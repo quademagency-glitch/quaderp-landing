@@ -3,6 +3,73 @@
    Extends the base design system for the product landing page.
    ========================================================================== */
 
+/* ===== SHARED / UTILITIES ===== */
+.section-padding {
+    padding: 110px 0;
+}
+
+.section-header {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 64px;
+}
+
+.section-header h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+}
+
+.section-header p {
+    color: var(--text-muted);
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.glow-effect {
+    transition: box-shadow 0.3s ease;
+}
+
+.glow-card:hover {
+    box-shadow: 0 0 30px rgba(0, 174, 239, 0.08);
+}
+
+.hero-noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.025;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.8) 1px, transparent 0);
+    background-size: 4px 4px;
+    pointer-events: none;
+}
+
+/* Scroll-reveal */
+.animate-on-scroll {
+    opacity: 0;
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.animate-on-scroll.slide-up { transform: translateY(28px); }
+.animate-on-scroll.slide-left { transform: translateX(28px); }
+.animate-on-scroll.slide-right { transform: translateX(-28px); }
+.animate-on-scroll.in-view { opacity: 1; transform: none; }
+
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-on-scroll {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
 /* ===== HERO ===== */
 .erp-hero {
     position: relative;
@@ -251,8 +318,41 @@
     padding: 40px 0;
 }
 
+.stats-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 0 32px;
+}
+
+.stat-number {
+    font-size: 40px;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: var(--text-color);
+    margin: 0 0 6px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 44px;
+    background: var(--border-color);
+    flex-shrink: 0;
+}
+
 .erp-stat-text {
-    font-size: 48px;
+    font-size: 40px;
     font-weight: 700;
     color: var(--accent) !important;
 }
@@ -439,6 +539,109 @@
     line-height: 1.6;
 }
 
+/* ===== PRICING ===== */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: stretch;
+}
+
+.pricing-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 20px;
+    padding: 40px 32px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pricing-card:hover {
+    border-color: var(--border-glass-strong);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.pricing-card.popular-tier {
+    border-color: rgba(0, 174, 239, 0.35);
+    background: linear-gradient(180deg, rgba(0, 174, 239, 0.07), var(--bg-glass) 60%);
+    box-shadow: 0 16px 50px rgba(0, 174, 239, 0.12);
+}
+
+.pricing-card.popular-tier:hover {
+    box-shadow: 0 20px 60px rgba(0, 174, 239, 0.18);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 18px;
+    border-radius: 100px;
+    font-family: var(--font-heading);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.tier-name {
+    font-size: 20px;
+    margin-bottom: 12px;
+    font-family: var(--font-heading);
+}
+
+.tier-price {
+    font-size: 40px;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    margin-bottom: 12px;
+}
+
+.tier-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 28px;
+    min-height: 42px;
+}
+
+.tier-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px;
+    flex: 1;
+}
+
+.tier-features li {
+    position: relative;
+    padding-left: 26px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.tier-features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.tier-btn {
+    width: 100%;
+    text-align: center;
+}
+
 /* ===== PRICING EXTRA ===== */
 .erp-price-period {
     font-size: 16px;
@@ -457,6 +660,60 @@
     border-radius: 12px;
     display: inline-block;
     width: 100%;
+}
+
+/* ===== HOW IT WORKS / PROCESS ===== */
+.process-timeline {
+    position: relative;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 28px;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-glass-strong) 20%, var(--border-glass-strong) 80%, transparent);
+    z-index: 0;
+}
+
+.process-steps {
+    display: grid;
+    position: relative;
+    z-index: 1;
+}
+
+.process-step {
+    text-align: center;
+    padding: 0 24px;
+}
+
+.step-number {
+    width: 56px;
+    height: 56px;
+    line-height: 56px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass-strong);
+    color: var(--accent);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.step-title {
+    font-size: 19px;
+    margin-bottom: 10px;
+    font-family: var(--font-heading);
+}
+
+.step-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 280px;
+    margin: 0 auto;
 }
 
 /* ===== AUDIENCE / WHO IT'S FOR ===== */
@@ -692,9 +949,37 @@
     .erp-contact-grid {
         grid-template-columns: 1fr;
     }
+
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+    }
 }
 
 @media (max-width: 768px) {
+    .process-steps {
+        grid-template-columns: 1fr !important;
+        gap: 48px;
+    }
+
+    .timeline-line {
+        display: none;
+    }
+
+    .stats-container {
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .stat-divider {
+        display: none;
+    }
+
+    .stat-item {
+        padding: 0;
+    }
+
     .erp-hero {
         padding: 100px 0 60px;
         min-height: auto;
