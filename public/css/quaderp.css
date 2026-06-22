@@ -14,6 +14,44 @@
     overflow: hidden;
 }
 
+/* Hero Glow Orbs */
+.erp-glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    z-index: 1;
+    animation: erp-orb-float 20s infinite ease-in-out alternate;
+}
+.orb-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    top: -10%;
+    left: -10%;
+}
+.orb-2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%);
+    bottom: -20%;
+    right: -10%;
+    animation-delay: -5s;
+}
+.orb-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    top: 40%;
+    left: 40%;
+    animation-delay: -10s;
+    opacity: 0.3;
+}
+@keyframes erp-orb-float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 50px) scale(1.2); }
+}
+
 .erp-hero-bg {
     position: absolute;
     top: 0;
@@ -228,6 +266,33 @@
 
 .erp-features-grid .service-card {
     grid-column: auto;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.erp-features-grid .service-card:hover {
+    background: var(--bg-glass-hover);
+    border-color: var(--border-glass-strong);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 174, 239, 0.1);
+}
+.service-icon {
+    margin-bottom: 20px;
+    color: var(--accent);
+}
+.service-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+    font-family: var(--font-heading);
+}
+.service-desc {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.6;
 }
 
 /* ===== APP SHOWCASE ===== */
@@ -287,9 +352,10 @@
 }
 
 .erp-showcase-content h3 {
-    font-size: clamp(24px, 3vw, 32px);
-    margin-bottom: 16px;
-    line-height: 1.3;
+    font-size: clamp(28px, 3.5vw, 40px);
+    margin-bottom: 20px;
+    line-height: 1.2;
+    font-family: var(--font-heading);
 }
 
 .erp-showcase-content p {
@@ -333,17 +399,19 @@
 .erp-benefit-card {
     text-align: center;
     padding: 40px 28px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--border-color);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
     border-radius: 16px;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .erp-benefit-card:hover {
-    border-color: rgba(0, 174, 239, 0.3);
-    transform: translateY(-6px);
-    box-shadow: 0 12px 30px rgba(0, 174, 239, 0.08);
-    background: rgba(0, 174, 239, 0.03);
+    border-color: var(--border-glass-strong);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 174, 239, 0.1);
+    background: var(--bg-glass-hover);
 }
 
 .erp-benefit-icon {
@@ -434,7 +502,13 @@
 }
 
 .erp-contact-form-wrapper {
-    padding: 36px;
+    padding: 40px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 .erp-contact-form-wrapper h3 {
@@ -506,8 +580,14 @@
 
 /* Info Card */
 .erp-contact-info-card {
-    padding: 32px;
+    padding: 40px;
     text-align: center;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 .erp-contact-info-card h3 {
