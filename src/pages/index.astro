@@ -418,8 +418,12 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
 
             <!-- Compare Features Matrix -->
             <div class="erp-compare-features animate-on-scroll slide-up delay-200">
-                <h3 class="compare-title">Compare Plan Features</h3>
-                <div class="table-responsive">
+                <details class="erp-compare-details">
+                    <summary class="compare-title">
+                        <span>Compare Plan Features</span>
+                        <svg class="compare-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </summary>
+                    <div class="table-responsive">
                     <table class="erp-feature-table">
                         <thead>
                             <tr>
@@ -457,6 +461,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                         </tbody>
                     </table>
                 </div>
+                </details>
             </div>
         </div>
     </section>
@@ -560,11 +565,42 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
     }
     
     .compare-title {
-        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         font-family: var(--font-heading);
-        font-size: 28px;
-        margin-bottom: 40px;
+        font-size: 24px;
         color: var(--text-primary);
+        cursor: pointer;
+        padding: 0 10px;
+        transition: color 0.2s;
+    }
+
+    .compare-title:hover {
+        color: var(--accent);
+    }
+
+    .compare-title::-webkit-details-marker {
+        display: none;
+    }
+
+    .erp-compare-details > summary {
+        list-style: none;
+    }
+
+    .compare-chevron {
+        transition: transform 0.3s ease;
+        color: var(--accent);
+    }
+
+    .erp-compare-details[open] .compare-chevron {
+        transform: rotate(180deg);
+    }
+
+    .erp-compare-details[open] .compare-title {
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 20px;
     }
 
     .table-responsive {
