@@ -36,22 +36,128 @@ const defaultFeatures = [
 
 const defaultPricingPlans = [
     {
-        name: "Starter", price: "$29", period: "/mo",
-        description: "Perfect for small retail stores getting started with digital management.",
-        features: ["1 Store Location", "Up to 500 Products", "Basic Sales Dashboard", "Inventory Tracking", "2 Staff Accounts", "Email Support"],
+        name: "Single Branch", price: "GHS 250", period: "/mo",
+        description: "Perfect for single-location retail stores and pharmacies getting started.",
+        features: [
+            "1 Store Location", 
+            "Up to 3 POS Terminals", 
+            "Basic Sales Dashboard", 
+            "Real-time Inventory Tracking", 
+            "Built-in Accounting & Invoicing",
+            "Standard Support", 
+            "+ GHS 1,000 Setup Fee"
+        ],
         isPopular: false, buttonText: "Contact Us"
     },
     {
-        name: "Growth", price: "$79", period: "/mo",
-        description: "The ideal plan for growing businesses with multiple staff and advanced needs.",
-        features: ["Up to 3 Locations", "Unlimited Products", "Advanced Analytics", "Theft & Loss Alerts", "10 Staff Accounts", "Priority Support", "Custom Reports"],
+        name: "Multi-Branch", price: "GHS 600", period: "/mo",
+        description: "The ideal plan for growing businesses with 2 to 5 store locations.",
+        features: [
+            "Up to 5 Store Locations", 
+            "Unlimited POS Terminals", 
+            "Advanced Analytics & Loss Prevention", 
+            "Multi-store Stock Transfers", 
+            "CRM & Advanced Team Management",
+            "Priority Support", 
+            "+ GHS 2,500 Setup Fee"
+        ],
         isPopular: true, buttonText: "Contact Us"
     },
     {
-        name: "Enterprise", price: "Custom", period: "",
-        description: "Tailored solutions for large retail chains and franchise operations.",
-        features: ["Unlimited Locations", "Unlimited Products", "AI-Powered Insights", "Advanced Security", "Unlimited Staff", "Dedicated Account Manager", "API Access", "White-label Option"],
+        name: "Franchise", price: "Custom", period: "",
+        description: "Tailored value-based solutions for large retail chains and distributors.",
+        features: [
+            "Unlimited Locations", 
+            "Custom API Integrations", 
+            "Legacy Data Migration", 
+            "On-site Staff Training", 
+            "Dedicated Account Manager", 
+            "Custom SLA & 99.9% Uptime"
+        ],
         isPopular: false, buttonText: "Contact Sales"
+    }
+];
+
+const featureCategories = [
+    {
+        name: "Platform Basics",
+        features: [
+            { name: "Max Store Locations", single: "1 Location", multi: "Up to 5 Locations", franchise: "Unlimited Locations" },
+            { name: "Setup Fee", single: "GHS 1000", multi: "GHS 2500", franchise: "Custom Quote" },
+            { name: "Support Level", single: "Standard Support", multi: "Priority Support", franchise: "Dedicated Account Mgr" }
+        ]
+    },
+    {
+        name: "Point of Sale (POS)",
+        features: [
+            { name: "Max POS Terminals", single: "Up to 3", multi: "Unlimited", franchise: "Unlimited" },
+            { name: "Touch-Optimized Register", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Multi-Payment (Cash/Card/Momo)", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Returns & Refunds", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Till Management (Cash Drawer)", single: "Yes", multi: "Yes", franchise: "Yes" }
+        ]
+    },
+    {
+        name: "Inventory & Stock Control",
+        features: [
+            { name: "Real-time Stock Sync", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Low Stock Alerts", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Stock Adjustments & Reconciliation", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Multi-Store Stock Transfers", single: "No", multi: "Yes", franchise: "Yes" },
+            { name: "Centralized Warehouse Routing", single: "No", multi: "Yes", franchise: "Yes" }
+        ]
+    },
+    {
+        name: "Business Dashboard & Analytics",
+        features: [
+            { name: "Basic Sales Metrics & Charts", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Top Selling Products", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Advanced Loss Prevention Alerts", single: "No", multi: "Yes", franchise: "Yes" },
+            { name: "Employee Performance Tracking", single: "No", multi: "Yes", franchise: "Yes" },
+            { name: "Cross-Location Comparison", single: "No", multi: "Yes", franchise: "Yes" }
+        ]
+    },
+    {
+        name: "Integrated Accounting & Invoicing",
+        features: [
+            { name: "B2B Invoicing generation", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Accounts Receivable (Who owes you)", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Accounts Payable (Who you owe)", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Basic Expense Logging", single: "Yes", multi: "Yes", franchise: "Yes" }
+        ]
+    },
+    {
+        name: "CRM & Customer Loyalty",
+        features: [
+            { name: "Customer Profiles & History", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Loyalty Points & Rewards", single: "No", multi: "Yes", franchise: "Yes" },
+            { name: "Marketing Comms (SMS/Email)", single: "No", multi: "Yes", franchise: "Yes" }
+        ]
+    },
+    {
+        name: "Purchasing & Supply Chain",
+        features: [
+            { name: "Supplier Directory", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Create Purchase Orders (POs)", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Auto-Receive POs into Stock", single: "Yes", multi: "Yes", franchise: "Yes" }
+        ]
+    },
+    {
+        name: "Staff Management & Security",
+        features: [
+            { name: "Basic Staff Profiles", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Advanced Role-Based Permissions", single: "No", multi: "Yes", franchise: "Yes" },
+            { name: "Detailed Activity Audit Logs", single: "No", multi: "Yes", franchise: "Yes" }
+        ]
+    },
+    {
+        name: "Enterprise / Technical Extras",
+        features: [
+            { name: "Custom API Integrations", single: "No", multi: "No", franchise: "Yes" },
+            { name: "Legacy Data Migration", single: "No", multi: "No", franchise: "Yes" },
+            { name: "On-site Staff Training", single: "No", multi: "No", franchise: "Yes" },
+            { name: "Custom SLA (99.9% Uptime)", single: "No", multi: "No", franchise: "Yes" }
+        ]
     }
 ];
 
@@ -309,6 +415,49 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
             <div class="erp-pricing-note animate-on-scroll slide-up">
                 <p>🔒 Contact us to secure your pricing and get started.</p>
             </div>
+
+            <!-- Compare Features Matrix -->
+            <div class="erp-compare-features animate-on-scroll slide-up delay-200">
+                <h3 class="compare-title">Compare Plan Features</h3>
+                <div class="table-responsive">
+                    <table class="erp-feature-table">
+                        <thead>
+                            <tr>
+                                <th>Feature Category & Capabilities</th>
+                                <th>Single Branch<br/><span class="tier-sub">GHS 250/mo</span></th>
+                                <th>Multi-Branch<br/><span class="tier-sub">GHS 600/mo</span></th>
+                                <th>Franchise<br/><span class="tier-sub">Custom</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {featureCategories.map((category) => (
+                                <>
+                                    <tr class="category-row">
+                                        <td colspan="4">{category.name}</td>
+                                    </tr>
+                                    {category.features.map((feature) => (
+                                        <tr>
+                                            <td class="feature-name">{feature.name}</td>
+                                            <td class={feature.single === 'Yes' ? 'text-accent' : feature.single === 'No' ? 'text-muted' : ''}>
+                                                {feature.single === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> : 
+                                                 feature.single === 'No' ? '-' : feature.single}
+                                            </td>
+                                            <td class={feature.multi === 'Yes' ? 'text-accent' : feature.multi === 'No' ? 'text-muted' : ''}>
+                                                {feature.multi === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> : 
+                                                 feature.multi === 'No' ? '-' : feature.multi}
+                                            </td>
+                                            <td class={feature.franchise === 'Yes' ? 'text-accent' : feature.franchise === 'No' ? 'text-muted' : ''}>
+                                                {feature.franchise === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> : 
+                                                 feature.franchise === 'No' ? '-' : feature.franchise}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -398,3 +547,103 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         </div>
     </section>
 </Layout>
+
+<style>
+    .erp-compare-features {
+        margin-top: 80px;
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 40px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+    
+    .compare-title {
+        text-align: center;
+        font-family: var(--font-heading);
+        font-size: 28px;
+        margin-bottom: 40px;
+        color: var(--text-primary);
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .erp-feature-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        min-width: 800px;
+    }
+
+    .erp-feature-table th {
+        font-family: var(--font-heading);
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+        padding: 20px 16px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .erp-feature-table th:first-child {
+        text-align: left;
+        border-top-left-radius: 12px;
+    }
+    
+    .erp-feature-table th:last-child {
+        border-top-right-radius: 12px;
+    }
+
+    .tier-sub {
+        font-size: 13px;
+        color: var(--accent);
+        font-weight: 400;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .category-row td {
+        background: rgba(255, 255, 255, 0.03);
+        text-align: left;
+        font-weight: 600;
+        font-family: var(--font-heading);
+        color: var(--accent-purple);
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .erp-feature-table td {
+        padding: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+        font-size: 15px;
+    }
+
+    .erp-feature-table td.feature-name {
+        text-align: left;
+        color: var(--text-muted);
+    }
+
+    .erp-feature-table tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .text-accent {
+        color: var(--accent);
+    }
+    
+    .text-muted {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .erp-compare-features {
+            padding: 24px 16px;
+        }
+    }
+</style>
