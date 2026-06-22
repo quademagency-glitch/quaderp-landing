@@ -36,7 +36,7 @@ const defaultFeatures = [
 
 const defaultPricingPlans = [
     {
-        name: "Single Branch", price: "GHS 450", period: "/mo",
+        name: "Single Branch", price: "GHS 450", period: "/mo", setupFee: "GHS 1,500",
         description: "Perfect for single-location retail stores and pharmacies getting started.",
         features: [
             "1 Store Location", 
@@ -44,13 +44,12 @@ const defaultPricingPlans = [
             "Basic Sales Dashboard", 
             "Real-time Inventory Tracking", 
             "Built-in Accounting & Invoicing",
-            "Standard Support", 
-            "+ GHS 1,500 Setup Fee"
+            "Standard Support"
         ],
         isPopular: false, buttonText: "Contact Us"
     },
     {
-        name: "Multi-Branch", price: "GHS 1000", period: "/mo",
+        name: "Multi-Branch", price: "GHS 1000", period: "/mo", setupFee: "GHS 5,500",
         description: "The ideal plan for growing businesses with 2 to 5 store locations.",
         features: [
             "Up to 5 Store Locations", 
@@ -58,13 +57,12 @@ const defaultPricingPlans = [
             "Advanced Analytics & Loss Prevention", 
             "Multi-store Stock Transfers", 
             "CRM & Advanced Team Management",
-            "Priority Support", 
-            "+ GHS 5,500 Setup Fee"
+            "Priority Support"
         ],
         isPopular: true, buttonText: "Contact Us"
     },
     {
-        name: "Franchise", price: "Custom", period: "",
+        name: "Franchise", price: "Custom", period: "", setupFee: "Custom Quote",
         description: "Tailored value-based solutions for large retail chains and distributors.",
         features: [
             "Unlimited Locations", 
@@ -402,6 +400,11 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                         <div class="tier-price">
                             {plan.price}<span class="erp-price-period">{plan.period}</span>
                         </div>
+                        {plan.setupFee && (
+                            <div class="tier-setup-fee">
+                                + {plan.setupFee} Setup Fee
+                            </div>
+                        )}
                         <p class="tier-desc">{plan.description}</p>
                         <ul class="tier-features">
                             {plan.features.map((feature) => (
@@ -681,5 +684,19 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         .erp-compare-features {
             padding: 24px 16px;
         }
+    }
+
+    .tier-setup-fee {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--accent);
+        margin-top: -4px;
+        margin-bottom: 16px;
+        background: rgba(0, 174, 239, 0.1);
+        padding: 4px 12px;
+        border-radius: 100px;
+        display: inline-block;
+        align-self: flex-start;
+        border: 1px solid rgba(0, 174, 239, 0.2);
     }
 </style>
