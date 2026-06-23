@@ -36,7 +36,10 @@ const defaultFeatures = [
 
 const defaultPricingPlans = [
     {
-        name: "Single Branch", price: "GHS 450", period: "/mo", setupFee: "GHS 1,500",
+        name: "Single Branch", 
+        monthlyPrice: "GHS 450", monthlyPeriod: "/mo", 
+        yearlyPrice: "GHS 4,950", yearlyPeriod: "/yr",
+        setupFee: "GHS 1,500",
         description: "Perfect for single-location retail stores and pharmacies getting started.",
         features: [
             "1 Store Location", 
@@ -49,7 +52,10 @@ const defaultPricingPlans = [
         isPopular: false, buttonText: "Contact Us"
     },
     {
-        name: "Multi-Branch", price: "GHS 1000", period: "/mo", setupFee: "GHS 5,500",
+        name: "Multi-Branch", 
+        monthlyPrice: "GHS 1,000", monthlyPeriod: "/mo", 
+        yearlyPrice: "GHS 11,000", yearlyPeriod: "/yr",
+        setupFee: "GHS 5,500",
         description: "The ideal plan for growing businesses with 2 to 5 store locations.",
         features: [
             "Up to 5 Store Locations", 
@@ -62,7 +68,10 @@ const defaultPricingPlans = [
         isPopular: true, buttonText: "Contact Us"
     },
     {
-        name: "Franchise", price: "Custom", period: "", setupFee: "Custom Quote",
+        name: "Franchise", 
+        monthlyPrice: "Custom", monthlyPeriod: "", 
+        yearlyPrice: "Custom", yearlyPeriod: "",
+        setupFee: "Custom Quote",
         description: "Tailored value-based solutions for large retail chains and distributors.",
         features: [
             "Unlimited Locations", 
@@ -391,14 +400,23 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
             <div class="section-header animate-on-scroll slide-up">
                 <h2><span class="text-gradient">Simple, Transparent Pricing</span></h2>
                 <p>Start small, scale as you grow. No hidden fees.</p>
+
+                <div class="pricing-toggle-container">
+                    <span class="toggle-label active" id="label-monthly">Monthly</span>
+                    <label class="erp-toggle">
+                        <input type="checkbox" id="pricing-toggle">
+                        <span class="erp-toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label" id="label-yearly">Annually <span class="discount-badge">1 Month Free</span></span>
+                </div>
             </div>
             <div class="pricing-grid">
                 {defaultPricingPlans.map((plan, index) => (
                     <div class={`pricing-card ${plan.isPopular ? 'popular-tier' : ''} animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
                         {plan.isPopular && <div class="popular-badge">Most Popular</div>}
                         <h3 class="tier-name">{plan.name}</h3>
-                        <div class="tier-price">
-                            {plan.price}<span class="erp-price-period">{plan.period}</span>
+                        <div class="tier-price" data-monthly-price={plan.monthlyPrice} data-yearly-price={plan.yearlyPrice} data-monthly-period={plan.monthlyPeriod} data-yearly-period={plan.yearlyPeriod}>
+                            <span class="price-amount">{plan.monthlyPrice}</span><span class="erp-price-period">{plan.monthlyPeriod}</span>
                         </div>
                         {plan.setupFee && (
                             <div class="tier-setup-fee">
@@ -554,6 +572,40 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
             </div>
         </div>
     </section>
+
+    <script>
+        const pricingToggle = document.getElementById('pricing-toggle');
+        const labelMonthly = document.getElementById('label-monthly');
+        const labelYearly = document.getElementById('label-yearly');
+        const priceElements = document.querySelectorAll('.tier-price');
+
+        if (pricingToggle) {
+            pricingToggle.addEventListener('change', (e) => {
+                const isYearly = e.target.checked;
+                
+                if (isYearly) {
+                    labelMonthly.classList.remove('active');
+                    labelYearly.classList.add('active');
+                } else {
+                    labelMonthly.classList.add('active');
+                    labelYearly.classList.remove('active');
+                }
+
+                priceElements.forEach(el => {
+                    const amountSpan = el.querySelector('.price-amount');
+                    const periodSpan = el.querySelector('.erp-price-period');
+                    
+                    if (isYearly) {
+                        amountSpan.textContent = el.dataset.yearlyPrice;
+                        periodSpan.textContent = el.dataset.yearlyPeriod;
+                    } else {
+                        amountSpan.textContent = el.dataset.monthlyPrice;
+                        periodSpan.textContent = el.dataset.monthlyPeriod;
+                    }
+                });
+            });
+        }
+    </script>
 </Layout>
 
 <style>
