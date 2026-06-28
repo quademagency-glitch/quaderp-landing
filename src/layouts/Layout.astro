@@ -29,13 +29,7 @@ const { title, description } = Astro.props;
                 document.documentElement.setAttribute('data-theme', 'light');
             }
         </script>
-        <script is:inline>
-            var ahrefs_analytics_script = document.createElement('script');
-            ahrefs_analytics_script.async = true;
-            ahrefs_analytics_script.src = 'https://analytics.ahrefs.com/analytics.js';
-            ahrefs_analytics_script.setAttribute('data-key', 'K8bWFBn6V2/49PsFCMRFcA');
-            document.getElementsByTagName('head')[0].appendChild(ahrefs_analytics_script);
-        </script>
+        <script src="https://analytics.ahrefs.com/analytics.js" data-key="K8bWFBn6V2/49PsFCMRFcA" async></script>
 	</head>
 	<body>
         <!-- Header -->
