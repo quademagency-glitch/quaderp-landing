@@ -551,6 +551,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                         <button type="submit" class="btn btn-primary btn-pill glow-effect w-100" id="erpSubmitBtn">
                             Submit Request
                         </button>
+                        <div id="erpFormResult" class="erp-form-result" aria-live="polite"></div>
                     </form>
                 </div>
 
@@ -574,6 +575,67 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
     </section>
 
     <script>
+        // Form AJAX submit
+        const erpForm = document.getElementById('erpContactForm') as HTMLFormElement | null;
+        const erpSubmitBtn = document.getElementById('erpSubmitBtn') as HTMLButtonElement | null;
+        const erpFormResult = document.getElementById('erpFormResult');
+
+        erpForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!erpSubmitBtn || !erpFormResult) return;
+
+            erpSubmitBtn.disabled = true;
+            erpSubmitBtn.textContent = 'Sending…';
+            erpFormResult.className = 'erp-form-result';
+            erpFormResult.textContent = '';
+
+            try {
+                const res = await fetch(erpForm.action, {
+                    method: 'POST',
+                    body: new FormData(erpForm),
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (res.ok) {
+                    erpForm.reset();
+                    erpFormResult.textContent = '✓ Request sent! We\'ll reach out within 24 hours.';
+                    erpFormResult.className = 'erp-form-result erp-form-success';
+                    erpSubmitBtn.textContent = 'Sent!';
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch {
+                erpFormResult.textContent = '✗ Something went wrong. Please try WhatsApp or email us directly.';
+                erpFormResult.className = 'erp-form-result erp-form-error';
+                erpSubmitBtn.disabled = false;
+                erpSubmitBtn.textContent = 'Try Again';
+            }
+        });
+
+        // Count-up animation for numeric stats
+        const countUpEls = document.querySelectorAll('.stat-number:not(.erp-stat-text)');
+        const countUpObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target as HTMLElement;
+                const target = parseInt(el.dataset.target ?? '0', 10);
+                const suffix = (el.textContent ?? '').replace(/\d+/g, '').trim();
+                const duration = 1400;
+                const start = performance.now();
+                const tick = (now: number) => {
+                    const progress = Math.min((now - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = Math.floor(eased * target) + suffix;
+                    if (progress < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+                countUpObserver.unobserve(el);
+            });
+        }, { threshold: 0.6 });
+
+        countUpEls.forEach(el => countUpObserver.observe(el));
+
+        // Pricing toggle
         const pricingToggle = document.getElementById('pricing-toggle');
         const labelMonthly = document.getElementById('label-monthly');
         const labelYearly = document.getElementById('label-yearly');
@@ -750,5 +812,31 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         display: inline-block;
         align-self: flex-start;
         border: 1px solid rgba(0, 174, 239, 0.2);
+    }
+
+    .erp-form-result {
+        display: none;
+        margin-top: 16px;
+        padding: 14px 18px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .erp-form-result:not(:empty) {
+        display: block;
+    }
+
+    .erp-form-success {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #22c55e;
+    }
+
+    .erp-form-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
     }
 </style>
