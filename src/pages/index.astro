@@ -40,7 +40,7 @@ const defaultPricingPlans = [
         monthlyPrice: "GHS 450", monthlyPeriod: "/mo", 
         yearlyPrice: "GHS 4,950", yearlyPeriod: "/yr",
         setupFee: "GHS 1,500",
-        description: "Perfect for single-location retail stores and pharmacies getting started.",
+        description: "For retail shops and pharmacies running a single location.",
         features: [
             "1 Store Location", 
             "Up to 3 POS Terminals", 
@@ -56,7 +56,7 @@ const defaultPricingPlans = [
         monthlyPrice: "GHS 1,000", monthlyPeriod: "/mo", 
         yearlyPrice: "GHS 11,000", yearlyPeriod: "/yr",
         setupFee: "GHS 5,500",
-        description: "The ideal plan for growing businesses with 2 to 5 store locations.",
+        description: "For businesses managing 2 to 5 store locations.",
         features: [
             "Up to 5 Store Locations", 
             "Unlimited POS Terminals", 
@@ -72,7 +72,7 @@ const defaultPricingPlans = [
         monthlyPrice: "Custom", monthlyPeriod: "", 
         yearlyPrice: "Custom", yearlyPeriod: "",
         setupFee: "Custom Quote",
-        description: "Tailored value-based solutions for large retail chains and distributors.",
+        description: "For large retail chains and distributors. We build around your setup.",
         features: [
             "Unlimited Locations", 
             "Custom API Integrations", 
@@ -169,21 +169,21 @@ const featureCategories = [
 ];
 
 const benefits = [
-    { icon: "☁️", title: "100% Cloud-Based", desc: "No servers to maintain. Access everything from your browser, anywhere in the world." },
-    { icon: "⚡", title: "Real-Time Sync", desc: "Every sale, every stock change, every alert — synced across all devices instantly." },
-    { icon: "🏪", title: "Multi-Store Support", desc: "Manage multiple locations from a single dashboard with store-level permissions." },
-    { icon: "🔒", title: "Bank-Grade Security", desc: "End-to-end encryption, role-based access control, and secure cloud infrastructure." },
-    { icon: "📱", title: "No Hardware Required", desc: "Works on any device with a browser. No POS hardware or special equipment needed." },
-    { icon: "🔄", title: "Automatic Updates", desc: "Always running the latest version. New features and improvements delivered seamlessly." }
+    { icon: "☁️", title: "100% Cloud-Based", desc: "No servers or IT setup needed. Log in from any browser, anywhere." },
+    { icon: "⚡", title: "Real-Time Sync", desc: "Sales, stock changes, and alerts sync across your devices in real time." },
+    { icon: "🏪", title: "Multi-Store Support", desc: "Manage all your locations from one dashboard with store-level permissions." },
+    { icon: "🔒", title: "Bank-Grade Security", desc: "Your data is encrypted and access is locked to each staff member's role." },
+    { icon: "📱", title: "No Hardware Required", desc: "Works on any device with a browser. No terminals or special equipment needed." },
+    { icon: "🔄", title: "Automatic Updates", desc: "Always on the latest version. Updates happen in the background." }
 ];
 
 const whatsappNumber = "233530890302";
 const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
 ---
 
-<Layout 
-    title="QuadERP — All-in-One Store Management Platform" 
-    description="QuadERP is a powerful, cloud-based ERP for retail stores. Track sales, manage inventory, oversee staff, and prevent losses — all in one app."
+<Layout
+    title="QuadERP | Store Management Software for Retail"
+    description="QuadERP helps retail stores track sales, manage inventory, monitor staff, and cut losses, all from one platform."
 >
     <!-- ===== HERO ===== -->
     <section class="erp-hero" id="erp-hero">
@@ -202,7 +202,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                     Take Control of Your <span class="text-gradient">Store Operations</span>
                 </h1>
                 <p class="erp-hero-subtitle">
-                    Real-time sales tracking, smart inventory management, staff oversight, and theft prevention — all in one powerful platform built for modern retail.
+                    Sales tracking, inventory management, staff oversight, and theft prevention, all in one platform.
                 </p>
                 <div class="erp-hero-ctas">
                     <a href="#erp-contact" class="btn btn-primary btn-pill glow-effect erp-btn-lg">Contact Us To Get Set Up</a>
@@ -212,9 +212,9 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                     </a>
                 </div>
                 <div class="erp-hero-trust">
-                    <span>✓ Setup handled by us</span>
-                    <span>✓ Personalized onboarding</span>
-                    <span>✓ Built for scale</span>
+                    <span>✓ We handle the setup</span>
+                    <span>✓ Staff trained by our team</span>
+                    <span>✓ Grows with your business</span>
                 </div>
             </div>
             <div class="erp-hero-visual animate-on-scroll slide-left delay-200">
@@ -259,8 +259,8 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
     <section class="erp-features section-padding" id="erp-features">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2><span class="text-gradient">Everything You Need</span> to Run Your Store</h2>
-                <p>Powerful tools designed for retail businesses of every size — from single shops to multi-location chains.</p>
+                <h2><span class="text-gradient">All the Tools</span> to Run Your Store</h2>
+                <p>From a single shop to five locations, QuadERP has what your business needs.</p>
             </div>
 
             <div class="erp-features-grid">
@@ -280,7 +280,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
                 <h2>See <span class="text-gradient">QuadERP</span> in Action</h2>
-                <p>A powerful, intuitive interface designed for speed and clarity.</p>
+                <p>Fast to learn, built for daily use.</p>
             </div>
 
             <!-- Showcase 1: Dashboard -->
@@ -293,7 +293,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                 <div class="erp-showcase-content animate-on-scroll slide-left delay-200">
                     <span class="erp-showcase-label">Sales Dashboard</span>
                     <h3>Know Your Numbers <span class="text-gradient">Instantly</span></h3>
-                    <p>Track total revenue, daily transactions, average order value, and sales trends — all updated in real time. No more guesswork.</p>
+                    <p>Track total revenue, daily transactions, average order value, and sales trends in real time. No spreadsheets.</p>
                     <ul class="erp-feature-list">
                         <li>Live revenue tracking across registers</li>
                         <li>Visual weekly and monthly trend charts</li>
@@ -313,7 +313,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                 <div class="erp-showcase-content animate-on-scroll slide-right delay-200">
                     <span class="erp-showcase-label">Inventory Control</span>
                     <h3>Never Run Out of <span class="text-gradient">Stock Again</span></h3>
-                    <p>See every product, its stock level, and health status at a glance. Color-coded indicators make it easy to spot what needs attention.</p>
+                    <p>See every product, its stock level, and status in one view. Color-coded indicators show what needs restocking before it becomes a problem.</p>
                     <ul class="erp-feature-list">
                         <li>Real-time stock level monitoring</li>
                         <li>Low-stock and critical alerts</li>
@@ -333,7 +333,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                 <div class="erp-showcase-content animate-on-scroll slide-left delay-200">
                     <span class="erp-showcase-label">Sales POS</span>
                     <h3>Sell Faster With a <span class="text-gradient">Modern POS</span></h3>
-                    <p>A sleek, touch-friendly point-of-sale that your staff will love. Browse products, build carts, and process payments — all from one screen.</p>
+                    <p>A touch-friendly point-of-sale your staff can learn in minutes. Browse products, build carts, and process payments from one screen.</p>
                     <ul class="erp-feature-list">
                         <li>Visual product grid with quick-add buttons</li>
                         <li>Multi-payment: Cash, Card, and Mobile Money</li>
@@ -350,7 +350,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
                 <h2>Get Started in <span class="text-gradient">3 Simple Steps</span></h2>
-                <p>We handle the heavy lifting so you can focus on your business.</p>
+                <p>We handle the setup from start to finish.</p>
             </div>
             <div class="process-timeline">
                 <div class="timeline-line"></div>
@@ -358,12 +358,12 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                     <div class="process-step animate-on-scroll slide-up delay-100">
                         <div class="step-number">1</div>
                         <h3 class="step-title">Contact Us</h3>
-                        <p class="step-desc">Reach out to our team to discuss your specific store needs and requirements.</p>
+                        <p class="step-desc">Tell us about your store, your locations, and what you need.</p>
                     </div>
                     <div class="process-step animate-on-scroll slide-up delay-200">
                         <div class="step-number">2</div>
                         <h3 class="step-title">We Set You Up</h3>
-                        <p class="step-desc">We configure your instance, set up your locations, and help import initial data.</p>
+                        <p class="step-desc">We set up your account, add your locations, and bring in your initial stock data.</p>
                     </div>
                     <div class="process-step animate-on-scroll slide-up delay-300">
                         <div class="step-number">3</div>
@@ -379,8 +379,8 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
     <section class="erp-benefits section-padding" id="erp-benefits">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2>Why Choose <span class="text-gradient">QuadERP</span></h2>
-                <p>Built different. Built better. Here's what sets us apart.</p>
+                <h2>What Makes <span class="text-gradient">QuadERP</span> Different</h2>
+                <p>Six things that matter when running a store.</p>
             </div>
             <div class="erp-benefits-grid">
                 {benefits.map((benefit, index) => (
@@ -399,7 +399,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
                 <h2><span class="text-gradient">Simple, Transparent Pricing</span></h2>
-                <p>Start small, scale as you grow. No hidden fees.</p>
+                <p>Pick the plan that fits your store. No hidden fees.</p>
 
                 <div class="pricing-toggle-container">
                     <span class="toggle-label active" id="label-monthly">Monthly</span>
@@ -434,7 +434,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                 ))}
             </div>
             <div class="erp-pricing-note animate-on-scroll slide-up">
-                <p>🔒 Contact us to secure your pricing and get started.</p>
+                <p>🔒 Contact us to lock in your plan and get started.</p>
             </div>
 
             <!-- Compare Features Matrix -->
@@ -492,7 +492,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
                 <h2><span class="text-gradient">Get Started With QuadERP</span></h2>
-                <p>Tell us about your business and we'll set you up with the perfect plan.</p>
+                <p>Tell us about your store and we'll get you set up.</p>
             </div>
 
             <div class="erp-contact-grid">
@@ -545,7 +545,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
 
                         <div class="form-group">
                             <label for="erp-message">Anything else you'd like us to know?</label>
-                            <textarea id="erp-message" name="message" rows="3" placeholder="Tell us about your current setup, pain points, or what features matter most..."></textarea>
+                            <textarea id="erp-message" name="message" rows="3" placeholder="Tell us about your current setup, any challenges you have, or which features matter most to you..."></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-pill glow-effect w-100" id="erpSubmitBtn">
@@ -636,34 +636,23 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         countUpEls.forEach(el => countUpObserver.observe(el));
 
         // Pricing toggle
-        const pricingToggle = document.getElementById('pricing-toggle');
+        const pricingToggle = document.getElementById('pricing-toggle') as HTMLInputElement | null;
         const labelMonthly = document.getElementById('label-monthly');
         const labelYearly = document.getElementById('label-yearly');
-        const priceElements = document.querySelectorAll('.tier-price');
+        const priceElements = document.querySelectorAll<HTMLElement>('.tier-price');
 
         if (pricingToggle) {
-            pricingToggle.addEventListener('change', (e) => {
-                const isYearly = e.target.checked;
-                
-                if (isYearly) {
-                    labelMonthly.classList.remove('active');
-                    labelYearly.classList.add('active');
-                } else {
-                    labelMonthly.classList.add('active');
-                    labelYearly.classList.remove('active');
-                }
+            pricingToggle.addEventListener('change', () => {
+                const isYearly = pricingToggle.checked;
+
+                labelMonthly?.classList.toggle('active', !isYearly);
+                labelYearly?.classList.toggle('active', isYearly);
 
                 priceElements.forEach(el => {
                     const amountSpan = el.querySelector('.price-amount');
                     const periodSpan = el.querySelector('.erp-price-period');
-                    
-                    if (isYearly) {
-                        amountSpan.textContent = el.dataset.yearlyPrice;
-                        periodSpan.textContent = el.dataset.yearlyPeriod;
-                    } else {
-                        amountSpan.textContent = el.dataset.monthlyPrice;
-                        periodSpan.textContent = el.dataset.monthlyPeriod;
-                    }
+                    if (amountSpan) amountSpan.textContent = isYearly ? (el.dataset.yearlyPrice ?? '') : (el.dataset.monthlyPrice ?? '');
+                    if (periodSpan) periodSpan.textContent = isYearly ? (el.dataset.yearlyPeriod ?? '') : (el.dataset.monthlyPeriod ?? '');
                 });
             });
         }
