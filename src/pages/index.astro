@@ -708,6 +708,11 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
 </Layout>
 
 <style>
+    /* Ensure the hidden attribute always wins over element display rules */
+    [hidden] {
+        display: none !important;
+    }
+
     .erp-compare-features {
         margin-top: 80px;
         background: var(--bg-glass);
