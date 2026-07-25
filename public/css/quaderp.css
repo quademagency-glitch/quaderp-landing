@@ -1099,3 +1099,89 @@ input:checked + .erp-toggle-slider:before {
     }
 }
 
+/* ===== LIGHT MODE OVERRIDES ===== */
+
+[data-theme="light"] .hero-noise {
+    background-image: radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.15) 1px, transparent 0);
+}
+
+[data-theme="light"] .erp-glow-orb { opacity: 0.12; }
+[data-theme="light"] .orb-3 { opacity: 0.08; }
+
+[data-theme="light"] .erp-hero-gradient {
+    background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 144, 199, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 50%, rgba(0, 85, 255, 0.03) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(0, 144, 199, 0.025) 0%, transparent 50%);
+}
+
+[data-theme="light"] .erp-mockup-wrapper {
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.1),
+        0 0 0 1px rgba(15, 23, 42, 0.07),
+        0 0 40px rgba(0, 144, 199, 0.06);
+}
+
+[data-theme="light"] .erp-mockup-glow {
+    background: radial-gradient(ellipse, rgba(0, 144, 199, 0.07) 0%, transparent 70%);
+}
+
+[data-theme="light"] .glow-card:hover {
+    box-shadow: 0 0 30px rgba(0, 144, 199, 0.07);
+}
+
+[data-theme="light"] .erp-features-grid .service-card:hover {
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1), 0 0 20px rgba(0, 144, 199, 0.07);
+}
+
+[data-theme="light"] .erp-showcase-img-wrapper {
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .erp-showcase-img-wrapper:hover {
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.14), 0 0 40px rgba(0, 144, 199, 0.07);
+}
+
+[data-theme="light"] .erp-benefit-icon {
+    background: rgba(0, 144, 199, 0.08);
+}
+
+[data-theme="light"] .erp-benefit-card:hover {
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1), 0 0 20px rgba(0, 144, 199, 0.07);
+}
+
+[data-theme="light"] .pricing-card:hover {
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .pricing-card.popular-tier {
+    border-color: rgba(0, 144, 199, 0.28);
+    background: linear-gradient(180deg, rgba(0, 144, 199, 0.05), var(--bg-glass) 60%);
+    box-shadow: 0 16px 50px rgba(0, 144, 199, 0.08);
+}
+
+[data-theme="light"] .pricing-card.popular-tier:hover {
+    box-shadow: 0 20px 60px rgba(0, 144, 199, 0.12);
+}
+
+[data-theme="light"] .erp-pricing-note {
+    background: rgba(0, 144, 199, 0.04);
+    border-color: rgba(0, 144, 199, 0.12);
+}
+
+[data-theme="light"] input:checked + .erp-toggle-slider {
+    background-color: rgba(0, 144, 199, 0.1);
+    border-color: rgba(0, 144, 199, 0.3);
+}
+
+[data-theme="light"] .erp-contact-form-wrapper,
+[data-theme="light"] .erp-contact-info-card {
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .erp-contact-form-wrapper input:focus,
+[data-theme="light"] .erp-contact-form-wrapper select:focus,
+[data-theme="light"] .erp-contact-form-wrapper textarea:focus {
+    box-shadow: 0 0 0 3px rgba(0, 144, 199, 0.15);
+}
+

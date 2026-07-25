@@ -44,9 +44,7 @@ const { title, description } = Astro.props;
         <!-- Applied before paint to avoid a flash of the wrong theme -->
         <script>
             const storedTheme = localStorage.getItem('quaderp-theme');
-            if (storedTheme === 'light') {
-                document.documentElement.setAttribute('data-theme', 'light');
-            }
+            document.documentElement.setAttribute('data-theme', storedTheme === 'dark' ? 'dark' : 'light');
         </script>
         <script is:inline src="https://analytics.ahrefs.com/analytics.js" data-key="K8bWFBn6V2/49PsFCMRFcA" async></script>
 	</head>
@@ -155,19 +153,14 @@ const { title, description } = Astro.props;
             // Theme toggle
             const themeToggle = document.getElementById('themeToggle');
             const setToggleIcon = () => {
-                if (themeToggle) themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '☀️' : '🌙';
+                if (themeToggle) themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
             };
             setToggleIcon();
 
             themeToggle?.addEventListener('click', () => {
-                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                if (isLight) {
-                    document.documentElement.removeAttribute('data-theme');
-                    localStorage.setItem('quaderp-theme', 'dark');
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    localStorage.setItem('quaderp-theme', 'light');
-                }
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+                localStorage.setItem('quaderp-theme', isDark ? 'light' : 'dark');
                 setToggleIcon();
             });
 
@@ -201,7 +194,7 @@ const { title, description } = Astro.props;
         box-sizing: border-box;
     }
 
-    :root {
+    :root, :root[data-theme="dark"] {
         --bg-color: #060609;
         --bg-surface: #0a0a0f;
         --bg-glass: rgba(255, 255, 255, 0.02);
