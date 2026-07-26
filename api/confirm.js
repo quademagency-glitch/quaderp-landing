@@ -122,7 +122,7 @@ function buildNotification(f) {
         </td></tr>
         <tr><td style="padding:28px 32px 4px 32px;">
           <h1 style="margin:0 0 4px 0;font-size:20px;font-weight:700;color:#0f172a;">${escapeHtml(heading)}</h1>
-          <p style="margin:0;font-size:13px;color:#51607a;">Submitted ${dateStr}${tag ? ` &middot; ${escapeHtml(tag)}` : ''}</p>
+          <p style="margin:0;font-size:13px;color:#51607a;">Submitted ${dateStr}${tag ? ` (${escapeHtml(tag)})` : ''}</p>
         </td></tr>
         <tr><td style="padding:16px 32px 8px 32px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #eef1f6;border-radius:10px;overflow:hidden;">${rows}</table>
@@ -153,7 +153,7 @@ function buildNotification(f) {
     if (wa) lines.push(`WhatsApp: ${wa}`);
     const text = lines.join('\n');
 
-    const subject = `New QuadERP Request — ${heading}${tag ? ` · ${tag}` : ''}`;
+    const subject = `New QuadERP Request: ${heading}${tag ? ` (${tag})` : ''}`;
     return { html, text, subject };
 }
 
@@ -162,7 +162,7 @@ function buildConfirmation({ firstName, plan }) {
     const safeName = escapeHtml(firstName);
     const safePlan = plan ? escapeHtml(plan) : '';
     const planLineHtml = safePlan
-        ? `<p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#51607a;text-align:center;">You told us you're interested in the <strong style="color:#0f172a;">${safePlan}</strong> plan — we'll tailor our follow-up around that.</p>`
+        ? `<p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#51607a;text-align:center;">You told us you're interested in the <strong style="color:#0f172a;">${safePlan}</strong> plan, so we'll tailor our follow-up around that.</p>`
         : '';
 
     const html = `<!DOCTYPE html>
@@ -184,7 +184,7 @@ function buildConfirmation({ firstName, plan }) {
         <tr><td style="padding:8px 32px;">
           <div style="background-color:#f6f8fb;border-radius:12px;padding:24px;text-align:center;">
             <p style="margin:0 0 12px 0;font-size:13px;font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:0.04em;">While you wait</p>
-            <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#51607a;">Want to move faster? Book a free 15-minute demo and we'll walk you through QuadERP live — or message us on WhatsApp.</p>
+            <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#51607a;">Want to move faster? Book a free 15-minute demo and we'll walk you through QuadERP live, or message us on WhatsApp.</p>
             <a href="${CALENDLY_URL}" style="display:inline-block;background-color:#00aeef;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:999px;margin:0 4px 10px 4px;">Book a Demo Call</a>
             <a href="${WHATSAPP_URL}" style="display:inline-block;background-color:#ffffff;color:#0f172a;font-size:15px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:999px;border:1px solid #d7dee8;margin:0 4px 10px 4px;">Chat on WhatsApp</a>
           </div>
@@ -201,14 +201,14 @@ function buildConfirmation({ firstName, plan }) {
     const text = `Hi ${firstName},
 
 Thanks for reaching out about QuadERP. We've received your details and our team will get back to you within 24 hours.
-${plan ? `\nYou told us you're interested in the ${plan} plan — we'll tailor our follow-up around that.\n` : ''}
+${plan ? `\nYou told us you're interested in the ${plan} plan, so we'll tailor our follow-up around that.\n` : ''}
 While you wait, you can:
 - Book a free 15-min demo call: ${CALENDLY_URL}
 - Chat with us on WhatsApp: ${WHATSAPP_URL}
 
 Questions? Just reply to this email or reach us at info@quaderp.app
 
-— The QuadERP Team
+The QuadERP Team
 Quadem Digital Enterprise`;
 
     return { html, text };
