@@ -15,7 +15,7 @@
 
 const FROM = 'QuadERP <info@quaderp.app>';
 const REPLY_TO = 'info@quaderp.app';
-const CALENDLY_URL = 'https://calendly.com/quademdigitalenterprise/quaderp-demo-call';
+const CALENDLY_URL = 'https://calendly.com/quaderp/30min';
 const WHATSAPP_URL = 'https://wa.me/233530890302';
 
 const ALLOWED_ORIGINS = ['https://quaderp.app', 'https://www.quaderp.app'];
