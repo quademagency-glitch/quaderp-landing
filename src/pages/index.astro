@@ -187,47 +187,43 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
 >
     <!-- ===== HERO ===== -->
     <section class="erp-hero" id="erp-hero">
-        <div class="erp-hero-bg">
-            <div class="erp-hero-gradient"></div>
-            <div class="erp-hero-grid-pattern"></div>
-            <div class="erp-glow-orb orb-1"></div>
-            <div class="erp-glow-orb orb-2"></div>
-            <div class="erp-glow-orb orb-3"></div>
-            <div class="hero-noise"></div>
-        </div>
+        <div class="erp-hero-bg"></div>
         <div class="container erp-hero-container">
-            <div class="erp-hero-content animate-on-scroll slide-up">
-                <span class="erp-badge">🏪 Built for stores across Ghana</span>
-                <h1 class="erp-hero-title">
-                    Stop Losing Money to <span class="text-gradient">Theft and Stockouts</span>
+            <div class="erp-hero-content">
+                <span class="erp-badge hero-reveal">🏪 Built for stores across Ghana</span>
+                <h1 class="erp-hero-title hero-reveal hero-delay-1">
+                    Stop Losing Money to<br />
+                    <span class="text-gradient">Theft and Stockouts</span>
                 </h1>
-                <p class="erp-hero-subtitle">
+                <p class="erp-hero-subtitle hero-reveal hero-delay-2">
                     See what's selling, what's in stock, and what your staff are doing across every branch, right from your phone.
                 </p>
-                <div class="erp-hero-ctas">
+                <div class="erp-hero-ctas hero-reveal hero-delay-3">
                     <a href="#erp-contact" class="btn btn-primary btn-pill glow-effect erp-btn-lg">Get Set Up Today</a>
                     <a href="#erp-showcase" class="btn btn-ghost btn-pill erp-btn-lg">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                         See It In Action
                     </a>
                 </div>
-                <div class="erp-hero-trust">
-                    <span>✓ We handle the setup</span>
-                    <span>✓ Staff trained by our team</span>
-                    <span>✓ Grows with your business</span>
-                </div>
+                <ul class="erp-hero-trust hero-reveal hero-delay-4">
+                    <li><span class="erp-check" aria-hidden="true">✓</span>We handle the setup</li>
+                    <li><span class="erp-check" aria-hidden="true">✓</span>Staff trained by our team</li>
+                    <li><span class="erp-check" aria-hidden="true">✓</span>Grows with your business</li>
+                </ul>
             </div>
-            <div class="erp-hero-visual animate-on-scroll slide-left delay-200">
+        </div>
+        <!-- Outside .container so it can run past the viewport's right edge. -->
+        <div class="erp-hero-visual hero-reveal-x hero-delay-5">
+            <div class="erp-hero-parallax" id="heroParallax">
                 <div class="erp-mockup-wrapper">
-                    <img src="/images/quaderp-dashboard.png" alt="QuadERP Dashboard" class="erp-mockup-img" width="800" height="500" />
-                    <div class="erp-mockup-glow"></div>
+                    <img src="/images/quaderp-dashboard.png" alt="QuadERP Dashboard" class="erp-mockup-img" width="1024" height="1024" fetchpriority="high" />
                 </div>
             </div>
         </div>
-        <div class="erp-hero-scroll-indicator">
+        <a href="#erp-features" class="erp-hero-scroll-indicator">
             <span>Scroll to explore</span>
             <div class="erp-scroll-arrow">↓</div>
-        </div>
+        </a>
     </section>
 
     <!-- ===== STATS STRIP ===== -->
@@ -619,6 +615,30 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
     </section>
 
     <script>
+        // Hero parallax: the mockup lags the scroll slightly, so it reads as sitting
+        // deeper than the copy. Purely decorative, so it stays off for reduced motion.
+        const heroParallax = document.getElementById('heroParallax');
+        const heroSection = document.getElementById('erp-hero');
+
+        if (heroParallax && heroSection && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            let parallaxQueued = false;
+
+            const updateHeroParallax = () => {
+                parallaxQueued = false;
+                // Cap at the hero's own height so the offset freezes once it's off screen.
+                const scrolled = Math.min(window.scrollY, heroSection.offsetHeight);
+                heroParallax.style.setProperty('--parallax-y', `${scrolled * 0.08}px`);
+            };
+
+            window.addEventListener('scroll', () => {
+                if (parallaxQueued) return;
+                parallaxQueued = true;
+                requestAnimationFrame(updateHeroParallax);
+            }, { passive: true });
+
+            updateHeroParallax();
+        }
+
         // Plan pre-selection from pricing card buttons
         document.querySelectorAll<HTMLElement>('[data-plan]').forEach(btn => {
             btn.addEventListener('click', () => {
