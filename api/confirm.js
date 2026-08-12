@@ -75,7 +75,7 @@ function buildNotification(f) {
 
     const wa = waLink(f.phone);
     const heading = f.business_name || f.name || 'New lead';
-    const tag = f.plan || f.business_type;
+    const tag = [f.plan || f.business_type, f.wants_demo ? 'wants demo' : ''].filter(Boolean).join(' · ');
     const dateStr =
         new Date().toLocaleString('en-GB', {
             timeZone: 'Africa/Accra',
@@ -94,6 +94,11 @@ function buildNotification(f) {
         row('Business type', escapeHtml(f.business_type)) +
         row('Locations', escapeHtml(f.locations)) +
         row('Plan interest', f.plan ? `<strong style="color:#0090c7;">${escapeHtml(f.plan)}</strong>` : '<span style="color:#94a3b8;">Not specified</span>') +
+        // Always rendered, never conditional: "they did not ask for a demo" is
+        // information worth reading, and an omitted row reads as an oversight.
+        row('Wants a live demo', f.wants_demo
+            ? '<strong style="color:#0090c7;">Yes — send a booking link</strong>'
+            : '<span style="color:#94a3b8;">No</span>') +
         row('Source', escapeHtml(f.source));
 
     const messageBlock = f.message
@@ -146,6 +151,7 @@ function buildNotification(f) {
         `Business type: ${f.business_type}`,
         `Locations: ${f.locations}`,
         `Plan interest: ${f.plan || 'Not specified'}`,
+        `Wants a live demo: ${f.wants_demo ? 'Yes' : 'No'}`,
         `Source: ${f.source}`,
     ];
     if (f.message) lines.push('', 'Message:', f.message);
@@ -158,11 +164,14 @@ function buildNotification(f) {
 }
 
 // --- Confirmation (to the submitter) ---------------------------------------
-function buildConfirmation({ firstName, plan }) {
+function buildConfirmation({ firstName, plan, wantsDemo }) {
     const safeName = escapeHtml(firstName);
     const safePlan = plan ? escapeHtml(plan) : '';
     const planLineHtml = safePlan
         ? `<p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#51607a;text-align:center;">You told us you're interested in the <strong style="color:#0f172a;">${safePlan}</strong> plan, so we'll tailor our follow-up around that.</p>`
+        : '';
+    const demoLineHtml = wantsDemo
+        ? `<p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#51607a;text-align:center;">You asked for a <strong style="color:#0f172a;">live demo</strong> — we'll bring a booking link when we reply, or you can pick a slot yourself below.</p>`
         : '';
 
     const html = `<!DOCTYPE html>
@@ -180,6 +189,7 @@ function buildConfirmation({ firstName, plan }) {
           <h1 style="margin:0 0 12px 0;font-size:24px;font-weight:700;color:#0f172a;text-align:center;">We've got your request!</h1>
           <p style="margin:0 0 24px 0;font-size:16px;line-height:1.6;color:#51607a;text-align:center;">Hi ${safeName}, thanks for reaching out about QuadERP. We've received your details and our team will get back to you within <strong style="color:#0f172a;">24 hours</strong>.</p>
           ${planLineHtml}
+          ${demoLineHtml}
         </td></tr>
         <tr><td style="padding:8px 32px;">
           <div style="background-color:#f6f8fb;border-radius:12px;padding:24px;text-align:center;">
@@ -201,7 +211,7 @@ function buildConfirmation({ firstName, plan }) {
     const text = `Hi ${firstName},
 
 Thanks for reaching out about QuadERP. We've received your details and our team will get back to you within 24 hours.
-${plan ? `\nYou told us you're interested in the ${plan} plan, so we'll tailor our follow-up around that.\n` : ''}
+${plan ? `\nYou told us you're interested in the ${plan} plan, so we'll tailor our follow-up around that.\n` : ''}${wantsDemo ? `\nYou asked for a live demo — we'll bring a booking link when we reply, or you can pick a slot yourself below.\n` : ''}
 While you wait, you can:
 - Book a free 15-min demo call: ${CALENDLY_URL}
 - Chat with us on WhatsApp: ${WHATSAPP_URL}
@@ -220,11 +230,6 @@ export default async function handler(req, res) {
     }
     if (!isAllowedOrigin(req)) {
         return res.status(403).json({ error: 'Forbidden' });
-    }
-
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-        return res.status(500).json({ error: 'Email service not configured' });
     }
 
     let body = req.body;
@@ -246,11 +251,38 @@ export default async function handler(req, res) {
         business_type: String(body.business_type || '').trim(),
         locations: String(body.locations || '').trim(),
         plan: String(body.plan_interest || '').trim(),
+        // The form posts 'Yes'/'No'; a checked native checkbox without the JS
+        // path would post 'on'. Accept all of them.
+        wants_demo: /^(yes|on|true|1)$/i.test(String(body.wants_demo || '').trim()),
         message: String(body.message || '').trim(),
         source: String(body.source || 'QuadERP Landing Page').trim(),
     };
 
-    const notifyTo = process.env.LEAD_NOTIFICATION_EMAIL || 'info@quaderp.app';
+    // The bare minimum for a lead to be actionable. Formspree has already
+    // archived the submission by the time this is called, so rejecting here
+    // loses nothing but a malformed email.
+    if (!f.name && !f.business_name && !f.email) {
+        return res.status(400).json({ error: 'Nothing to send' });
+    }
+
+    // LEAD_NOTIFICATION_EMAIL is this deploy's own name for it;
+    // PLATFORM_ADMIN_EMAIL is what the ERP server calls the same address, and
+    // is accepted so one value can be set across both deploys.
+    const notifyTo = process.env.LEAD_NOTIFICATION_EMAIL || process.env.PLATFORM_ADMIN_EMAIL || 'info@quaderp.app';
+
+    // Graceful degradation, matching store-app/server/services/emailService.js:
+    // an unconfigured mail provider is a deployment gap, not a visitor's
+    // problem. The submission is already safe in Formspree, so report success
+    // and leave the details in the function log for whoever set it up.
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+        console.warn('[contact] RESEND_API_KEY not set — emails simulated.', {
+            notifyTo,
+            lead: { name: f.name, business_name: f.business_name, email: f.email, wants_demo: f.wants_demo },
+        });
+        return res.status(200).json({ ok: true, simulated: true });
+    }
+
     const sends = [];
 
     // 1. Lead notification to the business (reply goes straight to the lead).
@@ -269,13 +301,13 @@ export default async function handler(req, res) {
     // 2. Confirmation to the submitter (only with a valid email).
     if (f.email && isValidEmail(f.email)) {
         const firstName = f.name ? f.name.split(/\s+/)[0] : 'there';
-        const conf = buildConfirmation({ firstName, plan: f.plan });
+        const conf = buildConfirmation({ firstName, plan: f.plan, wantsDemo: f.wants_demo });
         sends.push(
             sendEmail(apiKey, {
                 from: FROM,
                 to: [f.email],
                 reply_to: REPLY_TO,
-                subject: 'We received your QuadERP request',
+                subject: f.wants_demo ? 'Your QuadERP demo request' : 'We received your QuadERP request',
                 html: conf.html,
                 text: conf.text,
             })

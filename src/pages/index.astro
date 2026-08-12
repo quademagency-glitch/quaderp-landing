@@ -200,9 +200,12 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                 </p>
                 <div class="erp-hero-ctas hero-reveal hero-delay-3">
                     <a href="#erp-contact" class="btn btn-primary btn-pill glow-effect erp-btn-lg">Get Set Up Today</a>
-                    <a href="#erp-showcase" class="btn btn-ghost btn-pill erp-btn-lg">
+                    {/* Straight into the sandbox — no form, no email. For a shop
+                        owner weighing this up, five minutes inside a stocked
+                        store beats any amount of copy. */}
+                    <a href="https://app.quaderp.app/login?demo=1" class="btn btn-ghost btn-pill erp-btn-lg">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                        See It In Action
+                        Try Live Demo
                     </a>
                 </div>
                 <ul class="erp-hero-trust hero-reveal hero-delay-4">
@@ -566,6 +569,17 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                                 <textarea id="erp-message" name="message" rows="3" placeholder="Tell us about your current setup, any challenges, or features that matter most..."></textarea>
                             </div>
 
+                            <label class="erp-demo-toggle" for="erp-wants-demo">
+                                <input type="checkbox" id="erp-wants-demo" name="wants_demo" value="Yes" />
+                                <span class="erp-demo-toggle-box" aria-hidden="true">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </span>
+                                <span class="erp-demo-toggle-text">
+                                    <strong>I'd like a live demo</strong>
+                                    <small>We'll send you a booking link with our reply.</small>
+                                </span>
+                            </label>
+
                             <input type="hidden" name="source" value="QuadERP Landing Page" />
 
                             <button type="submit" class="btn btn-primary btn-pill glow-effect w-100" id="erpSubmitBtn">
@@ -580,7 +594,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </div>
                         <h3>We've Got Your Request!</h3>
-                        <p>We'll reach out within 24 hours. While you wait:</p>
+                        <p id="erpSuccessLead">We'll reach out within 24 hours. While you wait:</p>
                         <div class="erp-success-actions">
                             <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill glow-effect w-100">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -669,7 +683,15 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
             const planPick = (formData.get('plan_interest') || '').toString().trim();
             const bizType = (formData.get('business_type') || '').toString().trim();
             const subjectTag = planPick || bizType;
-            formData.set('_subject', `New QuadERP Request: ${bizName}${subjectTag ? ` (${subjectTag})` : ''}`);
+            // An unchecked box is absent from FormData entirely, which would
+            // read downstream as "field not on the form" rather than "they
+            // said no". Make the answer explicit either way.
+            const wantsDemo = (document.getElementById('erp-wants-demo') as HTMLInputElement | null)?.checked ?? false;
+            formData.set('wants_demo', wantsDemo ? 'Yes' : 'No');
+            formData.set(
+                '_subject',
+                `New QuadERP Request: ${bizName}${subjectTag ? ` (${subjectTag})` : ''}${wantsDemo ? ' — wants demo' : ''}`,
+            );
 
             try {
                 const res = await fetch(erpForm.action, {
@@ -681,6 +703,10 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                 if (res.ok) {
                     const formView = document.getElementById('erpFormView');
                     const successCard = document.getElementById('erpSuccessCard');
+                    const successLead = document.getElementById('erpSuccessLead');
+                    if (successLead && wantsDemo) {
+                        successLead.textContent = "We'll reach out within 24 hours to book your demo. In the meantime you can grab a slot yourself:";
+                    }
                     if (formView) formView.hidden = true;
                     if (successCard) successCard.hidden = false;
 
@@ -897,6 +923,90 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         display: inline-block;
         align-self: flex-start;
         border: 1px solid rgba(0, 174, 239, 0.2);
+    }
+
+    /* "I'd like a live demo" — a real checkbox kept in the accessibility tree
+       (focusable, announced, keyboard-toggled) with the painted box drawn
+       beside it, since the native control cannot be styled to match. */
+    .erp-demo-toggle {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-glass-strong);
+        border-radius: 12px;
+        background: var(--bg-glass);
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .erp-demo-toggle:hover {
+        background: var(--bg-glass-hover);
+        border-color: var(--accent);
+    }
+
+    .erp-demo-toggle input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .erp-demo-toggle-box {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        margin-top: 1px;
+        border: 1.5px solid var(--border-glass-strong);
+        border-radius: 6px;
+        background: var(--bg-input);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .erp-demo-toggle-box svg {
+        opacity: 0;
+        transform: scale(0.6);
+        transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .erp-demo-toggle input:checked + .erp-demo-toggle-box {
+        background: var(--accent);
+        border-color: var(--accent);
+    }
+
+    .erp-demo-toggle input:checked + .erp-demo-toggle-box svg {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* The visually-hidden input still takes focus, so the ring has to be
+       drawn on the box that stands in for it. */
+    .erp-demo-toggle input:focus-visible + .erp-demo-toggle-box {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+
+    .erp-demo-toggle-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        line-height: 1.4;
+    }
+
+    .erp-demo-toggle-text strong {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .erp-demo-toggle-text small {
+        font-size: 12.5px;
+        color: var(--text-muted);
     }
 
     .erp-form-result {
