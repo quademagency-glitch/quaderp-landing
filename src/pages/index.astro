@@ -1,87 +1,189 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const defaultFeatures = [
+const SIGNUP_URL = "https://app.quaderp.app/signup";
+const DEMO_URL = "https://app.quaderp.app/login?demo=1";
+
+const whatsappNumber = "233530890302";
+const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
+const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+
+/* The five things a shop owner here checks for that a foreign system fails.
+   Every claim is a capability, not a performance stat, so nothing on this
+   strip needs a customer to substantiate it. */
+const ghanaProof = [
+    { title: "Mobile Money", desc: "Take MoMo at the counter, not just cash and card." },
+    { title: "Priced in Cedis", desc: "GHS throughout, with per-location currency for the borders." },
+    { title: "No Hardware to Buy", desc: "Runs in a browser on the phone or laptop you already own." },
+    { title: "SMS That Arrives", desc: "Customer campaigns sent through Arkesel, not a foreign gateway." },
+    { title: "Paystack Payments", desc: "Card processing through a processor built for this market." }
+];
+
+/* Straight from what shop owners say in the field. The quote does the
+   selling; the answer just names the screen that handles it. */
+const painPoints = [
     {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>`,
-        title: "Sales Dashboard",
-        description: "Track revenue, transactions, average order value, and weekly trends with real-time visual analytics."
+        quote: "I don't know what's selling and what's sitting on the shelf.",
+        answer: "Your dashboard ranks every product by what actually moved this week. Reorder what sells, stop tying up cash in what doesn't."
     },
     {
+        quote: "My staff are stealing from me and I can't prove it.",
+        answer: "Loss prevention flags void patterns, after-hours activity and stock that doesn't add up, with the staff name and the time attached."
+    },
+    {
+        quote: "I have no idea how my other branch is doing unless I go there.",
+        answer: "Every branch reports into one dashboard. Check today's sales in Kumasi from your phone in Accra."
+    },
+    {
+        quote: "I write everything in a book and work out profit at month end.",
+        answer: "Profit and loss updates as you sell. You stop waiting until month end to find out how the month went."
+    },
+    {
+        quote: "Customers owe me money and I've lost track of who and how much.",
+        answer: "Accounts receivable lists every customer who owes you, the amount, and how many days it has been sitting there."
+    },
+    {
+        quote: "I ordered too much of one thing and ran out of another.",
+        answer: "Low-stock alerts warn you before the shelf is empty, and purchase orders are built from what your own sales history says you need."
+    }
+];
+
+const defaultFeatures = [
+    {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
-        title: "Sales POS",
-        description: "A fast, intuitive point-of-sale with product search, cart management, and multi-payment support."
+        title: "Point of Sale",
+        description: "Cash, card, Mobile Money and split payments across them. Returns, refunds and a till that reconciles at close of day."
     },
     {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-3a2 2 0 0 1-2-2V2"/><path d="M9 18a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7l4 4v10a2 2 0 0 1-2 2H9z"/><path d="M3 7v10a2 2 0 0 0 2 2h6"/><line x1="12" y1="11" x2="16" y2="11"/><line x1="12" y1="15" x2="16" y2="15"/></svg>`,
-        title: "Inventory Management",
-        description: "Monitor stock levels with color-coded health indicators, SKU tracking, and automatic low-stock alerts."
-    },
-    {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-        title: "Loss Prevention Alerts",
-        description: "Track voids, suspicious patterns, shrinkage, stock discrepancies, and after-hours activity in real time."
-    },
-    {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-        title: "CRM & Team Management",
-        description: "Manage customers, staff roles and permissions, and track team performance across all locations."
+        title: "Inventory Control",
+        description: "Live stock levels, low-stock alerts, transfers between branches, stocktake reconciliation and barcode scanning from a phone."
     },
     {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
         title: "Accounting & Invoicing",
-        description: "Generate invoices, reconcile payments, and keep your books clean with built-in accounting tools."
+        description: "B2B invoices, who owes you, who you owe, expenses and deposits from MoMo, POS machine or bank, all posting to one ledger."
+    },
+    {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+        title: "CRM & Loyalty",
+        description: "Customer profiles with full purchase history, loyalty points, gift cards, store credit and SMS or email campaigns."
+    },
+    {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>`,
+        title: "Team Management",
+        description: "Role-based permissions, activity audit logs, employee performance tracking and attendance for every member of staff."
+    },
+    {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/><line x1="9" y1="11" x2="9.01" y2="11"/><line x1="15" y1="11" x2="15.01" y2="11"/></svg>`,
+        title: "Multi-Location",
+        description: "One dashboard across every branch, cross-location stock transfers, per-branch reporting and per-location currency."
+    }
+];
+
+/* The three things an owner is actually weighing QuadERP against. Each claim
+   here is checkable, and no local competitor is named. */
+const alternatives = [
+    {
+        heading: "“My book works fine.”",
+        body: "You are already doing this work by hand. Counting stock on Sunday evening, adding up the day, trying to remember who took goods on credit. QuadERP does the same work as you sell, in seconds. And a book cannot tell you that a sale was voided at 9:14pm after you had gone home."
+    },
+    {
+        heading: "“I'll just use a simple sales app.”",
+        body: "Most of them record sales and stop there, which is the easy half of the job. QuadERP tracks stock across every branch, flags the void and shrinkage patterns that point to theft, and keeps a live list of exactly who owes you money."
+    },
+    {
+        heading: "“What about the big foreign systems?”",
+        body: "Square, Vend and Lightspeed are good software built for other markets. They do not take Mobile Money, they do not price in cedis by default, they do not plug into Arkesel or Paystack, and their support desk is asleep while your shop is open."
+    }
+];
+
+/* Worked examples, not testimonials. QuadERP has no published customer
+   results yet, so these show the arithmetic an owner can run on their own
+   figures instead of putting invented people and outcomes on the page.
+   The disclaimer above them in the markup is not decorative. */
+const scenarios = [
+    {
+        label: "Scenario A",
+        title: "A single-branch pharmacy in Accra",
+        setup: "Two tills, six staff, roughly GHS 90,000 across the counter each month. Stock counted by hand on Sunday evenings. Regulars take goods on credit, written in a notebook behind the counter.",
+        cost: "If shrinkage runs at 5%, a common figure for counter retail, that is GHS 4,500 a month leaving the shop unrecorded. The Sunday count takes four hours and still does not reconcile. Nobody can say what the credit book is owed, only that it is “plenty”.",
+        shows: [
+            "Every void and refund, with the staff member and the timestamp",
+            "Stock variance by product after each count, so a gap surfaces the week it happens",
+            "A receivables list naming each customer, the amount, and how many days old it is",
+            "The Sunday count done by scanning, with the variance worked out for you"
+        ],
+        bottomLine: "You cannot recover what you cannot see. The first thing that changes is that the GHS 4,500 stops being invisible."
+    },
+    {
+        label: "Scenario B",
+        title: "A cosmetics chain across Accra and Kumasi",
+        setup: "Two shops in Accra, one in Kumasi. Ordering happens when somebody notices a shelf looking empty, and each branch orders for itself.",
+        cost: "Osu is holding forty units of a shade that has not moved in two months. Kumasi has been out of that same shade for three weeks and turning customers away. Head office orders more from the supplier, because nobody can see across the branches. Cash sits dead on one shelf while sales are lost on another.",
+        shows: [
+            "Stock levels in all three branches on one screen, side by side",
+            "A transfer from Osu to Kumasi instead of a fresh supplier order",
+            "Per-branch sales reporting, so you know which shop is actually carrying the chain",
+            "Reorder suggestions built from each branch's own sales history"
+        ],
+        bottomLine: "The stock you need is often already inside your own business. You just cannot see it from where you are standing."
     }
 ];
 
 const defaultPricingPlans = [
     {
-        name: "Single Branch", 
-        monthlyPrice: "GHS 450", monthlyPeriod: "/mo", 
-        yearlyPrice: "GHS 4,950", yearlyPeriod: "/yr",
-        setupFee: "GHS 1,500",
-        description: "For retail shops and pharmacies running a single location.",
+        name: "Single Branch",
+        monthlyPrice: "GHS 250", monthlyPeriod: "/mo",
+        yearlyPrice: "GHS 2,750", yearlyPeriod: "/yr",
+        setupFee: "GHS 1,000",
+        description: "One shop, run properly. Know what sold, what is left, and what your staff did with it.",
         features: [
-            "1 Store Location", 
-            "Up to 3 POS Terminals", 
-            "Basic Sales Dashboard", 
-            "Real-time Inventory Tracking", 
-            "Built-in Accounting & Invoicing",
+            "1 Store Location",
+            "Up to 3 POS Terminals",
+            "Real-time Inventory Tracking",
+            "Accounting, Invoicing & Receivables",
+            "Sales Dashboard & Top Sellers",
             "Standard Support"
         ],
-        isPopular: false, buttonText: "Contact Us"
+        isPopular: false, buttonText: "Start Free Trial", href: SIGNUP_URL
     },
     {
-        name: "Multi-Branch", 
-        monthlyPrice: "GHS 1,000", monthlyPeriod: "/mo", 
-        yearlyPrice: "GHS 11,000", yearlyPeriod: "/yr",
-        setupFee: "GHS 5,500",
-        description: "For businesses managing 2 to 5 store locations.",
+        name: "Multi-Branch",
+        monthlyPrice: "GHS 600", monthlyPeriod: "/mo",
+        yearlyPrice: "GHS 6,600", yearlyPeriod: "/yr",
+        setupFee: "GHS 2,500",
+        description: "For when “how is the other shop doing?” has become a daily question. Every branch on one screen.",
         features: [
-            "Up to 5 Store Locations", 
-            "Unlimited POS Terminals", 
-            "Advanced Analytics & Loss Prevention", 
-            "Multi-store Stock Transfers", 
-            "CRM & Advanced Team Management",
+            "Up to 5 Store Locations",
+            "Unlimited POS Terminals",
+            "Loss Prevention & Shrinkage Alerts",
+            "Cross-Branch Stock Transfers",
+            "Loyalty, Gift Cards & SMS Campaigns",
             "Priority Support"
         ],
-        isPopular: true, buttonText: "Contact Us"
+        isPopular: true, buttonText: "Start Free Trial", href: SIGNUP_URL
     },
     {
-        name: "Franchise", 
-        monthlyPrice: "Custom", monthlyPeriod: "", 
+        name: "Franchise",
+        monthlyPrice: "Custom", monthlyPeriod: "",
         yearlyPrice: "Custom", yearlyPeriod: "",
         setupFee: "Custom Quote",
-        description: "For large retail chains and distributors. We build around your setup.",
+        description: "Six locations or more, or a distribution business. We build the setup around how you actually operate.",
         features: [
-            "Unlimited Locations", 
-            "Custom API Integrations", 
-            "Legacy Data Migration", 
-            "On-site Staff Training", 
-            "Dedicated Account Manager", 
+            "Unlimited Locations",
+            "Custom API Integrations",
+            "Legacy Data Migration",
+            "On-site Staff Training",
+            "Dedicated Account Manager",
             "Custom SLA & 99.9% Uptime"
         ],
-        isPopular: false, buttonText: "Contact Sales"
+        isPopular: false, buttonText: "Talk to Sales", href: "#erp-contact",
+        /* "+ Custom Quote one-time setup" reads as broken English, and the
+           trial-conversion caveat is meaningless when the whole plan is
+           quoted. Franchise gets its own wording. */
+        setupLabel: "Setup quoted with your plan",
+        setupNote: "Priced around your locations, migration and training needs."
     }
 ];
 
@@ -90,7 +192,7 @@ const featureCategories = [
         name: "Platform Basics",
         features: [
             { name: "Max Store Locations", single: "1 Location", multi: "Up to 5 Locations", franchise: "Unlimited Locations" },
-            { name: "Setup Fee", single: "GHS 1500", multi: "GHS 5500", franchise: "Custom Quote" },
+            { name: "Setup Fee", single: "GHS 1,000", multi: "GHS 2,500", franchise: "Custom Quote" },
             { name: "Support Level", single: "Standard Support", multi: "Priority Support", franchise: "Dedicated Account Mgr" }
         ]
     },
@@ -168,29 +270,52 @@ const featureCategories = [
     }
 ];
 
-const benefits = [
-    { icon: "☁️", title: "100% Cloud-Based", desc: "No servers or IT setup needed. Log in from any browser, anywhere." },
-    { icon: "⚡", title: "Real-Time Sync", desc: "Sales, stock changes, and alerts sync across your devices in real time." },
-    { icon: "🏪", title: "Multi-Store Support", desc: "Manage all your locations from one dashboard with store-level permissions." },
-    { icon: "🔒", title: "Bank-Grade Security", desc: "Your data is encrypted and access is locked to each staff member's role." },
-    { icon: "📱", title: "No Hardware Required", desc: "Works on any device with a browser. No terminals or special equipment needed." },
-    { icon: "🔄", title: "Automatic Updates", desc: "Always on the latest version. Updates happen in the background." }
+const pricingFaqs = [
+    {
+        q: "Is the free trial really free?",
+        a: "Yes. Thirty days, no card at signup, and nothing to cancel if you decide to walk away. We would rather you test it in your own shop than take our word for it."
+    },
+    {
+        q: "What does the setup fee actually pay for?",
+        a: "Our team loading your products, prices and opening stock, setting up your branches, and training your staff so they can work the till on day one. It is a one-time charge, and it only falls due when you move onto a paid plan after the trial."
+    },
+    {
+        q: "Do I need to buy a POS machine or any special hardware?",
+        a: "No. QuadERP runs in a browser on the phone, tablet or laptop you already have. If you want a barcode scanner later, our scanner app turns a phone into one."
+    },
+    {
+        q: "Can I start on Single Branch and move up later?",
+        a: "Yes. When you open a second shop we move you to Multi-Branch and you pay the difference in the monthly fee. There is no second setup fee for growing."
+    },
+    {
+        q: "What happens to my data if I stop paying?",
+        a: "It stays yours. Ask us and we will export your products, sales, customers and ledger into files you keep. We do not hold your business records hostage to a subscription."
+    },
+    {
+        q: "Can I take Mobile Money through it?",
+        a: "Yes. Cash, card and Mobile Money at the counter, including splitting one sale across two payment methods. Card processing runs through Paystack."
+    },
+    {
+        q: "I have more than five branches. What then?",
+        a: "That is the Franchise plan. Tell us the shape of your business and we will quote for it, including migrating your data across from whatever you are running now."
+    },
+    {
+        q: "Is paying yearly worth it?",
+        a: "It is twelve months for the price of eleven. Same product, one less invoice to think about during the year."
+    }
 ];
-
-const whatsappNumber = "233530890302";
-const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
 ---
 
 <Layout
-    title="QuadERP | Store Management Software for Retail"
-    description="QuadERP helps retail stores track sales, manage inventory, monitor staff, and cut losses, all from one platform."
+    title="QuadERP | Store Management Software for Retail in Ghana"
+    description="QuadERP helps Ghanaian shops track sales, manage stock across branches, catch staff theft, and know who owes them. Free for 30 days, no card needed."
 >
     <!-- ===== HERO ===== -->
     <section class="erp-hero" id="erp-hero">
         <div class="erp-hero-bg"></div>
         <div class="container erp-hero-container">
             <div class="erp-hero-content">
-                <span class="erp-badge hero-reveal">🏪 Built for stores across Ghana</span>
+                <span class="erp-badge hero-reveal">🏪 Built for shops across Ghana</span>
                 <h1 class="erp-hero-title hero-reveal hero-delay-1">
                     Stop Losing Money to<br />
                     <span class="text-gradient">Theft and Stockouts</span>
@@ -199,19 +324,20 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                     See what's selling, what's in stock, and what your staff are doing across every branch, right from your phone.
                 </p>
                 <div class="erp-hero-ctas hero-reveal hero-delay-3">
-                    <a href="#erp-contact" class="btn btn-primary btn-pill glow-effect erp-btn-lg">Get Set Up Today</a>
-                    {/* Straight into the sandbox — no form, no email. For a shop
-                        owner weighing this up, five minutes inside a stocked
-                        store beats any amount of copy. */}
-                    <a href="https://app.quaderp.app/login?demo=1" class="btn btn-ghost btn-pill erp-btn-lg">
+                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill glow-effect erp-btn-lg">Start Your 30-Day Free Trial</a>
+                    {/* Scrolls down to the demo section rather than jumping
+                        straight into the sandbox: the owner gets to see what
+                        the screens look like before deciding to open one. The
+                        sandbox link itself lives at the end of that section. */}
+                    <a href="#erp-showcase" class="btn btn-ghost btn-pill erp-btn-lg">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                         Try Live Demo
                     </a>
                 </div>
                 <ul class="erp-hero-trust hero-reveal hero-delay-4">
-                    <li><span class="erp-check" aria-hidden="true">✓</span>We handle the setup</li>
-                    <li><span class="erp-check" aria-hidden="true">✓</span>Staff trained by our team</li>
-                    <li><span class="erp-check" aria-hidden="true">✓</span>Grows with your business</li>
+                    <li><span class="erp-check" aria-hidden="true">✓</span>No credit card needed</li>
+                    <li><span class="erp-check" aria-hidden="true">✓</span>We set you up and train your staff</li>
+                    <li><span class="erp-check" aria-hidden="true">✓</span>Pay nothing until you decide to stay</li>
                 </ul>
             </div>
         </div>
@@ -219,47 +345,101 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         <div class="erp-hero-visual hero-reveal-x hero-delay-5">
             <div class="erp-hero-parallax" id="heroParallax">
                 <div class="erp-mockup-wrapper">
-                    <img src="/images/quaderp-dashboard.png" alt="QuadERP Dashboard" class="erp-mockup-img" width="1024" height="1024" fetchpriority="high" />
+                    <img src="/images/quaderp-dashboard.png" alt="The QuadERP dashboard showing today's sales in cedis, stock alerts and theft alerts" class="erp-mockup-img" width="1800" height="1125" fetchpriority="high" />
                 </div>
             </div>
         </div>
-        <a href="#erp-features" class="erp-hero-scroll-indicator">
+        <a href="#erp-pains" class="erp-hero-scroll-indicator">
             <span>Scroll to explore</span>
             <div class="erp-scroll-arrow">↓</div>
         </a>
     </section>
 
-    <!-- ===== STATS STRIP ===== -->
-    <section class="erp-stats" id="erp-stats">
-        <div class="container stats-container">
-            <div class="stat-item">
-                <h3 class="stat-number erp-stat-text" data-target="0">Real-time</h3>
-                <p class="stat-label">Inventory Sync</p>
+    <!-- ===== BUILT FOR GHANA STRIP =====
+         Replaces the old stats bar. Every line is a capability we ship, not a
+         performance figure that would need a customer to stand behind it. -->
+    <section class="erp-proof" id="erp-proof">
+        <div class="container">
+            <p class="erp-proof-kicker">Built here, for how business actually runs here</p>
+            <ul class="erp-proof-grid">
+                {ghanaProof.map((item) => (
+                    <li class="erp-proof-item">
+                        <span class="erp-proof-check" aria-hidden="true">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </span>
+                        <strong>{item.title}</strong>
+                        <span>{item.desc}</span>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===== PAIN POINTS ===== -->
+    <section class="erp-pains section-padding" id="erp-pains">
+        <div class="container">
+            <div class="section-header animate-on-scroll slide-up">
+                <h2>If You've Said Any of This, <span class="text-gradient">We Built This for You</span></h2>
+                <p>Six sentences we hear in almost every shop we walk into.</p>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <h3 class="stat-number" data-target="50">50%</h3>
-                <p class="stat-label">Less Shrinkage</p>
+            <div class="erp-pains-grid">
+                {painPoints.map((pain, index) => (
+                    <div class={`erp-pain-card animate-on-scroll slide-up delay-${(index % 3 + 1) * 100}`}>
+                        <blockquote class="erp-pain-quote">{pain.quote}</blockquote>
+                        <div class="erp-pain-answer">
+                            <span class="erp-pain-arrow" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </span>
+                            <p>{pain.answer}</p>
+                        </div>
+                    </div>
+                ))}
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <h3 class="stat-number" data-target="2">2x</h3>
-                <p class="stat-label">Faster Operations</p>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <h3 class="stat-number erp-stat-text" data-target="0">24/7</h3>
-                <p class="stat-label">Cloud Access</p>
+        </div>
+    </section>
+
+    <!-- ===== LOSS PREVENTION =====
+         Pulled out of the feature grid and given its own section. It is the
+         one capability the competition does not ship, so it should not be
+         sitting as one card among six. -->
+    <section class="erp-lossprev section-padding" id="erp-lossprev">
+        <div class="container">
+            <div class="erp-lossprev-row">
+                <div class="erp-lossprev-content animate-on-scroll slide-right">
+                    <span class="erp-showcase-label">Loss Prevention</span>
+                    <h2>The Part Other Systems <span class="text-gradient">Leave Out</span></h2>
+                    <p>
+                        Most shop software records sales. It will just as happily record the sale that never
+                        happened, the void at 9:14pm, the twelve units that left the shelf without a receipt.
+                        Recording is not the same as catching.
+                    </p>
+                    <p>
+                        QuadERP watches for the patterns theft leaves behind and puts them in front of you
+                        with a name and a time attached.
+                    </p>
+                    <ul class="erp-feature-list">
+                        <li>Void and refund patterns, flagged per staff member</li>
+                        <li>Logins and sales that happen outside your trading hours</li>
+                        <li>Stock counts that don't match what was actually sold</li>
+                        <li>Shrinkage tracked by product, by branch and by person</li>
+                        <li>A full audit trail of who did what, on which till, and when</li>
+                    </ul>
+                </div>
+                <div class="erp-lossprev-image animate-on-scroll slide-left delay-200">
+                    <div class="erp-showcase-img-wrapper glow-effect">
+                        <img src="/images/quaderp-alerts.png" alt="QuadERP loss prevention alerts screen, filtered by void, shrinkage and after-hours activity" width="1800" height="748" loading="lazy" decoding="async" />
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- ===== FEATURES ===== -->
-    <section class="erp-features section-padding" id="erp-features">
+    <section class="erp-features section-padding" id="erp-features" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2><span class="text-gradient">All the Tools</span> to Run Your Store</h2>
-                <p>From a single shop to five locations, QuadERP has what your business needs.</p>
+                <h2><span class="text-gradient">Everything Else</span> You Need to Run the Shop</h2>
+                <p>One system instead of a book, a spreadsheet and a POS machine that don't talk to each other.</p>
             </div>
 
             <div class="erp-features-grid">
@@ -275,18 +455,27 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
     </section>
 
     <!-- ===== APP SHOWCASE ===== -->
-    <section class="erp-showcase section-padding" id="erp-showcase" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <section class="erp-showcase section-padding" id="erp-showcase">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
                 <h2>See <span class="text-gradient">QuadERP</span> in Action</h2>
-                <p>Fast to learn, built for daily use.</p>
+                <p>Fast to learn, built for daily use. Have a look, then open the real thing.</p>
+                <!-- The hero's demo button lands here, so the actual sandbox
+                     link has to be reachable without hunting for it. -->
+                <div class="erp-demo-cta">
+                    <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill glow-effect">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Open the Live Demo
+                    </a>
+                    <span class="erp-demo-cta-note">A fully stocked demo store. No signup, no email, nothing to install.</span>
+                </div>
             </div>
 
             <!-- Showcase 1: Dashboard -->
             <div class="erp-showcase-row">
                 <div class="erp-showcase-image animate-on-scroll slide-right">
                     <div class="erp-showcase-img-wrapper glow-effect">
-                        <img src="/images/quaderp-dashboard.png" alt="QuadERP Sales Dashboard with analytics" width="1024" height="1024" loading="lazy" decoding="async" />
+                        <img src="/images/quaderp-dashboard.png" alt="QuadERP sales dashboard showing today's takings, product count, stock alerts and recent activity" width="1800" height="1125" loading="lazy" decoding="async" />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-left delay-200">
@@ -306,7 +495,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
             <div class="erp-showcase-row erp-showcase-reverse">
                 <div class="erp-showcase-image animate-on-scroll slide-left">
                     <div class="erp-showcase-img-wrapper glow-effect">
-                        <img src="/images/quaderp-inventory.png" alt="QuadERP Inventory Management screen" width="1024" height="1024" loading="lazy" decoding="async" />
+                        <img src="/images/quaderp-inventory.png" alt="QuadERP inventory screen listing products with stock levels and low-stock status" width="1800" height="1091" loading="lazy" decoding="async" />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-right delay-200">
@@ -326,7 +515,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
             <div class="erp-showcase-row">
                 <div class="erp-showcase-image animate-on-scroll slide-right">
                     <div class="erp-showcase-img-wrapper glow-effect">
-                        <img src="/images/quaderp-pos.png" alt="QuadERP Point of Sale interface" width="1024" height="1024" loading="lazy" decoding="async" />
+                        <img src="/images/quaderp-pos.png" alt="The QuadERP POS terminal with a basket of goods priced in cedis and a running total" width="1800" height="814" loading="lazy" decoding="async" />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-left delay-200">
@@ -344,66 +533,110 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         </div>
     </section>
 
-    <!-- ===== HOW IT WORKS ===== -->
-    <section class="process section-padding" id="erp-process">
+    <!-- ===== ALTERNATIVES / POSITIONING ===== -->
+    <section class="erp-alternatives section-padding" id="erp-alternatives" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2>Get Started in <span class="text-gradient">3 Simple Steps</span></h2>
-                <p>We handle the setup from start to finish.</p>
+                <h2>Why Not <span class="text-gradient">Just Carry On</span> As You Are?</h2>
+                <p>Fair question. Here is the honest answer to the three we hear most.</p>
             </div>
-            <div class="process-timeline">
-                <div class="timeline-line"></div>
-                <div class="process-steps" style="grid-template-columns: repeat(3, 1fr);">
-                    <div class="process-step animate-on-scroll slide-up delay-100">
-                        <div class="step-number">1</div>
-                        <h3 class="step-title">Contact Us</h3>
-                        <p class="step-desc">Tell us about your store, your locations, and what you need.</p>
-                    </div>
-                    <div class="process-step animate-on-scroll slide-up delay-200">
-                        <div class="step-number">2</div>
-                        <h3 class="step-title">We Set You Up</h3>
-                        <p class="step-desc">We set up your account, add your locations, and bring in your initial stock data.</p>
-                    </div>
-                    <div class="process-step animate-on-scroll slide-up delay-300">
-                        <div class="step-number">3</div>
-                        <h3 class="step-title">Start Managing</h3>
-                        <p class="step-desc">You and your staff log in and start using QuadERP instantly.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== BENEFITS ===== -->
-    <section class="erp-benefits section-padding" id="erp-benefits">
-        <div class="container">
-            <div class="section-header animate-on-scroll slide-up">
-                <h2>What Makes <span class="text-gradient">QuadERP</span> Different</h2>
-                <p>Six things that matter when running a store.</p>
-            </div>
-            <div class="erp-benefits-grid">
-                {benefits.map((benefit, index) => (
-                    <div class={`erp-benefit-card animate-on-scroll slide-up delay-${(index % 3 + 1) * 100}`}>
-                        <div class="erp-benefit-icon">{benefit.icon}</div>
-                        <h3 class="erp-benefit-title">{benefit.title}</h3>
-                        <p class="erp-benefit-desc">{benefit.desc}</p>
+            <div class="erp-alternatives-grid">
+                {alternatives.map((alt, index) => (
+                    <div class={`erp-alternative-card animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
+                        <h3>{alt.heading}</h3>
+                        <p>{alt.body}</p>
                     </div>
                 ))}
             </div>
         </div>
     </section>
 
-    <!-- ===== PRICING ===== -->
-    <section class="pricing section-padding" id="erp-pricing" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <!-- ===== ILLUSTRATIVE SCENARIOS =====
+         Deliberately not testimonials. There are no published customer results
+         yet, so these are worked examples on typical shop figures and are
+         labelled as such, both in the section header and on every card. -->
+    <section class="erp-scenarios section-padding" id="erp-scenarios">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2><span class="text-gradient">Simple, Transparent Pricing</span></h2>
-                <p>Pick the plan that fits your store. No hidden fees.</p>
+                <h2>What This Looks Like <span class="text-gradient">in a Real Shop</span></h2>
+                <p>Two worked examples on typical shop figures, so you can run the same sums on your own numbers.</p>
+            </div>
+
+            <p class="erp-scenarios-disclaimer animate-on-scroll slide-up">
+                <strong>These are illustrations, not customer stories.</strong>
+                QuadERP is new to market and we are not going to put invented people on our website.
+                The businesses below are composites, and the figures are arithmetic on ordinary retail
+                numbers, shown so you can check the maths against your own shop.
+            </p>
+
+            <div class="erp-scenarios-grid">
+                {scenarios.map((s, index) => (
+                    <article class={`erp-scenario-card animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
+                        <span class="erp-scenario-label">{s.label} · Illustration</span>
+                        <h3 class="erp-scenario-title">{s.title}</h3>
+
+                        <h4 class="erp-scenario-subhead">The setup</h4>
+                        <p>{s.setup}</p>
+
+                        <h4 class="erp-scenario-subhead">Where the money goes</h4>
+                        <p>{s.cost}</p>
+
+                        <h4 class="erp-scenario-subhead">What QuadERP puts in front of you</h4>
+                        <ul class="erp-feature-list">
+                            {s.shows.map((item) => (<li>{item}</li>))}
+                        </ul>
+
+                        <p class="erp-scenario-bottom">{s.bottomLine}</p>
+                    </article>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="process section-padding" id="erp-process" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+        <div class="container">
+            <div class="section-header animate-on-scroll slide-up">
+                <h2>Get Started in <span class="text-gradient">3 Simple Steps</span></h2>
+                <p>Thirty days to make up your mind, and we do the heavy lifting.</p>
+            </div>
+            <div class="process-timeline">
+                <div class="timeline-line"></div>
+                <div class="process-steps" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="process-step animate-on-scroll slide-up delay-100">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Start Free</h3>
+                        <p class="step-desc">Open your account in a few minutes. Thirty days, no card, no commitment.</p>
+                    </div>
+                    <div class="process-step animate-on-scroll slide-up delay-200">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">We Set You Up</h3>
+                        <p class="step-desc">Our team loads your products, prices and opening stock, adds your branches, and trains your staff.</p>
+                    </div>
+                    <div class="process-step animate-on-scroll slide-up delay-300">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Decide After 30 Days</h3>
+                        <p class="step-desc">Move onto a paid plan or walk away. Either way the data is yours to take with you.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PRICING ===== -->
+    <section class="pricing section-padding" id="erp-pricing">
+        <div class="container">
+            <div class="section-header animate-on-scroll slide-up">
+                <h2><span class="text-gradient">Try It Free. Pay When It's Working.</span></h2>
+                <p>Thirty days on us, no card required. Setup is a one-time charge that only falls due when you decide to stay.</p>
 
                 <div class="pricing-toggle-container">
                     <span class="toggle-label active" id="label-monthly">Monthly</span>
                     <label class="erp-toggle">
-                        <input type="checkbox" id="pricing-toggle">
+                        {/* The visible "Monthly / Annually" text sits outside the
+                            label, so without this the control announces as a bare
+                            unnamed checkbox. */}
+                        <input type="checkbox" id="pricing-toggle" aria-label="Show annual pricing">
                         <span class="erp-toggle-slider"></span>
                     </label>
                     <span class="toggle-label" id="label-yearly">Annually <span class="discount-badge">1 Month Free</span></span>
@@ -417,23 +650,27 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                         <div class="tier-price" data-monthly-price={plan.monthlyPrice} data-yearly-price={plan.yearlyPrice} data-monthly-period={plan.monthlyPeriod} data-yearly-period={plan.yearlyPeriod}>
                             <span class="price-amount">{plan.monthlyPrice}</span><span class="erp-price-period">{plan.monthlyPeriod}</span>
                         </div>
-                        {plan.setupFee && (
-                            <div class="tier-setup-fee">
-                                + {plan.setupFee} Setup Fee
-                            </div>
-                        )}
+                        <div class="tier-setup-fee">
+                            {plan.setupLabel ?? `+ ${plan.setupFee} one-time setup`}
+                        </div>
+                        <p class="tier-setup-note">
+                            {plan.setupNote ?? "Charged only when your free trial converts to a paid plan."}
+                        </p>
                         <p class="tier-desc">{plan.description}</p>
                         <ul class="tier-features">
                             {plan.features.map((feature) => (
                                 <li>{feature}</li>
                             ))}
                         </ul>
-                        <a href="#erp-contact" data-plan={plan.name} class={`btn ${plan.isPopular ? 'btn-primary glow-effect' : 'btn-ghost'} btn-pill tier-btn`}>{plan.buttonText}</a>
+                        <a href={plan.href} class={`btn ${plan.isPopular ? 'btn-primary glow-effect' : 'btn-ghost'} btn-pill tier-btn`}>{plan.buttonText}</a>
+                        {plan.href === SIGNUP_URL && (
+                            <a href="#erp-contact" data-plan={plan.name} class="tier-alt-link">Prefer we walk you through it first?</a>
+                        )}
                     </div>
                 ))}
             </div>
             <div class="erp-pricing-note animate-on-scroll slide-up">
-                <p>🔒 Contact us to lock in your plan and get started.</p>
+                <p>🔒 Every plan starts with the same 30-day free trial. No card, nothing to cancel.</p>
             </div>
 
             <!-- Compare Features Matrix -->
@@ -448,8 +685,8 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                         <thead>
                             <tr>
                                 <th>Feature Category & Capabilities</th>
-                                <th>Single Branch<br/><span class="tier-sub">GHS 450/mo</span></th>
-                                <th>Multi-Branch<br/><span class="tier-sub">GHS 1000/mo</span></th>
+                                <th>Single Branch<br/><span class="tier-sub">GHS 250/mo</span></th>
+                                <th>Multi-Branch<br/><span class="tier-sub">GHS 600/mo</span></th>
                                 <th>Franchise<br/><span class="tier-sub">Custom</span></th>
                             </tr>
                         </thead>
@@ -463,15 +700,15 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                                         <tr>
                                             <td class="feature-name">{feature.name}</td>
                                             <td class={feature.single === 'Yes' ? 'text-accent' : feature.single === 'No' ? 'text-muted' : ''}>
-                                                {feature.single === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> : 
+                                                {feature.single === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> :
                                                  feature.single === 'No' ? '-' : feature.single}
                                             </td>
                                             <td class={feature.multi === 'Yes' ? 'text-accent' : feature.multi === 'No' ? 'text-muted' : ''}>
-                                                {feature.multi === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> : 
+                                                {feature.multi === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> :
                                                  feature.multi === 'No' ? '-' : feature.multi}
                                             </td>
                                             <td class={feature.franchise === 'Yes' ? 'text-accent' : feature.franchise === 'No' ? 'text-muted' : ''}>
-                                                {feature.franchise === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> : 
+                                                {feature.franchise === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> :
                                                  feature.franchise === 'No' ? '-' : feature.franchise}
                                             </td>
                                         </tr>
@@ -483,6 +720,25 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                 </div>
                 </details>
             </div>
+
+            <!-- Pricing FAQ -->
+            <div class="erp-faq animate-on-scroll slide-up delay-200">
+                <h3 class="erp-faq-heading">Questions People Ask Before They Sign Up</h3>
+                <div class="erp-faq-list">
+                    {pricingFaqs.map((faq) => (
+                        <details class="erp-faq-item">
+                            <summary>
+                                <span>{faq.q}</span>
+                                <svg class="erp-faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </summary>
+                            <p>{faq.a}</p>
+                        </details>
+                    ))}
+                </div>
+                <p class="erp-faq-footer">
+                    Something we haven't answered? <a href={whatsappLink} target="_blank" rel="noopener noreferrer">Ask us on WhatsApp</a>, we usually reply the same day.
+                </p>
+            </div>
         </div>
     </section>
 
@@ -490,8 +746,8 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
     <section class="erp-contact-section section-padding" id="erp-contact">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2><span class="text-gradient">Get Started With QuadERP</span></h2>
-                <p>Tell us about your store and we'll get you set up.</p>
+                <h2><span class="text-gradient">Rather Talk to a Person First?</span></h2>
+                <p>Tell us about your shop and we'll walk you through it. You can still start the free trial yourself at any time.</p>
             </div>
 
             <div class="erp-contact-grid">
@@ -558,8 +814,8 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                                 <label for="erp-plan-select">Plan You're Interested In <span class="form-optional">(optional)</span></label>
                                 <select id="erp-plan-select" name="plan_interest">
                                     <option value="" selected>Not sure yet</option>
-                                    <option value="Single Branch">Single Branch (GHS 450/mo)</option>
-                                    <option value="Multi-Branch">Multi-Branch (GHS 1,000/mo)</option>
+                                    <option value="Single Branch">Single Branch (GHS 250/mo)</option>
+                                    <option value="Multi-Branch">Multi-Branch (GHS 600/mo)</option>
                                     <option value="Franchise">Franchise (Custom Quote)</option>
                                 </select>
                             </div>
@@ -600,7 +856,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                 Book a Demo Call
                             </a>
-                            <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill w-100">
+                            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill w-100">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                                 Chat on WhatsApp
                             </a>
@@ -617,7 +873,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                             Book a Demo Call
                         </a>
-                        <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill w-100">
+                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill w-100">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                             Chat on WhatsApp
                         </a>
@@ -729,29 +985,6 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
             }
         });
 
-        // Count-up animation for numeric stats
-        const countUpEls = document.querySelectorAll('.stat-number:not(.erp-stat-text)');
-        const countUpObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                const el = entry.target as HTMLElement;
-                const target = parseInt(el.dataset.target ?? '0', 10);
-                const suffix = (el.textContent ?? '').replace(/\d+/g, '').trim();
-                const duration = 1400;
-                const start = performance.now();
-                const tick = (now: number) => {
-                    const progress = Math.min((now - start) / duration, 1);
-                    const eased = 1 - Math.pow(1 - progress, 3);
-                    el.textContent = Math.floor(eased * target) + suffix;
-                    if (progress < 1) requestAnimationFrame(tick);
-                };
-                requestAnimationFrame(tick);
-                countUpObserver.unobserve(el);
-            });
-        }, { threshold: 0.6 });
-
-        countUpEls.forEach(el => countUpObserver.observe(el));
-
         // Pricing toggle
         const pricingToggle = document.getElementById('pricing-toggle') as HTMLInputElement | null;
         const labelMonthly = document.getElementById('label-monthly');
@@ -773,6 +1006,18 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
                 });
             });
         }
+
+        // FAQ accordion: only one answer open at a time, so the list stays
+        // scannable rather than turning into a wall of text.
+        const faqItems = document.querySelectorAll<HTMLDetailsElement>('.erp-faq-item');
+        faqItems.forEach(item => {
+            item.addEventListener('toggle', () => {
+                if (!item.open) return;
+                faqItems.forEach(other => {
+                    if (other !== item) other.open = false;
+                });
+            });
+        });
     </script>
 </Layout>
 
@@ -791,7 +1036,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
     }
-    
+
     .compare-title {
         display: flex;
         align-items: center;
@@ -857,7 +1102,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         text-align: left;
         border-top-left-radius: 12px;
     }
-    
+
     .erp-feature-table th:last-child {
         border-top-right-radius: 12px;
     }
@@ -904,7 +1149,7 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
     .text-muted {
         color: var(--text-placeholder);
     }
-    
+
     @media (max-width: 768px) {
         .erp-compare-features {
             padding: 24px 16px;
@@ -916,13 +1161,40 @@ const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can 
         font-weight: 600;
         color: var(--accent);
         margin-top: -4px;
-        margin-bottom: 16px;
+        margin-bottom: 8px;
         background: rgba(0, 174, 239, 0.1);
         padding: 4px 12px;
         border-radius: 100px;
         display: inline-block;
         align-self: flex-start;
         border: 1px solid rgba(0, 174, 239, 0.2);
+    }
+
+    /* The setup fee is the single biggest objection in the field, so the
+       "only when you convert" caveat sits directly under the number rather
+       than being buried in the FAQ. */
+    .tier-setup-note {
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--text-muted);
+        margin: 0 0 16px;
+    }
+
+    /* Secondary path out of a pricing card for owners who won't self-serve.
+       Deliberately a text link, so it never competes with the trial button. */
+    .tier-alt-link {
+        display: block;
+        margin-top: 14px;
+        text-align: center;
+        font-size: 13px;
+        color: var(--text-muted);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        transition: color 0.2s;
+    }
+
+    .tier-alt-link:hover {
+        color: var(--accent);
     }
 
     /* "I'd like a live demo" — a real checkbox kept in the accessibility tree

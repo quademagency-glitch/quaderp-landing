@@ -254,12 +254,14 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 56%;
-    width: 60vw;
+    left: 54%;
+    /* Wider than the old 60vw because the screenshot is now 16:10 rather than
+       square: at 60vw a landscape panel stood only ~540px tall in a 900px
+       hero and read as floating. The extra width buys back the height, and
+       what it pushes off the right edge is only the tail of the KPI row —
+       the greeting and today's takings stay in frame. */
+    width: 68vw;
     height: fit-content;
-    /* The source image is square, so at 60vw it would stand taller than the
-       viewport and get clipped at both ends. Capping the height crops it from
-       the bottom only, which keeps the sidebar and KPI row in frame. */
     max-height: 76vh;
     /* Auto block margins centre an out-of-flow box vertically without a
        transform, which the reveal animation would otherwise overwrite when it
@@ -333,51 +335,155 @@
     50% { transform: translateY(8px); }
 }
 
-/* ===== STATS ===== */
-.erp-stats {
+/* ===== BUILT FOR GHANA PROOF STRIP =====
+   Replaced the old stats bar, which carried performance figures ("50% less
+   shrinkage", "2x faster") that no customer had substantiated. These are
+   shipped capabilities instead, so every line survives being challenged. */
+.erp-proof {
     background-color: var(--bg-surface);
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
-    padding: 40px 0;
+    padding: 44px 0;
 }
 
-.stats-container {
+.erp-proof-kicker {
+    text-align: center;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin: 0 0 32px;
+}
+
+.erp-proof-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.erp-proof-item {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding-left: 16px;
+    border-left: 1px solid var(--border-color);
+}
+
+.erp-proof-item:first-child {
+    border-left: none;
+    padding-left: 0;
+}
+
+.erp-proof-check {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 174, 239, 0.1);
+    color: var(--accent);
+    margin-bottom: 2px;
 }
 
-.stat-item {
-    flex: 1;
-    text-align: center;
-    padding: 0 32px;
-}
-
-.stat-number {
-    font-size: 40px;
-    font-weight: 700;
+.erp-proof-item strong {
     font-family: var(--font-heading);
-    color: var(--text-color);
-    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
 }
 
-.stat-label {
-    font-size: 14px;
+.erp-proof-item span:last-child {
+    font-size: 13px;
+    line-height: 1.5;
     color: var(--text-muted);
-    margin: 0;
 }
 
-.stat-divider {
-    width: 1px;
-    height: 44px;
-    background: var(--border-color);
+/* ===== PAIN POINTS =====
+   The owner's own words carry this section, so the quote is set larger than
+   the answer and the answer is visually demoted to a response. */
+.erp-pains-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.erp-pain-card {
+    display: flex;
+    flex-direction: column;
+    padding: 32px 28px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.erp-pain-card:hover {
+    background: var(--bg-glass-hover);
+    border-color: var(--border-glass-strong);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.erp-pain-quote {
+    position: relative;
+    margin: 0 0 20px;
+    padding: 0;
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--text-primary);
+}
+
+.erp-pain-quote::before {
+    content: "“";
+    position: absolute;
+    top: -18px;
+    left: -6px;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.18;
+    pointer-events: none;
+}
+
+.erp-pain-answer {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-glass);
+    margin-top: auto;
+}
+
+.erp-pain-arrow {
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(0, 174, 239, 0.1);
+    color: var(--accent);
+    margin-top: 1px;
 }
 
-.erp-stat-text {
-    font-size: 40px;
-    font-weight: 700;
-    color: var(--accent) !important;
+.erp-pain-answer p {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--text-muted);
 }
 
 /* ===== FEATURES ===== */
@@ -419,6 +525,22 @@
 }
 
 /* ===== APP SHOWCASE ===== */
+/* Sits inside .section-header, which is centred and capped at 620px, so the
+   button and its caveat just need stacking and breathing room. */
+.erp-demo-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.erp-demo-cta-note {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
 .erp-showcase-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -512,54 +634,181 @@
     font-size: 14px;
 }
 
-/* ===== BENEFITS ===== */
-.erp-benefits-grid {
+/* ===== LOSS PREVENTION =====
+   Same two-column shape as a showcase row, but the copy column leads and the
+   heading is an h2, because this is a section in its own right rather than
+   one more screenshot walkthrough. */
+.erp-lossprev-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
 }
 
-.erp-benefit-card {
-    text-align: center;
-    padding: 40px 28px;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 16px;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-.erp-benefit-card:hover {
-    border-color: var(--border-glass-strong);
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 174, 239, 0.1);
-    background: var(--bg-glass-hover);
-}
-
-.erp-benefit-icon {
-    font-size: 36px;
+.erp-lossprev-content h2 {
+    font-size: clamp(28px, 3.8vw, 42px);
+    line-height: 1.2;
     margin-bottom: 20px;
-    display: inline-block;
-    width: 72px;
-    height: 72px;
-    line-height: 72px;
-    background: rgba(0, 174, 239, 0.06);
-    border-radius: 50%;
-}
-
-.erp-benefit-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 10px;
     font-family: var(--font-heading);
 }
 
-.erp-benefit-desc {
-    font-size: 14px;
+.erp-lossprev-content p {
+    font-size: 16px;
     color: var(--text-muted);
-    line-height: 1.6;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.erp-lossprev-content .erp-feature-list {
+    margin-top: 28px;
+}
+
+/* ===== ALTERNATIVES / POSITIONING ===== */
+.erp-alternatives-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.erp-alternative-card {
+    padding: 36px 32px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.erp-alternative-card:hover {
+    background: var(--bg-glass-hover);
+    border-color: var(--border-glass-strong);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.erp-alternative-card h3 {
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    font-family: var(--font-heading);
+}
+
+.erp-alternative-card p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+}
+
+/* ===== ILLUSTRATIVE SCENARIOS =====
+   The disclaimer is styled to be read, not skipped: it sits above the cards
+   at full width with an accent rule, and each card repeats the label. These
+   are worked examples, and the page has to say so plainly. */
+.erp-scenarios-disclaimer {
+    max-width: 780px;
+    margin: -32px auto 56px;
+    padding: 18px 24px;
+    background: rgba(167, 139, 250, 0.07);
+    border: 1px solid rgba(167, 139, 250, 0.22);
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.erp-scenarios-disclaimer strong {
+    color: var(--text-primary);
+    display: block;
+    margin-bottom: 4px;
+    font-family: var(--font-heading);
+}
+
+.erp-scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px;
+}
+
+/* Column layout so the closing line can be pinned to the card floor. The two
+   scenarios run to different lengths, and without this the shorter one's
+   bottom line floats mid-card with dead space under it. */
+.erp-scenario-card {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 36px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.erp-scenario-card:hover {
+    border-color: var(--border-glass-strong);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.erp-scenario-label {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-purple);
+    background: rgba(167, 139, 250, 0.12);
+    border: 1px solid rgba(167, 139, 250, 0.28);
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+}
+
+.erp-scenario-title {
+    font-size: 23px;
+    line-height: 1.3;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    font-family: var(--font-heading);
+}
+
+.erp-scenario-subhead {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--accent);
+    margin: 0 0 8px;
+}
+
+.erp-scenario-card > p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin: 0 0 24px;
+}
+
+.erp-scenario-card .erp-feature-list {
+    margin-bottom: 24px;
+}
+
+/* Has to out-specify `.erp-scenario-card > p` above, whose margin shorthand
+   would otherwise reset the auto top margin back to 0 and strand this line
+   mid-card. Matching that selector's weight also removes the !important
+   pair this rule previously needed. */
+.erp-scenario-card > .erp-scenario-bottom {
+    margin: auto 0 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-glass);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    font-weight: 500;
 }
 
 /* ===== PRICING ===== */
@@ -766,6 +1015,154 @@ input:checked + .erp-toggle-slider:before {
     border-radius: 12px;
     display: inline-block;
     width: 100%;
+}
+
+/* ===== PRICING FAQ ===== */
+.erp-faq {
+    max-width: 820px;
+    margin: 80px auto 0;
+}
+
+.erp-faq-heading {
+    text-align: center;
+    font-size: clamp(22px, 3vw, 28px);
+    color: var(--text-primary);
+    margin-bottom: 32px;
+    font-family: var(--font-heading);
+}
+
+.erp-faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.erp-faq-item {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.erp-faq-item:hover {
+    border-color: var(--border-glass-strong);
+}
+
+.erp-faq-item[open] {
+    background: var(--bg-glass-hover);
+    border-color: var(--border-glass-strong);
+}
+
+.erp-faq-item > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: color 0.2s;
+}
+
+.erp-faq-item > summary::-webkit-details-marker {
+    display: none;
+}
+
+.erp-faq-item > summary:hover {
+    color: var(--accent);
+}
+
+.erp-faq-item > summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    border-radius: 12px;
+}
+
+.erp-faq-chevron {
+    flex-shrink: 0;
+    color: var(--accent);
+    transition: transform 0.3s ease;
+}
+
+.erp-faq-item[open] .erp-faq-chevron {
+    transform: rotate(180deg);
+}
+
+.erp-faq-item > p {
+    margin: 0;
+    padding: 0 24px 22px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+}
+
+.erp-faq-footer {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.erp-faq-footer a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ===== FLOATING WHATSAPP CTA =====
+   WhatsApp is the primary sales channel for this market, so it gets a
+   persistent affordance rather than living only at the foot of the page.
+   Bottom-right keeps it clear of the hero's bottom-left scroll indicator. */
+.erp-whatsapp-fab {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 999;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 20px 13px 16px;
+    border-radius: 100px;
+    background: #25d366;
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 600;
+    box-shadow: 0 6px 24px rgba(37, 211, 102, 0.35);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.erp-whatsapp-fab:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 32px rgba(37, 211, 102, 0.45);
+}
+
+.erp-whatsapp-fab:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.erp-whatsapp-fab:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+
+.erp-whatsapp-fab svg {
+    flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .erp-whatsapp-fab {
+        transition: none;
+    }
+
+    .erp-whatsapp-fab:hover {
+        transform: none;
+    }
 }
 
 /* ===== HOW IT WORKS / PROCESS ===== */
@@ -986,6 +1383,25 @@ input:checked + .erp-toggle-slider:before {
         direction: ltr;
     }
 
+    /* Copy first, screenshot underneath: the source order already reads
+       that way, so the row just needs to stop being two columns. */
+    .erp-lossprev-row {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .erp-proof-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px 20px;
+    }
+
+    /* Every item starts a fresh row position once the grid rewraps, so the
+       first-child-only rule is no longer enough to keep the rules tidy. */
+    .erp-proof-item {
+        border-left: none;
+        padding-left: 0;
+    }
+
     .erp-showcase-content {
         text-align: center;
     }
@@ -1017,17 +1433,9 @@ input:checked + .erp-toggle-slider:before {
         display: none;
     }
 
-    .stats-container {
-        flex-direction: column;
-        gap: 32px;
-    }
-
-    .stat-divider {
-        display: none;
-    }
-
-    .stat-item {
-        padding: 0;
+    .erp-proof-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px 20px;
     }
 
     .erp-hero {
@@ -1050,8 +1458,20 @@ input:checked + .erp-toggle-slider:before {
     }
 
     .erp-features-grid,
-    .erp-benefits-grid {
+    .erp-pains-grid,
+    .erp-alternatives-grid,
+    .erp-scenarios-grid {
         grid-template-columns: 1fr;
+    }
+
+    .erp-scenario-card {
+        padding: 32px 24px;
+    }
+
+    .erp-scenarios-disclaimer {
+        margin: -20px auto 40px;
+        padding: 16px 18px;
+        text-align: left;
     }
 
     .erp-showcase-row {
@@ -1076,8 +1496,13 @@ input:checked + .erp-toggle-slider:before {
         padding: 24px;
     }
 
-    .erp-stat-text {
-        font-size: 32px;
+    .erp-faq-item > summary {
+        padding: 18px 20px;
+        font-size: 15px;
+    }
+
+    .erp-faq-item > p {
+        padding: 0 20px 20px;
     }
 }
 
@@ -1111,16 +1536,29 @@ input:checked + .erp-toggle-slider:before {
         font-size: 14px;
     }
 
-    .stats-container {
-        flex-wrap: wrap;
-        gap: 24px 0;
+    .erp-proof-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
 
-    .stat-item {
-        flex: 0 0 50%;
+    .erp-pain-quote {
+        font-size: 17px;
     }
 
-    .stat-divider {
+    .erp-scenario-title {
+        font-size: 20px;
+    }
+
+    /* Collapse to an icon button: at this width the labelled pill eats a
+       meaningful slice of the screen and sits over the page content. The
+       aria-label on the anchor keeps it announced either way. */
+    .erp-whatsapp-fab {
+        padding: 14px;
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .erp-whatsapp-fab-label {
         display: none;
     }
 }
@@ -1153,12 +1591,27 @@ input:checked + .erp-toggle-slider:before {
     box-shadow: 0 20px 60px rgba(15, 23, 42, 0.14), 0 0 40px rgba(0, 144, 199, 0.07);
 }
 
-[data-theme="light"] .erp-benefit-icon {
-    background: rgba(0, 144, 199, 0.08);
+[data-theme="light"] .erp-proof-check,
+[data-theme="light"] .erp-pain-arrow {
+    background: rgba(0, 144, 199, 0.1);
 }
 
-[data-theme="light"] .erp-benefit-card:hover {
+/* The dark theme's near-black drop shadows read as smudges on a light
+   ground, so every new card surface gets the slate-tinted pair instead. */
+[data-theme="light"] .erp-pain-card:hover,
+[data-theme="light"] .erp-alternative-card:hover,
+[data-theme="light"] .erp-scenario-card:hover {
     box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1), 0 0 20px rgba(0, 144, 199, 0.07);
+}
+
+[data-theme="light"] .erp-scenarios-disclaimer {
+    background: rgba(124, 92, 219, 0.06);
+    border-color: rgba(124, 92, 219, 0.2);
+}
+
+[data-theme="light"] .erp-scenario-label {
+    background: rgba(124, 92, 219, 0.1);
+    border-color: rgba(124, 92, 219, 0.25);
 }
 
 [data-theme="light"] .pricing-card:hover {
