@@ -1,8 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
-const SIGNUP_URL = "https://app.quaderp.app/signup";
-const DEMO_URL = "https://app.quaderp.app/login?demo=1";
+import { SIGNUP_URL, DEMO_URL, signupUrl } from '../config/site';
 
 const whatsappNumber = "233530890302";
 const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
@@ -131,7 +129,24 @@ const scenarios = [
     }
 ];
 
-const defaultPricingPlans = [
+type PricingPlan = {
+    name: string;
+    monthlyPrice: string; monthlyPeriod: string;
+    yearlyPrice: string; yearlyPeriod: string;
+    setupFee: string;
+    description: string;
+    features: string[];
+    isPopular: boolean;
+    buttonText: string;
+    /* Exactly one of these. `selfServe` tiers build their own signup link from
+       the tier name; anything else states where it goes. */
+    selfServe?: boolean;
+    href?: string;
+    setupLabel?: string;
+    setupNote?: string;
+};
+
+const defaultPricingPlans: PricingPlan[] = [
     {
         name: "Single Branch",
         monthlyPrice: "GHS 250", monthlyPeriod: "/mo",
@@ -146,7 +161,10 @@ const defaultPricingPlans = [
             "Sales Dashboard & Top Sellers",
             "Standard Support"
         ],
-        isPopular: false, buttonText: "Start Free Trial", href: SIGNUP_URL
+        /* `selfServe` drives the signup link: the href is built from the tier
+           name so the choice made here survives the jump to the app. Franchise
+           is quoted by hand and sets its own href instead. */
+        isPopular: false, buttonText: "Start Free Trial", selfServe: true
     },
     {
         name: "Multi-Branch",
@@ -162,7 +180,7 @@ const defaultPricingPlans = [
             "Loyalty, Gift Cards & SMS Campaigns",
             "Priority Support"
         ],
-        isPopular: true, buttonText: "Start Free Trial", href: SIGNUP_URL
+        isPopular: true, buttonText: "Start Free Trial", selfServe: true
     },
     {
         name: "Franchise",
@@ -471,7 +489,13 @@ const pricingFaqs = [
                 <h2>See QuadERP in Action</h2>
                 <p>Fast to learn, built for daily use. Have a look, then open the real thing.</p>
                 <!-- The hero's demo button lands here, so the actual sandbox
-                     link has to be reachable without hunting for it. -->
+                     link has to be reachable without hunting for it.
+
+                     This is the one link on the page that opens a new tab, and
+                     deliberately: a visitor poking at the demo has not decided
+                     anything yet, and closing it should put them back here
+                     rather than on a blank page. Signup is the opposite — it
+                     is the end of the visit, so it takes over the tab. -->
                 <div class="erp-demo-cta">
                     <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 9px;" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.3-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14z"/></svg>
@@ -676,8 +700,8 @@ const pricingFaqs = [
                                 <li>{feature}</li>
                             ))}
                         </ul>
-                        <a href={plan.href} class={`btn ${plan.isPopular ? 'btn-primary' : 'btn-ghost'} btn-pill tier-btn`}>{plan.buttonText}</a>
-                        {plan.href === SIGNUP_URL && (
+                        <a href={plan.selfServe ? signupUrl(plan.name) : plan.href} class={`btn ${plan.isPopular ? 'btn-primary' : 'btn-ghost'} btn-pill tier-btn`}>{plan.buttonText}</a>
+                        {plan.selfServe && (
                             <a href="#erp-contact" data-plan={plan.name} class="tier-alt-link">Prefer we walk you through it first?</a>
                         )}
                     </div>

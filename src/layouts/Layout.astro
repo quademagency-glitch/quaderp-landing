@@ -6,7 +6,8 @@ interface Props {
 
 const { title, description } = Astro.props;
 
-const SIGNUP_URL = "https://app.quaderp.app/signup";
+import { SIGNUP_URL } from '../config/site';
+
 const whatsappNumber = "233530890302";
 const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
 const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
