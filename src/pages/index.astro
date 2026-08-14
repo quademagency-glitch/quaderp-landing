@@ -109,7 +109,7 @@ const scenarios = [
         setup: "Two tills, six staff, roughly GHS 90,000 across the counter each month. Stock counted by hand on Sunday evenings. Regulars take goods on credit, written in a notebook behind the counter.",
         cost: "If shrinkage runs at 5%, a common figure for counter retail, that is GHS 4,500 a month leaving the shop unrecorded. The Sunday count takes four hours and still does not reconcile. Nobody can say what the credit book is owed, only that it is “plenty”.",
         shows: [
-            "Every void and refund, with the staff member and the timestamp",
+            "Every void and discount, with the staff member and the timestamp",
             "Stock variance by product after each count, so a gap surfaces the week it happens",
             "A receivables list naming each customer, the amount, and how many days old it is",
             "The Sunday count done by scanning, with the variance worked out for you"
@@ -285,11 +285,11 @@ const pricingFaqs = [
     },
     {
         q: "Can I start on Single Branch and move up later?",
-        a: "Yes. When you open a second shop we move you to Multi-Branch and you pay the difference in the monthly fee. There is no second setup fee for growing."
+        a: "Yes. When you open a second shop we move you to Multi-Branch. You pay the difference in the monthly fee, plus a one-time top-up on setup, which is the difference between the two setup fees. So GHS 1,500 on top of the GHS 1,000 you already paid, not a fresh GHS 2,500."
     },
     {
         q: "What happens to my data if I stop paying?",
-        a: "It stays yours. Ask us and we will export your products, sales, customers and ledger into files you keep. We do not hold your business records hostage to a subscription."
+        a: "It stays yours. For 30 days after you cancel, ask us and we will export your products, sales, customers and ledger into files you keep. We do not hold your business records hostage to a subscription."
     },
     {
         q: "Can I take Mobile Money through it?",
@@ -315,29 +315,32 @@ const pricingFaqs = [
         <div class="erp-hero-bg"></div>
         <div class="container erp-hero-container">
             <div class="erp-hero-content">
-                <span class="erp-badge hero-reveal">🏪 Built for shops across Ghana</span>
+                <span class="erp-badge hero-reveal">Built for shops across Ghana</span>
+                {/* Two-tone rather than a gradient-clipped span: the set-up
+                    clause sits back in the muted ink and the phrase that does
+                    the work stays at full strength. */}
                 <h1 class="erp-hero-title hero-reveal hero-delay-1">
-                    Stop Losing Money to<br />
-                    <span class="text-gradient">Theft and Stockouts</span>
+                    <span class="hl-soft">Stop Losing Money to</span>
+                    Theft and Stockouts
                 </h1>
                 <p class="erp-hero-subtitle hero-reveal hero-delay-2">
                     See what's selling, what's in stock, and what your staff are doing across every branch, right from your phone.
                 </p>
                 <div class="erp-hero-ctas hero-reveal hero-delay-3">
-                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill glow-effect erp-btn-lg">Start Your 30-Day Free Trial</a>
+                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill erp-btn-lg">Start Your 30-Day Free Trial</a>
                     {/* Scrolls down to the demo section rather than jumping
                         straight into the sandbox: the owner gets to see what
                         the screens look like before deciding to open one. The
                         sandbox link itself lives at the end of that section. */}
                     <a href="#erp-showcase" class="btn btn-ghost btn-pill erp-btn-lg">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 9px;" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.3-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14z"/></svg>
                         Try Live Demo
                     </a>
                 </div>
                 <ul class="erp-hero-trust hero-reveal hero-delay-4">
-                    <li><span class="erp-check" aria-hidden="true">✓</span>No credit card needed</li>
-                    <li><span class="erp-check" aria-hidden="true">✓</span>We set you up and train your staff</li>
-                    <li><span class="erp-check" aria-hidden="true">✓</span>Pay nothing until you decide to stay</li>
+                    <li><span class="erp-check" aria-hidden="true"></span>No credit card needed</li>
+                    <li><span class="erp-check" aria-hidden="true"></span>We set you up and train your staff</li>
+                    <li><span class="erp-check" aria-hidden="true"></span>Pay nothing until you decide to stay</li>
                 </ul>
             </div>
         </div>
@@ -349,9 +352,13 @@ const pricingFaqs = [
                 </div>
             </div>
         </div>
+        {/* Names the destination rather than saying "scroll to explore", and
+            it no longer bounces on a loop. */}
         <a href="#erp-pains" class="erp-hero-scroll-indicator">
-            <span>Scroll to explore</span>
-            <div class="erp-scroll-arrow">↓</div>
+            <span>What shop owners tell us</span>
+            <span class="erp-scroll-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v15M6 13.5l6 6 6-6"/></svg>
+            </span>
         </a>
     </section>
 
@@ -379,12 +386,13 @@ const pricingFaqs = [
     <section class="erp-pains section-padding" id="erp-pains">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2>If You've Said Any of This, <span class="text-gradient">We Built This for You</span></h2>
+                <span class="erp-eyebrow">In the field</span>
+                <h2><span class="hl-soft">If You've Said Any of This,</span> We Built This for You</h2>
                 <p>Six sentences we hear in almost every shop we walk into.</p>
             </div>
             <div class="erp-pains-grid">
                 {painPoints.map((pain, index) => (
-                    <div class={`erp-pain-card animate-on-scroll slide-up delay-${(index % 3 + 1) * 100}`}>
+                    <div class={`erp-pain-card erp-surface animate-on-scroll slide-up delay-${(index % 3 + 1) * 100}`}>
                         <blockquote class="erp-pain-quote">{pain.quote}</blockquote>
                         <div class="erp-pain-answer">
                             <span class="erp-pain-arrow" aria-hidden="true">
@@ -407,7 +415,7 @@ const pricingFaqs = [
             <div class="erp-lossprev-row">
                 <div class="erp-lossprev-content animate-on-scroll slide-right">
                     <span class="erp-showcase-label">Loss Prevention</span>
-                    <h2>The Part Other Systems <span class="text-gradient">Leave Out</span></h2>
+                    <h2><span class="hl-soft">The Part Other Systems</span> Leave Out</h2>
                     <p>
                         Most shop software records sales. It will just as happily record the sale that never
                         happened, the void at 9:14pm, the twelve units that left the shelf without a receipt.
@@ -418,16 +426,16 @@ const pricingFaqs = [
                         with a name and a time attached.
                     </p>
                     <ul class="erp-feature-list">
-                        <li>Void and refund patterns, flagged per staff member</li>
+                        <li>Void and discount patterns, flagged per staff member</li>
                         <li>Logins and sales that happen outside your trading hours</li>
                         <li>Stock counts that don't match what was actually sold</li>
                         <li>Shrinkage tracked by product, by branch and by person</li>
-                        <li>A full audit trail of who did what, on which till, and when</li>
+                        <li>Every sale, stock movement and alert carries the staff member, the time and the branch</li>
                     </ul>
                 </div>
                 <div class="erp-lossprev-image animate-on-scroll slide-left delay-200">
-                    <div class="erp-showcase-img-wrapper glow-effect">
-                        <img src="/images/quaderp-alerts.png" alt="QuadERP loss prevention alerts screen, filtered by void, shrinkage and after-hours activity" width="1800" height="748" loading="lazy" decoding="async" />
+                    <div class="erp-showcase-img-wrapper">
+                        <img src="/images/quaderp-alerts.png" alt="QuadERP loss prevention alerts, each naming the staff member, the alert type and the time" width="1800" height="1041" loading="lazy" decoding="async" />
                     </div>
                 </div>
             </div>
@@ -435,16 +443,17 @@ const pricingFaqs = [
     </section>
 
     <!-- ===== FEATURES ===== -->
-    <section class="erp-features section-padding" id="erp-features" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <section class="erp-features section-padding section-alt" id="erp-features">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2><span class="text-gradient">Everything Else</span> You Need to Run the Shop</h2>
+                <span class="erp-eyebrow">The rest of the system</span>
+                <h2>Everything Else You Need to Run the Shop</h2>
                 <p>One system instead of a book, a spreadsheet and a POS machine that don't talk to each other.</p>
             </div>
 
             <div class="erp-features-grid">
                 {defaultFeatures.map((feature, index) => (
-                    <div class={`service-card glow-card animate-on-scroll slide-up delay-${(index % 3 + 1) * 100}`}>
+                    <div class={`service-card erp-surface animate-on-scroll slide-up delay-${(index % 3 + 1) * 100}`}>
                         <div class="service-icon" set:html={feature.icon} />
                         <h3 class="service-title">{feature.title}</h3>
                         <p class="service-desc">{feature.description}</p>
@@ -458,13 +467,14 @@ const pricingFaqs = [
     <section class="erp-showcase section-padding" id="erp-showcase">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2>See <span class="text-gradient">QuadERP</span> in Action</h2>
+                <span class="erp-eyebrow">The product</span>
+                <h2>See QuadERP in Action</h2>
                 <p>Fast to learn, built for daily use. Have a look, then open the real thing.</p>
                 <!-- The hero's demo button lands here, so the actual sandbox
                      link has to be reachable without hunting for it. -->
                 <div class="erp-demo-cta">
-                    <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill glow-effect">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 9px;" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.3-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14z"/></svg>
                         Open the Live Demo
                     </a>
                     <span class="erp-demo-cta-note">A fully stocked demo store. No signup, no email, nothing to install.</span>
@@ -474,13 +484,13 @@ const pricingFaqs = [
             <!-- Showcase 1: Dashboard -->
             <div class="erp-showcase-row">
                 <div class="erp-showcase-image animate-on-scroll slide-right">
-                    <div class="erp-showcase-img-wrapper glow-effect">
+                    <div class="erp-showcase-img-wrapper">
                         <img src="/images/quaderp-dashboard.png" alt="QuadERP sales dashboard showing today's takings, product count, stock alerts and recent activity" width="1800" height="1125" loading="lazy" decoding="async" />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-left delay-200">
                     <span class="erp-showcase-label">Sales Dashboard</span>
-                    <h3>Know Your Numbers <span class="text-gradient">Instantly</span></h3>
+                    <h3>Know Your Numbers Instantly</h3>
                     <p>Track total revenue, daily transactions, average order value, and sales trends in real time. No spreadsheets.</p>
                     <ul class="erp-feature-list">
                         <li>Live revenue tracking across registers</li>
@@ -494,13 +504,13 @@ const pricingFaqs = [
             <!-- Showcase 2: Inventory -->
             <div class="erp-showcase-row erp-showcase-reverse">
                 <div class="erp-showcase-image animate-on-scroll slide-left">
-                    <div class="erp-showcase-img-wrapper glow-effect">
+                    <div class="erp-showcase-img-wrapper">
                         <img src="/images/quaderp-inventory.png" alt="QuadERP inventory screen listing products with stock levels and low-stock status" width="1800" height="1091" loading="lazy" decoding="async" />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-right delay-200">
                     <span class="erp-showcase-label">Inventory Control</span>
-                    <h3>Never Run Out of <span class="text-gradient">Stock Again</span></h3>
+                    <h3>Never Run Out of Stock Again</h3>
                     <p>See every product, its stock level, and status in one view. Color-coded indicators show what needs restocking before it becomes a problem.</p>
                     <ul class="erp-feature-list">
                         <li>Real-time stock level monitoring</li>
@@ -514,13 +524,13 @@ const pricingFaqs = [
             <!-- Showcase 3: Sales POS -->
             <div class="erp-showcase-row">
                 <div class="erp-showcase-image animate-on-scroll slide-right">
-                    <div class="erp-showcase-img-wrapper glow-effect">
+                    <div class="erp-showcase-img-wrapper">
                         <img src="/images/quaderp-pos.png" alt="The QuadERP POS terminal with a basket of goods priced in cedis and a running total" width="1800" height="814" loading="lazy" decoding="async" />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-left delay-200">
                     <span class="erp-showcase-label">Sales POS</span>
-                    <h3>Sell Faster With a <span class="text-gradient">Modern POS</span></h3>
+                    <h3>Sell Faster With a Modern POS</h3>
                     <p>A touch-friendly point-of-sale your staff can learn in minutes. Browse products, build carts, and process payments from one screen.</p>
                     <ul class="erp-feature-list">
                         <li>Visual product grid with quick-add buttons</li>
@@ -534,15 +544,16 @@ const pricingFaqs = [
     </section>
 
     <!-- ===== ALTERNATIVES / POSITIONING ===== -->
-    <section class="erp-alternatives section-padding" id="erp-alternatives" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <section class="erp-alternatives section-padding section-alt" id="erp-alternatives">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2>Why Not <span class="text-gradient">Just Carry On</span> As You Are?</h2>
+                <span class="erp-eyebrow">The alternatives</span>
+                <h2>Why Not Just Carry On As You Are?</h2>
                 <p>Fair question. Here is the honest answer to the three we hear most.</p>
             </div>
             <div class="erp-alternatives-grid">
                 {alternatives.map((alt, index) => (
-                    <div class={`erp-alternative-card animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
+                    <div class={`erp-alternative-card erp-surface animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
                         <h3>{alt.heading}</h3>
                         <p>{alt.body}</p>
                     </div>
@@ -558,7 +569,8 @@ const pricingFaqs = [
     <section class="erp-scenarios section-padding" id="erp-scenarios">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2>What This Looks Like <span class="text-gradient">in a Real Shop</span></h2>
+                <span class="erp-eyebrow">Worked examples</span>
+                <h2><span class="hl-soft">What This Looks Like</span> in a Real Shop</h2>
                 <p>Two worked examples on typical shop figures, so you can run the same sums on your own numbers.</p>
             </div>
 
@@ -571,7 +583,7 @@ const pricingFaqs = [
 
             <div class="erp-scenarios-grid">
                 {scenarios.map((s, index) => (
-                    <article class={`erp-scenario-card animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
+                    <article class={`erp-scenario-card erp-surface animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
                         <span class="erp-scenario-label">{s.label} · Illustration</span>
                         <h3 class="erp-scenario-title">{s.title}</h3>
 
@@ -594,11 +606,12 @@ const pricingFaqs = [
     </section>
 
     <!-- ===== HOW IT WORKS ===== -->
-    <section class="process section-padding" id="erp-process" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <section class="process section-padding section-alt" id="erp-process">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2>Get Started in <span class="text-gradient">3 Simple Steps</span></h2>
-                <p>Thirty days to make up your mind, and we do the heavy lifting.</p>
+                <span class="erp-eyebrow">Getting started</span>
+                <h2>Three Steps, and We Do the Heavy Lifting</h2>
+                <p>Thirty days to make up your mind, at no cost and with nothing to cancel.</p>
             </div>
             <div class="process-timeline">
                 <div class="timeline-line"></div>
@@ -627,7 +640,8 @@ const pricingFaqs = [
     <section class="pricing section-padding" id="erp-pricing">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2><span class="text-gradient">Try It Free. Pay When It's Working.</span></h2>
+                <span class="erp-eyebrow">Pricing</span>
+                <h2>Try It Free. Pay When It's Working.</h2>
                 <p>Thirty days on us, no card required. Setup is a one-time charge that only falls due when you decide to stay.</p>
 
                 <div class="pricing-toggle-container">
@@ -644,7 +658,7 @@ const pricingFaqs = [
             </div>
             <div class="pricing-grid">
                 {defaultPricingPlans.map((plan, index) => (
-                    <div class={`pricing-card ${plan.isPopular ? 'popular-tier' : ''} animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
+                    <div class={`pricing-card erp-surface ${plan.isPopular ? 'popular-tier' : ''} animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
                         {plan.isPopular && <div class="popular-badge">Most Popular</div>}
                         <h3 class="tier-name">{plan.name}</h3>
                         <div class="tier-price" data-monthly-price={plan.monthlyPrice} data-yearly-price={plan.yearlyPrice} data-monthly-period={plan.monthlyPeriod} data-yearly-period={plan.yearlyPeriod}>
@@ -662,7 +676,7 @@ const pricingFaqs = [
                                 <li>{feature}</li>
                             ))}
                         </ul>
-                        <a href={plan.href} class={`btn ${plan.isPopular ? 'btn-primary glow-effect' : 'btn-ghost'} btn-pill tier-btn`}>{plan.buttonText}</a>
+                        <a href={plan.href} class={`btn ${plan.isPopular ? 'btn-primary' : 'btn-ghost'} btn-pill tier-btn`}>{plan.buttonText}</a>
                         {plan.href === SIGNUP_URL && (
                             <a href="#erp-contact" data-plan={plan.name} class="tier-alt-link">Prefer we walk you through it first?</a>
                         )}
@@ -670,7 +684,8 @@ const pricingFaqs = [
                 ))}
             </div>
             <div class="erp-pricing-note animate-on-scroll slide-up">
-                <p>🔒 Every plan starts with the same 30-day free trial. No card, nothing to cancel.</p>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>
+                <p>Every plan starts with the same 30-day free trial. No card, nothing to cancel.</p>
             </div>
 
             <!-- Compare Features Matrix -->
@@ -746,16 +761,17 @@ const pricingFaqs = [
     <section class="erp-contact-section section-padding" id="erp-contact">
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
-                <h2><span class="text-gradient">Rather Talk to a Person First?</span></h2>
+                <span class="erp-eyebrow">Talk to us</span>
+                <h2>Rather Talk to a Person First?</h2>
                 <p>Tell us about your shop and we'll walk you through it. You can still start the free trial yourself at any time.</p>
             </div>
 
             <div class="erp-contact-grid">
                 <!-- Contact Form -->
-                <div class="erp-contact-form-wrapper glow-card animate-on-scroll slide-right">
+                <div class="erp-contact-form-wrapper animate-on-scroll slide-right">
                     <div id="erpFormView">
-                        <h3 style="margin-bottom: 6px;">Request a Setup</h3>
-                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 28px;">Fill in your details and we'll reach out within 24 hours.</p>
+                        <h3 class="erp-form-title">Request a Setup</h3>
+                        <p class="erp-form-lead">Fill in your details and we'll reach out within 24 hours.</p>
 
                         <form id="erpContactForm" action="https://formspree.io/f/xgobwrdw" method="POST">
                             <input type="hidden" name="_subject" value="QuadERP Setup Request" />
@@ -838,7 +854,7 @@ const pricingFaqs = [
 
                             <input type="hidden" name="source" value="QuadERP Landing Page" />
 
-                            <button type="submit" class="btn btn-primary btn-pill glow-effect w-100" id="erpSubmitBtn">
+                            <button type="submit" class="btn btn-primary btn-pill w-100" id="erpSubmitBtn">
                                 Submit Request
                             </button>
                             <div id="erpFormResult" class="erp-form-result" aria-live="polite"></div>
@@ -852,7 +868,7 @@ const pricingFaqs = [
                         <h3>We've Got Your Request!</h3>
                         <p id="erpSuccessLead">We'll reach out within 24 hours. While you wait:</p>
                         <div class="erp-success-actions">
-                            <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill glow-effect w-100">
+                            <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill w-100">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                 Book a Demo Call
                             </a>
@@ -866,10 +882,10 @@ const pricingFaqs = [
 
                 <!-- Right side: Info + Calendly -->
                 <div class="erp-contact-info animate-on-scroll slide-left delay-200">
-                    <div class="erp-contact-info-card glow-card">
+                    <div class="erp-contact-info-card">
                         <h3>Prefer to Talk?</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 24px;">Book a free 15-minute demo call. We'll walk you through QuadERP live and get you set up.</p>
-                        <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill glow-effect w-100" style="margin-bottom: 16px;">
+                        <p class="erp-contact-info-lead">Book a free 15-minute demo call. We'll walk you through QuadERP live and get you set up.</p>
+                        <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill w-100">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                             Book a Demo Call
                         </a>
@@ -877,7 +893,7 @@ const pricingFaqs = [
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                             Chat on WhatsApp
                         </a>
-                        <p style="color: var(--text-muted); margin-top: 16px; margin-bottom: 0; font-size: 14px;">Or email us at <a href="mailto:info@quaderp.app" style="color: var(--accent); font-weight: 600; text-decoration: none;">info@quaderp.app</a></p>
+                        <p class="erp-contact-info-mail">Or email us at <a href="mailto:info@quaderp.app">info@quaderp.app</a></p>
                     </div>
                 </div>
             </div>
@@ -1027,26 +1043,37 @@ const pricingFaqs = [
         display: none !important;
     }
 
+    /* Form heading pair, previously three inline style attributes. */
+    .erp-form-title {
+        margin-bottom: 5px;
+    }
+
+    .erp-form-lead {
+        color: var(--text-muted);
+        font-size: 14.5px;
+        margin: 0 0 26px;
+    }
+
     .erp-compare-features {
-        margin-top: 80px;
+        margin-top: 72px;
         background: var(--bg-glass);
         border: 1px solid var(--border-glass);
-        border-radius: 20px;
-        padding: 40px;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 32px;
     }
 
     .compare-title {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 16px;
         font-family: var(--font-heading);
-        font-size: 24px;
+        font-size: 19px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
         color: var(--text-primary);
         cursor: pointer;
-        padding: 0 10px;
-        transition: color 0.2s;
+        transition: color var(--dur) var(--ease-inout);
     }
 
     .compare-title:hover {
@@ -1062,7 +1089,8 @@ const pricingFaqs = [
     }
 
     .compare-chevron {
-        transition: transform 0.3s ease;
+        flex-shrink: 0;
+        transition: transform var(--dur) var(--ease-out);
         color: var(--accent);
     }
 
@@ -1071,9 +1099,9 @@ const pricingFaqs = [
     }
 
     .erp-compare-details[open] .compare-title {
-        margin-bottom: 30px;
-        border-bottom: 1px solid var(--border-glass-strong);
-        padding-bottom: 20px;
+        margin-bottom: 26px;
+        border-bottom: 1px solid var(--border-glass);
+        padding-bottom: 18px;
     }
 
     .table-responsive {
@@ -1090,47 +1118,54 @@ const pricingFaqs = [
 
     .erp-feature-table th {
         font-family: var(--font-heading);
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
+        letter-spacing: -0.01em;
         color: var(--text-primary);
-        padding: 20px 16px;
-        border-bottom: 2px solid var(--border-glass-strong);
+        padding: 16px 14px;
+        border-bottom: 1px solid var(--border-glass-strong);
         background: var(--bg-input);
     }
 
     .erp-feature-table th:first-child {
         text-align: left;
-        border-top-left-radius: 12px;
+        border-top-left-radius: 10px;
     }
 
     .erp-feature-table th:last-child {
-        border-top-right-radius: 12px;
+        border-top-right-radius: 10px;
     }
 
     .tier-sub {
-        font-size: 13px;
-        color: var(--accent);
-        font-weight: 400;
-        margin-top: 4px;
         display: block;
+        margin-top: 3px;
+        font-family: var(--font-body);
+        font-size: 12.5px;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums lining-nums;
     }
 
     .category-row td {
-        background: var(--bg-glass);
+        background: var(--bg-glass-hover);
         text-align: left;
-        font-weight: 600;
         font-family: var(--font-heading);
-        color: var(--accent-purple);
-        padding: 16px 20px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--accent-2);
+        padding: 12px 18px;
         border-bottom: 1px solid var(--border-glass);
         border-top: 1px solid var(--border-glass);
     }
 
     .erp-feature-table td {
-        padding: 16px;
+        padding: 13px 14px;
         border-bottom: 1px solid var(--border-glass);
         color: var(--text-color);
-        font-size: 15px;
+        font-size: 14.5px;
     }
 
     .erp-feature-table td.feature-name {
@@ -1138,7 +1173,7 @@ const pricingFaqs = [
         color: var(--text-muted);
     }
 
-    .erp-feature-table tr:hover td {
+    .erp-feature-table tbody tr:not(.category-row):hover td {
         background: var(--bg-glass);
     }
 
@@ -1146,28 +1181,30 @@ const pricingFaqs = [
         color: var(--accent);
     }
 
+    /* The "not included" cells. A dash at placeholder contrast is the point:
+       it should read as absent without competing with the ticks. */
     .text-muted {
         color: var(--text-placeholder);
     }
 
     @media (max-width: 768px) {
         .erp-compare-features {
-            padding: 24px 16px;
+            padding: 22px 16px;
         }
     }
 
     .tier-setup-fee {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--accent);
-        margin-top: -4px;
-        margin-bottom: 8px;
-        background: rgba(0, 174, 239, 0.1);
-        padding: 4px 12px;
-        border-radius: 100px;
         display: inline-block;
         align-self: flex-start;
-        border: 1px solid rgba(0, 174, 239, 0.2);
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--accent);
+        margin: -2px 0 8px;
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
+        padding: 3px 11px;
+        border-radius: 100px;
+        font-variant-numeric: tabular-nums lining-nums;
     }
 
     /* The setup fee is the single biggest objection in the field, so the
@@ -1190,7 +1227,7 @@ const pricingFaqs = [
         color: var(--text-muted);
         text-decoration: underline;
         text-underline-offset: 3px;
-        transition: color 0.2s;
+        transition: color var(--dur) var(--ease-inout);
     }
 
     .tier-alt-link:hover {
@@ -1210,12 +1247,17 @@ const pricingFaqs = [
         border-radius: 12px;
         background: var(--bg-glass);
         cursor: pointer;
-        transition: border-color 0.2s ease, background 0.2s ease;
+        transition: border-color var(--dur) var(--ease-inout), background-color var(--dur) var(--ease-inout);
     }
 
     .erp-demo-toggle:hover {
         background: var(--bg-glass-hover);
-        border-color: var(--accent);
+        border-color: var(--accent-line);
+    }
+
+    .erp-demo-toggle:has(input:checked) {
+        background: var(--accent-soft);
+        border-color: var(--accent-line);
     }
 
     .erp-demo-toggle input {
@@ -1236,19 +1278,19 @@ const pricingFaqs = [
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #ffffff;
-        transition: background 0.2s ease, border-color 0.2s ease;
+        color: var(--accent-contrast);
+        transition: background-color var(--dur) var(--ease-inout), border-color var(--dur) var(--ease-inout);
     }
 
     .erp-demo-toggle-box svg {
         opacity: 0;
-        transform: scale(0.6);
-        transition: opacity 0.15s ease, transform 0.15s ease;
+        transform: scale(0.7);
+        transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
     }
 
     .erp-demo-toggle input:checked + .erp-demo-toggle-box {
-        background: var(--accent);
-        border-color: var(--accent);
+        background: var(--accent-solid);
+        border-color: var(--accent-solid);
     }
 
     .erp-demo-toggle input:checked + .erp-demo-toggle-box svg {
@@ -1295,38 +1337,19 @@ const pricingFaqs = [
         display: block;
     }
 
+    /* Status colours come off the --positive / --negative tokens, which are
+       already defined per theme. The four [data-theme="light"] blocks that
+       used to sit here existed only because these were hardcoded. */
     .erp-form-success {
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        color: #22c55e;
+        background: var(--positive-soft);
+        border: 1px solid var(--positive-line);
+        color: var(--positive);
     }
 
     .erp-form-error {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        color: #ef4444;
-    }
-
-    [data-theme="light"] .erp-form-success {
-        background: rgba(22, 163, 74, 0.08);
-        border-color: rgba(22, 163, 74, 0.25);
-        color: #15803d;
-    }
-
-    [data-theme="light"] .erp-form-error {
-        background: rgba(220, 38, 38, 0.08);
-        border-color: rgba(220, 38, 38, 0.25);
-        color: #b91c1c;
-    }
-
-    [data-theme="light"] .discount-badge {
-        background: rgba(124, 92, 219, 0.1);
-        border-color: rgba(124, 92, 219, 0.22);
-    }
-
-    [data-theme="light"] .tier-setup-fee {
-        background: rgba(0, 144, 199, 0.07);
-        border-color: rgba(0, 144, 199, 0.16);
+        background: var(--negative-soft);
+        border: 1px solid var(--negative-line);
+        color: var(--negative);
     }
 
     .form-optional {
@@ -1346,12 +1369,12 @@ const pricingFaqs = [
     }
 
     .erp-success-icon {
-        width: 68px;
-        height: 68px;
+        width: 62px;
+        height: 62px;
         border-radius: 50%;
-        background: rgba(34, 197, 94, 0.1);
-        border: 2px solid rgba(34, 197, 94, 0.3);
-        color: #22c55e;
+        background: var(--positive-soft);
+        border: 1.5px solid var(--positive-line);
+        color: var(--positive);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1359,14 +1382,9 @@ const pricingFaqs = [
         flex-shrink: 0;
     }
 
-    [data-theme="light"] .erp-success-icon {
-        background: rgba(22, 163, 74, 0.08);
-        border-color: rgba(22, 163, 74, 0.3);
-        color: #15803d;
-    }
-
     .erp-success-card h3 {
-        font-size: 24px;
+        font-size: 23px;
+        font-weight: 600;
         color: var(--text-primary);
         margin: 0;
     }
@@ -1385,17 +1403,19 @@ const pricingFaqs = [
         margin-top: 8px;
     }
 
-    /* Submit button spinner */
+    /* Submit button spinner. Drawn from currentColor so it stays correct if
+       the button ever sits on a different fill. */
     .erp-btn-spinner {
         display: inline-block;
         width: 14px;
         height: 14px;
-        border: 2px solid rgba(255, 255, 255, 0.35);
-        border-top-color: #fff;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        opacity: 0.85;
         border-radius: 50%;
-        animation: erp-spin 0.6s linear infinite;
+        animation: erp-spin 0.65s linear infinite;
         vertical-align: middle;
-        margin-right: 8px;
+        margin-right: 9px;
     }
 
     @keyframes erp-spin {

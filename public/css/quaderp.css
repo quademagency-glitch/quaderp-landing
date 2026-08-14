@@ -1,67 +1,123 @@
 /* ==========================================================================
    QuadERP Landing Page — Styles
-   Extends the base design system for the product landing page.
+   Builds on the tokens defined in Layout.astro. Nothing in here hardcodes a
+   colour: the light theme is a token swap, not a second stylesheet of
+   overrides, which is why there is no [data-theme="light"] block at the foot
+   of this file any more.
    ========================================================================== */
 
 /* ===== SHARED / UTILITIES ===== */
-.section-padding {
-    padding: 110px 0;
-    /* .animate-on-scroll.slide-left parks elements at translateX(28px) until
-       they reveal, which is 8px past what the container's 20px of padding
-       allows. Below 1200px that let the whole page be dragged 8px sideways
-       until you had scrolled past every reveal.
+/* No overflow-x: clip here any more. It was guarding against the reveal
+   animations, which used to park elements 28px off-rest and so overran the
+   container's 20px of padding by 8px, letting the page be dragged sideways.
+   The reveals now travel 14px, which stays inside that padding, so the guard
+   has nothing left to catch.
 
-       Clip has to go here rather than on html or body: the viewport ignores a
-       propagated clip, so only a normal element actually honours it. Clip
-       rather than hidden because clip is the one value that can pair with
-       overflow-y: visible, leaving vertical hover shadows intact. */
-    overflow-x: clip;
+   Removing it also restores position: sticky inside these sections: Chrome
+   treats a clip container as the constraint box for a sticky descendant, so
+   the contact card could not pin while the clip was in place. */
+.section-padding {
+    padding: 104px 0;
+}
+
+/* Alternating bands. Previously each section repeated the same three
+   declarations inline in the markup. */
+.section-alt {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .section-header {
+    max-width: 640px;
+    margin: 0 auto 60px;
     text-align: center;
-    max-width: 620px;
-    margin: 0 auto 64px;
 }
 
 .section-header h2 {
-    font-size: clamp(28px, 4vw, 42px);
+    font-size: clamp(29px, 3.6vw, 41px);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.16;
     margin-bottom: 16px;
+    text-wrap: balance;
 }
 
 .section-header p {
     color: var(--text-muted);
     font-size: 17px;
     line-height: 1.6;
+    margin: 0;
+    text-wrap: pretty;
+}
+
+/* Small uppercase kicker above a heading. This is the section-level signpost
+   that the page previously got from putting a coloured gradient on a phrase
+   inside every single h2. */
+.erp-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.erp-eyebrow::before {
+    content: "";
+    width: 18px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.55;
+}
+
+.section-header .erp-eyebrow::before {
+    display: none;
+}
+
+/* Two-tone headline. The set-up clause drops to the muted ink and the payload
+   stays at full strength, so the emphasis is carried by contrast instead of a
+   clipped gradient. Used on a few headings, not on all of them: applying one
+   device uniformly is what made the old page read as generated.
+
+   display: block is load-bearing. Left inline, the balancer puts the tone
+   change wherever the line happens to break ("The Part Other / Systems Leave
+   Out"), which reads as a mistake rather than a device. As a block the colour
+   change always lands on a line boundary, at every width. */
+.hl-soft {
+    display: block;
+    color: var(--text-muted);
 }
 
 .w-100 {
     width: 100%;
 }
 
-.glow-effect {
-    transition: box-shadow 0.3s ease;
-}
-
-.glow-card:hover {
-    box-shadow: 0 0 30px rgba(0, 174, 239, 0.08);
-}
-
-/* Scroll-reveal */
+/* Scroll-reveal.
+   Shorter and shallower than before (14px over 380ms, was 28px over 700ms).
+   A long slow slide is legible as an effect; a short one just makes the
+   section feel like it settled into place. */
 .animate-on-scroll {
     opacity: 0;
-    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+        opacity var(--dur-slow) var(--ease-out),
+        transform var(--dur-slow) var(--ease-out);
 }
-.animate-on-scroll.slide-up { transform: translateY(28px); }
-.animate-on-scroll.slide-left { transform: translateX(28px); }
-.animate-on-scroll.slide-right { transform: translateX(-28px); }
+.animate-on-scroll.slide-up { transform: translateY(14px); }
+.animate-on-scroll.slide-left { transform: translateX(14px); }
+.animate-on-scroll.slide-right { transform: translateX(-14px); }
 .animate-on-scroll.in-view { opacity: 1; transform: none; }
 
-.delay-100 { transition-delay: 0.1s; }
-.delay-200 { transition-delay: 0.2s; }
-.delay-300 { transition-delay: 0.3s; }
+/* Stagger inside a row, not a queue. 100/200/300ms meant the third card in a
+   grid arrived a third of a second after the first, which is long enough to
+   watch happen. */
+.delay-100 { transition-delay: 60ms; }
+.delay-200 { transition-delay: 120ms; }
+.delay-300 { transition-delay: 180ms; }
 
 @media (prefers-reduced-motion: reduce) {
     .animate-on-scroll {
@@ -71,51 +127,39 @@
     }
 }
 
-/* Hero entrance
+/* Hero entrance.
    The hero sits above the fold, so it reveals on load rather than through the
    IntersectionObserver. Keeping the hidden state inside the keyframes (instead
    of a base opacity: 0) means the hero still paints if JS never runs. */
-/* Deliberately not the expo-out curve used elsewhere: expo front-loads almost
-   all of the opacity change into the first quarter, which reads as a pop rather
-   than a fade. This curve eases in and out, so the fade stays gradual. */
 .hero-reveal,
 .hero-reveal-x {
-    --hero-reveal-duration: 1.1s;
-    --hero-reveal-ease: cubic-bezier(0.33, 0, 0.2, 1);
+    --hero-reveal-duration: 620ms;
 }
 
 .hero-reveal {
-    animation: erp-hero-rise var(--hero-reveal-duration) var(--hero-reveal-ease) both;
+    animation: erp-hero-rise var(--hero-reveal-duration) var(--ease-out) both;
 }
 
 /* Horizontal variant for the mockup: it drifts in from the right, toward the
    edge it bleeds off, rather than rising like the copy. */
 .hero-reveal-x {
-    animation: erp-hero-drift var(--hero-reveal-duration) var(--hero-reveal-ease) both;
+    animation: erp-hero-drift var(--hero-reveal-duration) var(--ease-out) both;
 }
 
-.hero-delay-1 { animation-delay: 120ms; }
-.hero-delay-2 { animation-delay: 240ms; }
-.hero-delay-3 { animation-delay: 360ms; }
-.hero-delay-4 { animation-delay: 480ms; }
-.hero-delay-5 { animation-delay: 600ms; }
+.hero-delay-1 { animation-delay: 60ms; }
+.hero-delay-2 { animation-delay: 120ms; }
+.hero-delay-3 { animation-delay: 180ms; }
+.hero-delay-4 { animation-delay: 240ms; }
+.hero-delay-5 { animation-delay: 120ms; }
 
 @keyframes erp-hero-rise {
-    from { opacity: 0; transform: translateY(32px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: none; }
 }
 
 @keyframes erp-hero-drift {
-    from { opacity: 0; transform: translateX(56px); }
+    from { opacity: 0; transform: translateX(32px); }
     to { opacity: 1; transform: none; }
-}
-
-/* The badge runs its own infinite glow, which the shorthand above would replace,
-   so it declares both and holds the glow until after the reveal lands. */
-.erp-badge.hero-reveal {
-    animation:
-        erp-hero-rise var(--hero-reveal-duration) var(--hero-reveal-ease) both,
-        erp-badge-glow 3s ease-in-out var(--hero-reveal-duration) infinite;
 }
 
 /* Dedicated parallax layer: JS only writes --parallax-y, so it never competes
@@ -126,8 +170,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .hero-reveal,
-    .hero-reveal-x,
-    .erp-badge.hero-reveal {
+    .hero-reveal-x {
         animation: none;
     }
 
@@ -144,22 +187,24 @@
 .erp-hero {
     position: relative;
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 150px 0 100px;
+    padding: calc(var(--nav-h) + 76px) 0 96px;
     overflow: hidden;
 }
 
-/* One static wash instead of the previous four stacked layers. Dropping the
-   orbs and the pulsing gradient also removes four forever-running animations
-   that kept the compositor busy the entire time the page was open. */
+/* One static wash. Four stacked layers with orbs and a pulsing gradient used
+   to live here, which kept the compositor busy for the whole session. */
 .erp-hero-bg {
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(0, 174, 239, 0.08) 0%, transparent 55%);
+    background:
+        radial-gradient(90ch 60ch at 82% 8%, var(--accent-soft), transparent 62%),
+        linear-gradient(180deg, var(--accent-soft) 0%, transparent 46%);
 }
 
 .erp-hero-container {
@@ -168,71 +213,81 @@
 }
 
 .erp-hero-content {
-    max-width: 500px;
+    max-width: 510px;
 }
 
+/* A capability statement, not an emoji sticker. The dot is drawn, so it takes
+   the accent colour and sits on the text baseline properly, which a 🏪 in the
+   middle of a sentence never does. */
 .erp-badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-heading);
     font-size: 13px;
     font-weight: 600;
-    font-family: var(--font-heading);
-    padding: 8px 20px;
-    border-radius: 50px;
-    background: rgba(0, 174, 239, 0.08);
-    border: 1px solid rgba(0, 174, 239, 0.2);
+    letter-spacing: 0.01em;
+    padding: 7px 16px 7px 13px;
+    border-radius: 100px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
     color: var(--accent);
-    margin-bottom: 28px;
-    letter-spacing: 0.5px;
-    animation: erp-badge-glow 3s ease-in-out infinite;
+    margin-bottom: 26px;
 }
 
-@keyframes erp-badge-glow {
-    0%, 100% { box-shadow: 0 0 0 rgba(0, 174, 239, 0); }
-    50% { box-shadow: 0 0 20px rgba(0, 174, 239, 0.15); }
+.erp-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
 }
 
-/* Larger and tighter than before: with the background noise gone there is
-   nothing competing with the headline, so it can carry more of the page. */
+/* 1.1 rather than the 1.05 a narrow grotesque would take: Poppins has long
+   descenders, and .hl-soft makes this two stacked blocks, so at 1.05 the "p"
+   and "g" of line one clip into the caps of line two. */
 .erp-hero-title {
-    font-size: clamp(38px, 4.6vw, 60px);
+    font-size: clamp(38px, 4.8vw, 62px);
     font-weight: 700;
-    color: var(--text-primary);
     line-height: 1.1;
-    letter-spacing: -0.5px;
-    margin-bottom: 24px;
-    font-family: var(--font-heading);
+    letter-spacing: -0.025em;
+    margin-bottom: 22px;
+    text-wrap: balance;
 }
 
 .erp-hero-subtitle {
     font-size: 18px;
     color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 36px;
+    line-height: 1.65;
+    margin-bottom: 34px;
+    max-width: 46ch;
+    text-wrap: pretty;
 }
 
 .erp-hero-ctas {
     display: flex;
-    gap: 16px;
+    gap: 14px;
     flex-wrap: wrap;
-    margin-bottom: 32px;
+    margin-bottom: 30px;
 }
 
 .erp-btn-lg {
-    padding: 16px 32px;
+    padding: 15px 30px;
     font-size: 16px;
 }
 
-/* Now a real list rather than three loose spans, with hairline separators
-   instead of a bare gap so it reads as one grouped assurance line. */
+/* A real list rather than three loose spans, so it reads as one grouped
+   assurance line. */
 .erp-hero-trust {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px 18px;
+    gap: 9px 20px;
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: 13px;
+    font-size: 13.5px;
     color: var(--text-muted);
 }
 
@@ -242,9 +297,18 @@
     gap: 8px;
 }
 
-.erp-hero-trust .erp-check {
-    color: var(--accent);
-    font-weight: 700;
+/* Geometric tick drawn from two borders. A "✓" glyph inherits the body font's
+   weight and vertical metrics, so it never lines up with the text beside it
+   and changes shape between platforms. */
+.erp-check {
+    position: relative;
+    display: inline-block;
+    width: 11px;
+    height: 6px;
+    flex-shrink: 0;
+    border-left: 1.7px solid var(--accent);
+    border-bottom: 1.7px solid var(--accent);
+    transform: rotate(-45deg) translate(1px, -2px);
 }
 
 /* Hero Visual / Mockup
@@ -255,11 +319,10 @@
     top: 0;
     bottom: 0;
     left: 54%;
-    /* Wider than the old 60vw because the screenshot is now 16:10 rather than
+    /* Wider than a naive 60vw because the screenshot is 16:10 rather than
        square: at 60vw a landscape panel stood only ~540px tall in a 900px
-       hero and read as floating. The extra width buys back the height, and
-       what it pushes off the right edge is only the tail of the KPI row —
-       the greeting and today's takings stay in frame. */
+       hero and read as floating. What the extra width pushes off the right
+       edge is only the tail of the KPI row. */
     width: 68vw;
     height: fit-content;
     max-height: 76vh;
@@ -271,21 +334,18 @@
     z-index: 1;
 }
 
+/* Held at a fixed angle. It used to swing from -6deg to -2deg on hover, which
+   invited people to hover a screenshot that does nothing. */
 .erp-mockup-wrapper {
     position: relative;
     /* Only the left corners ever sit on screen. */
     border-radius: 14px 0 0 14px;
     max-height: 76vh;
     overflow: hidden;
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.45),
-        0 0 0 1px rgba(255, 255, 255, 0.07);
-    transform: perspective(1600px) rotateY(-6deg);
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.erp-mockup-wrapper:hover {
-    transform: perspective(1600px) rotateY(-2deg);
+    border: 1px solid var(--border-glass-strong);
+    border-right: none;
+    box-shadow: var(--shadow-lg);
+    transform: perspective(1800px) rotateY(-4deg);
 }
 
 .erp-mockup-img {
@@ -294,56 +354,53 @@
     display: block;
 }
 
-/* Scroll Indicator
-   Left-aligned now that the layout is asymmetric; dead centre would put it
-   underneath the mockup. */
+/* Scroll cue.
+   Left-aligned to match the copy column; dead centre would put it underneath
+   the mockup. No perpetual bounce: an element that moves forever is the first
+   thing the eye locks onto and the last thing it lets go of. It travels on
+   hover, when the pointer has actually arrived. */
 .erp-hero-scroll-indicator {
     position: absolute;
-    bottom: 40px;
+    bottom: 38px;
     /* Matches the container's left content edge: (100vw - 1200px) / 2 + 20px,
        floored at the container's own padding on narrower screens. Computing it
        rather than using translateX keeps transform free for animation. */
     left: max(20px, calc(50% - 580px));
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
     z-index: 2;
-    opacity: 0.6;
-    transition: opacity 0.3s;
+    font-family: var(--font-heading);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color var(--dur) var(--ease-inout);
 }
 
 .erp-hero-scroll-indicator:hover {
-    opacity: 1;
-}
-
-.erp-hero-scroll-indicator span {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-muted);
-    font-family: var(--font-heading);
+    color: var(--text-primary);
 }
 
 .erp-scroll-arrow {
-    font-size: 20px;
+    display: inline-flex;
     color: var(--accent);
-    animation: erp-scroll-bounce 2s ease-in-out infinite;
+    transition: transform var(--dur) var(--ease-out);
 }
 
-@keyframes erp-scroll-bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(8px); }
+.erp-hero-scroll-indicator:hover .erp-scroll-arrow {
+    transform: translateY(3px);
 }
 
 /* ===== BUILT FOR GHANA PROOF STRIP =====
-   Replaced the old stats bar, which carried performance figures ("50% less
-   shrinkage", "2x faster") that no customer had substantiated. These are
-   shipped capabilities instead, so every line survives being challenged. */
+   Every line is a capability we ship, not a performance figure that would
+   need a customer to stand behind it. */
 .erp-proof {
     background-color: var(--bg-surface);
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
-    padding: 44px 0;
+    padding: 40px 0;
 }
 
 .erp-proof-kicker {
@@ -352,15 +409,15 @@
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.13em;
     color: var(--text-muted);
-    margin: 0 0 32px;
+    margin: 0 0 30px;
 }
 
 .erp-proof-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
+    gap: 22px;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -370,8 +427,8 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-    padding-left: 16px;
+    gap: 5px;
+    padding-left: 18px;
     border-left: 1px solid var(--border-color);
 }
 
@@ -384,18 +441,19 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgba(0, 174, 239, 0.1);
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--accent-soft);
     color: var(--accent);
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .erp-proof-item strong {
     font-family: var(--font-heading);
     font-size: 15px;
     font-weight: 600;
+    letter-spacing: -0.01em;
     color: var(--text-primary);
     line-height: 1.3;
 }
@@ -406,62 +464,92 @@
     color: var(--text-muted);
 }
 
+/* ==========================================================================
+   CARD SURFACE
+
+   One surface definition shared by every card on the page, so a change lands
+   everywhere at once. The hover is deliberately small: a 2px rise and a
+   hairline that warms toward the accent. The old page lifted every card 8px
+   and lit a coloured halo under it, which is a lot of theatre for a panel of
+   static text, and it happened identically on six different components.
+   ========================================================================== */
+.erp-surface {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 14px;
+    transition:
+        background-color var(--dur) var(--ease-inout),
+        border-color var(--dur) var(--ease-inout),
+        box-shadow var(--dur) var(--ease-inout),
+        transform var(--dur) var(--ease-out);
+}
+
+.erp-surface:hover {
+    background: var(--bg-glass-hover);
+    border-color: var(--border-glass-strong);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .erp-surface:hover {
+        transform: none;
+    }
+}
+
 /* ===== PAIN POINTS =====
    The owner's own words carry this section, so the quote is set larger than
    the answer and the answer is visually demoted to a response. */
 .erp-pains-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
+    gap: 20px;
 }
 
 .erp-pain-card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    padding: 32px 28px;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 16px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 30px 26px;
+    overflow: hidden;
 }
 
-.erp-pain-card:hover {
-    background: var(--bg-glass-hover);
-    border-color: var(--border-glass-strong);
-    transform: translateY(-6px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+/* An accent rule down the leading edge that fills in on hover. Gives the card
+   somewhere to go that is not "up and glowing". */
+.erp-pain-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.erp-pain-card:hover::before {
+    transform: scaleY(1);
 }
 
 .erp-pain-quote {
-    position: relative;
-    margin: 0 0 20px;
+    margin: 0 0 18px;
     padding: 0;
     font-family: var(--font-heading);
     font-size: 18px;
     font-weight: 600;
+    letter-spacing: -0.015em;
     line-height: 1.45;
     color: var(--text-primary);
-}
-
-.erp-pain-quote::before {
-    content: "“";
-    position: absolute;
-    top: -18px;
-    left: -6px;
-    font-size: 56px;
-    line-height: 1;
-    color: var(--accent);
-    opacity: 0.18;
-    pointer-events: none;
+    text-wrap: pretty;
 }
 
 .erp-pain-answer {
     display: flex;
-    gap: 12px;
+    gap: 11px;
     align-items: flex-start;
-    padding-top: 18px;
+    padding-top: 16px;
     border-top: 1px solid var(--border-glass);
     margin-top: auto;
 }
@@ -471,10 +559,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: rgba(0, 174, 239, 0.1);
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: var(--accent-soft);
     color: var(--accent);
     margin-top: 1px;
 }
@@ -482,57 +570,58 @@
 .erp-pain-answer p {
     margin: 0;
     font-size: 14.5px;
-    line-height: 1.65;
+    line-height: 1.6;
     color: var(--text-muted);
+    text-wrap: pretty;
 }
 
 /* ===== FEATURES ===== */
 .erp-features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
+    gap: 20px;
 }
 
 .erp-features-grid .service-card {
-    grid-column: auto;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 16px;
-    padding: 32px;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    padding: 28px 26px;
 }
-.erp-features-grid .service-card:hover {
-    background: var(--bg-glass-hover);
-    border-color: var(--border-glass-strong);
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 174, 239, 0.1);
-}
+
 .service-icon {
-    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
     color: var(--accent);
+    margin-bottom: 18px;
 }
+
 .service-title {
-    font-size: 20px;
-    margin-bottom: 12px;
-    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
 }
+
 .service-desc {
     color: var(--text-muted);
-    font-size: 15px;
+    font-size: 14.5px;
     line-height: 1.6;
+    margin: 0;
+    text-wrap: pretty;
 }
 
 /* ===== APP SHOWCASE ===== */
-/* Sits inside .section-header, which is centred and capped at 620px, so the
-   button and its caveat just need stacking and breathing room. */
+/* Sits inside .section-header, which is centred and capped, so the button and
+   its caveat just need stacking and breathing room. */
 .erp-demo-cta {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    margin-top: 28px;
+    margin-top: 26px;
 }
 
 .erp-demo-cta-note {
@@ -544,9 +633,9 @@
 .erp-showcase-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 56px;
     align-items: center;
-    margin-bottom: 100px;
+    margin-bottom: 92px;
 }
 
 .erp-showcase-row:last-child {
@@ -561,53 +650,46 @@
     direction: ltr;
 }
 
+/* Screenshots hold still. They previously rose 8px, grew a cyan halo and
+   scaled their own contents 3% on hover, all at once. */
 .erp-showcase-img-wrapper {
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
     border: 1px solid var(--border-color);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.erp-showcase-img-wrapper:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 174, 239, 0.1);
+    box-shadow: var(--shadow-md);
 }
 
 .erp-showcase-img-wrapper img {
     width: 100%;
     height: auto;
     display: block;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.erp-showcase-img-wrapper:hover img {
-    transform: scale(1.03);
 }
 
 .erp-showcase-label {
     display: inline-block;
+    font-family: var(--font-heading);
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.11em;
     color: var(--accent);
-    margin-bottom: 16px;
-    font-family: var(--font-heading);
+    margin-bottom: 14px;
 }
 
 .erp-showcase-content h3 {
-    font-size: clamp(28px, 3.5vw, 40px);
-    margin-bottom: 20px;
-    line-height: 1.2;
-    font-family: var(--font-heading);
+    font-size: clamp(26px, 3.2vw, 36px);
+    font-weight: 700;
+    margin-bottom: 18px;
+    line-height: 1.18;
+    text-wrap: balance;
 }
 
 .erp-showcase-content p {
     font-size: 16px;
     color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 24px;
+    line-height: 1.65;
+    margin-bottom: 22px;
+    text-wrap: pretty;
 }
 
 .erp-feature-list {
@@ -618,20 +700,28 @@
 
 .erp-feature-list li {
     position: relative;
-    padding-left: 28px;
-    margin-bottom: 14px;
+    padding-left: 26px;
+    margin-bottom: 12px;
     color: var(--text-muted);
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
+.erp-feature-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Same drawn tick as .erp-check, positioned against the first line of text. */
 .erp-feature-list li::before {
-    content: "✓";
+    content: "";
     position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 14px;
+    left: 2px;
+    top: 0.62em;
+    width: 10px;
+    height: 5.5px;
+    border-left: 1.7px solid var(--accent);
+    border-bottom: 1.7px solid var(--accent);
+    transform: translateY(-50%) rotate(-45deg);
 }
 
 /* ===== LOSS PREVENTION =====
@@ -641,96 +731,88 @@
 .erp-lossprev-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 56px;
     align-items: center;
 }
 
 .erp-lossprev-content h2 {
-    font-size: clamp(28px, 3.8vw, 42px);
-    line-height: 1.2;
-    margin-bottom: 20px;
-    font-family: var(--font-heading);
+    font-size: clamp(28px, 3.6vw, 40px);
+    font-weight: 700;
+    line-height: 1.16;
+    margin-bottom: 18px;
+    text-wrap: balance;
 }
 
 .erp-lossprev-content p {
     font-size: 16px;
     color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 20px;
+    line-height: 1.65;
+    margin-bottom: 18px;
+    text-wrap: pretty;
 }
 
 .erp-lossprev-content .erp-feature-list {
-    margin-top: 28px;
+    margin-top: 26px;
 }
 
 /* ===== ALTERNATIVES / POSITIONING ===== */
 .erp-alternatives-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
+    gap: 20px;
 }
 
 .erp-alternative-card {
-    padding: 36px 32px;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 16px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.erp-alternative-card:hover {
-    background: var(--bg-glass-hover);
-    border-color: var(--border-glass-strong);
-    transform: translateY(-6px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    padding: 32px 28px;
 }
 
 .erp-alternative-card h3 {
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 600;
     line-height: 1.4;
     color: var(--text-primary);
-    margin-bottom: 16px;
-    font-family: var(--font-heading);
+    margin-bottom: 14px;
+    text-wrap: pretty;
 }
 
 .erp-alternative-card p {
     margin: 0;
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.65;
     color: var(--text-muted);
+    text-wrap: pretty;
 }
 
 /* ===== ILLUSTRATIVE SCENARIOS =====
    The disclaimer is styled to be read, not skipped: it sits above the cards
-   at full width with an accent rule, and each card repeats the label. These
-   are worked examples, and the page has to say so plainly. */
+   at full width with its own tint, and each card repeats the label. These are
+   worked examples, and the page has to say so plainly. */
 .erp-scenarios-disclaimer {
     max-width: 780px;
-    margin: -32px auto 56px;
-    padding: 18px 24px;
-    background: rgba(167, 139, 250, 0.07);
-    border: 1px solid rgba(167, 139, 250, 0.22);
+    margin: -28px auto 52px;
+    padding: 16px 22px;
+    background: var(--accent-2-soft);
+    border: 1px solid var(--accent-2-line);
     border-radius: 12px;
     font-size: 14px;
-    line-height: 1.65;
+    line-height: 1.6;
     color: var(--text-muted);
     text-align: center;
+    text-wrap: pretty;
 }
 
 .erp-scenarios-disclaimer strong {
     color: var(--text-primary);
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     font-family: var(--font-heading);
+    font-weight: 600;
 }
 
 .erp-scenarios-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 28px;
+    gap: 24px;
 }
 
 /* Column layout so the closing line can be pinned to the card floor. The two
@@ -739,98 +821,94 @@
 .erp-scenario-card {
     display: flex;
     flex-direction: column;
-    padding: 40px 36px;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 20px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 36px 32px;
+    border-radius: 18px;
 }
 
+/* Static panels of long-form text. They get the hairline treatment on hover
+   and nothing else; there is nothing here to click. */
 .erp-scenario-card:hover {
-    border-color: var(--border-glass-strong);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    transform: none;
 }
 
 .erp-scenario-label {
     display: inline-block;
+    align-self: flex-start;
     font-family: var(--font-heading);
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--accent-purple);
-    background: rgba(167, 139, 250, 0.12);
-    border: 1px solid rgba(167, 139, 250, 0.28);
-    padding: 4px 12px;
+    letter-spacing: 0.11em;
+    color: var(--accent-2);
+    background: var(--accent-2-soft);
+    border: 1px solid var(--accent-2-line);
+    padding: 4px 11px;
     border-radius: 100px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
 .erp-scenario-title {
-    font-size: 23px;
-    line-height: 1.3;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.25;
     color: var(--text-primary);
-    margin-bottom: 24px;
-    font-family: var(--font-heading);
+    margin-bottom: 22px;
+    text-wrap: balance;
 }
 
 .erp-scenario-subhead {
     font-family: var(--font-heading);
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
+    letter-spacing: 0.1em;
     color: var(--accent);
-    margin: 0 0 8px;
+    margin: 0 0 7px;
 }
 
 .erp-scenario-card > p {
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.65;
     color: var(--text-muted);
-    margin: 0 0 24px;
+    margin: 0 0 22px;
+    text-wrap: pretty;
 }
 
 .erp-scenario-card .erp-feature-list {
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
 /* Has to out-specify `.erp-scenario-card > p` above, whose margin shorthand
    would otherwise reset the auto top margin back to 0 and strand this line
-   mid-card. Matching that selector's weight also removes the !important
-   pair this rule previously needed. */
+   mid-card. */
 .erp-scenario-card > .erp-scenario-bottom {
     margin: auto 0 0;
     padding-top: 20px;
     border-top: 1px solid var(--border-glass);
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.65;
     color: var(--text-primary);
     font-weight: 500;
 }
 
 /* ===== PRICING ===== */
-/* Pricing Toggle */
 .pricing-toggle-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    margin-top: 32px;
-    margin-bottom: 16px;
+    gap: 14px;
+    margin-top: 30px;
 }
 
 .toggle-label {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-muted);
-    transition: color 0.3s ease;
     display: flex;
     align-items: center;
     gap: 8px;
     font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color var(--dur) var(--ease-inout);
 }
 
 .toggle-label.active {
@@ -838,158 +916,172 @@
 }
 
 .discount-badge {
-    background: rgba(167, 139, 250, 0.15);
-    color: var(--accent-purple);
+    background: var(--accent-2-soft);
+    color: var(--accent-2);
+    border: 1px solid var(--accent-2-line);
     font-size: 11px;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 3px 9px;
     border-radius: 100px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 1px solid rgba(167, 139, 250, 0.3);
+    letter-spacing: 0.06em;
 }
 
 .erp-toggle {
     position: relative;
     display: inline-block;
-    width: 64px;
-    height: 32px;
+    width: 52px;
+    height: 30px;
+    flex-shrink: 0;
 }
 
 .erp-toggle input {
+    position: absolute;
     opacity: 0;
-    width: 0;
-    height: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
 }
 
 .erp-toggle-slider {
     position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
+    inset: 0;
+    pointer-events: none;
     background-color: var(--bg-glass);
     border: 1px solid var(--border-glass-strong);
-    transition: .4s;
-    border-radius: 34px;
+    border-radius: 100px;
+    transition: background-color var(--dur) var(--ease-inout), border-color var(--dur) var(--ease-inout);
 }
 
-.erp-toggle-slider:before {
+.erp-toggle-slider::before {
     position: absolute;
     content: "";
-    height: 24px;
-    width: 24px;
+    height: 22px;
+    width: 22px;
     left: 3px;
-    bottom: 3px;
-    background-color: var(--accent);
-    transition: .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    top: 3px;
+    background-color: var(--text-muted);
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--dur) var(--ease-out), background-color var(--dur) var(--ease-inout);
 }
 
-input:checked + .erp-toggle-slider {
-    background-color: rgba(0, 174, 239, 0.1);
-    border-color: rgba(0, 174, 239, 0.3);
+.erp-toggle input:checked + .erp-toggle-slider {
+    background-color: var(--accent-soft);
+    border-color: var(--accent-line);
 }
 
-input:checked + .erp-toggle-slider:before {
-    transform: translateX(32px);
-    background-color: var(--accent-purple);
+.erp-toggle input:checked + .erp-toggle-slider::before {
+    transform: translateX(22px);
+    background-color: var(--accent);
+}
+
+.erp-toggle input:focus-visible + .erp-toggle-slider {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 20px;
     align-items: stretch;
+    margin-top: 52px;
 }
 
 .pricing-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 20px;
-    padding: 40px 32px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 34px 28px;
+    border-radius: 18px;
 }
 
-.pricing-card:hover {
-    border-color: var(--border-glass-strong);
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-}
-
+/* The recommended tier is marked by a solid accent border and a lifted
+   resting state, not by a tinted gradient wash across the whole panel. */
 .pricing-card.popular-tier {
-    border-color: rgba(0, 174, 239, 0.35);
-    background: linear-gradient(180deg, rgba(0, 174, 239, 0.07), var(--bg-glass) 60%);
-    box-shadow: 0 16px 50px rgba(0, 174, 239, 0.12);
-}
-
-.pricing-card.popular-tier:hover {
-    box-shadow: 0 20px 60px rgba(0, 174, 239, 0.18);
+    border-color: var(--accent-line);
+    box-shadow: var(--shadow-md);
 }
 
 .popular-badge {
     position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 18px;
-    border-radius: 100px;
+    top: -12px;
+    left: 28px;
+    background: var(--accent-solid);
+    color: var(--accent-contrast);
     font-family: var(--font-heading);
-    letter-spacing: 0.5px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
     white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+    z-index: 1;
 }
 
 .tier-name {
-    font-size: 20px;
-    margin-bottom: 12px;
-    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
 }
 
 .tier-price {
-    font-size: 40px;
-    font-weight: 700;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
     font-family: var(--font-heading);
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    color: var(--text-primary);
+    /* Lining figures, so GHS 250 and GHS 2,750 keep the same digit width when
+       the toggle swaps them. */
+    font-variant-numeric: tabular-nums lining-nums;
     margin-bottom: 12px;
 }
 
 .tier-desc {
     color: var(--text-muted);
     font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 28px;
-    min-height: 42px;
+    line-height: 1.55;
+    margin-bottom: 24px;
+    min-height: 44px;
+    text-wrap: pretty;
 }
 
 .tier-features {
     list-style: none;
     padding: 0;
-    margin: 0 0 32px;
+    margin: 0 0 28px;
     flex: 1;
 }
 
 .tier-features li {
     position: relative;
-    padding-left: 26px;
-    margin-bottom: 12px;
+    padding-left: 24px;
+    margin-bottom: 11px;
     font-size: 14px;
+    line-height: 1.5;
     color: var(--text-color);
 }
 
 .tier-features li::before {
-    content: "✓";
+    content: "";
     position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 13px;
+    left: 1px;
+    top: 0.6em;
+    width: 9px;
+    height: 5px;
+    border-left: 1.7px solid var(--accent);
+    border-bottom: 1.7px solid var(--accent);
+    transform: translateY(-50%) rotate(-45deg);
 }
 
 .tier-btn {
@@ -997,51 +1089,63 @@ input:checked + .erp-toggle-slider:before {
     text-align: center;
 }
 
-/* ===== PRICING EXTRA ===== */
 .erp-price-period {
-    font-size: 16px;
-    font-weight: 400;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0;
     color: var(--text-muted);
 }
 
 .erp-pricing-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     text-align: center;
-    margin-top: 40px;
+    margin-top: 36px;
     font-size: 14px;
     color: var(--text-muted);
-    padding: 16px 24px;
-    background: rgba(0, 174, 239, 0.05);
-    border: 1px solid rgba(0, 174, 239, 0.15);
+    padding: 15px 22px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
     border-radius: 12px;
-    display: inline-block;
-    width: 100%;
+}
+
+.erp-pricing-note p {
+    margin: 0;
+}
+
+.erp-pricing-note svg {
+    flex-shrink: 0;
+    color: var(--accent);
 }
 
 /* ===== PRICING FAQ ===== */
 .erp-faq {
     max-width: 820px;
-    margin: 80px auto 0;
+    margin: 76px auto 0;
 }
 
 .erp-faq-heading {
     text-align: center;
     font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 32px;
-    font-family: var(--font-heading);
+    margin-bottom: 28px;
 }
 
 .erp-faq-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .erp-faq-item {
     background: var(--bg-glass);
     border: 1px solid var(--border-glass);
     border-radius: 12px;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    transition: border-color var(--dur) var(--ease-inout), background-color var(--dur) var(--ease-inout);
 }
 
 .erp-faq-item:hover {
@@ -1058,14 +1162,15 @@ input:checked + .erp-toggle-slider:before {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 20px 24px;
+    padding: 18px 22px;
     cursor: pointer;
     list-style: none;
     font-family: var(--font-heading);
     font-size: 16px;
     font-weight: 600;
+    letter-spacing: -0.01em;
     color: var(--text-primary);
-    transition: color 0.2s;
+    transition: color var(--dur) var(--ease-inout);
 }
 
 .erp-faq-item > summary::-webkit-details-marker {
@@ -1085,7 +1190,7 @@ input:checked + .erp-toggle-slider:before {
 .erp-faq-chevron {
     flex-shrink: 0;
     color: var(--accent);
-    transition: transform 0.3s ease;
+    transition: transform var(--dur) var(--ease-out);
 }
 
 .erp-faq-item[open] .erp-faq-chevron {
@@ -1094,15 +1199,17 @@ input:checked + .erp-toggle-slider:before {
 
 .erp-faq-item > p {
     margin: 0;
-    padding: 0 24px 22px;
+    padding: 0 22px 20px;
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.65;
     color: var(--text-muted);
+    max-width: 66ch;
+    text-wrap: pretty;
 }
 
 .erp-faq-footer {
     text-align: center;
-    margin-top: 28px;
+    margin-top: 26px;
     font-size: 14px;
     color: var(--text-muted);
 }
@@ -1112,12 +1219,13 @@ input:checked + .erp-toggle-slider:before {
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
 }
 
 /* ===== FLOATING WHATSAPP CTA =====
    WhatsApp is the primary sales channel for this market, so it gets a
    persistent affordance rather than living only at the foot of the page.
-   Bottom-right keeps it clear of the hero's bottom-left scroll indicator. */
+   Bottom-right keeps it clear of the hero's bottom-left scroll cue. */
 .erp-whatsapp-fab {
     position: fixed;
     right: 20px;
@@ -1125,25 +1233,28 @@ input:checked + .erp-toggle-slider:before {
     z-index: 999;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 13px 20px 13px 16px;
+    gap: 9px;
+    padding: 12px 19px 12px 15px;
     border-radius: 100px;
-    background: #25d366;
+    /* WhatsApp brand green, which is the point of it: the affordance has to
+       be recognisable before it is read. */
+    background: #1faa54;
     color: #ffffff;
     font-family: var(--font-body);
     font-size: 14.5px;
     font-weight: 600;
-    box-shadow: 0 6px 24px rgba(37, 211, 102, 0.35);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    box-shadow: 0 1px 2px rgba(2, 2, 10, 0.2), 0 8px 22px rgba(31, 170, 84, 0.3);
+    transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-inout), background-color var(--dur) var(--ease-inout);
 }
 
 .erp-whatsapp-fab:hover {
-    transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 10px 32px rgba(37, 211, 102, 0.45);
+    background: #1b9a4c;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(2, 2, 10, 0.2), 0 12px 30px rgba(31, 170, 84, 0.38);
 }
 
 .erp-whatsapp-fab:active {
-    transform: translateY(0) scale(0.98);
+    transform: translateY(0);
 }
 
 .erp-whatsapp-fab:focus-visible {
@@ -1172,11 +1283,11 @@ input:checked + .erp-toggle-slider:before {
 
 .timeline-line {
     position: absolute;
-    top: 28px;
+    top: 24px;
     left: 8%;
     right: 8%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-glass-strong) 20%, var(--border-glass-strong) 80%, transparent);
+    background: linear-gradient(90deg, transparent, var(--border-glass-strong) 18%, var(--border-glass-strong) 82%, transparent);
     z-index: 0;
 }
 
@@ -1192,31 +1303,35 @@ input:checked + .erp-toggle-slider:before {
 }
 
 .step-number {
-    width: 56px;
-    height: 56px;
-    line-height: 56px;
-    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 20px;
     border-radius: 50%;
     background: var(--bg-surface);
-    border: 1px solid var(--border-glass-strong);
+    border: 1px solid var(--accent-line);
     color: var(--accent);
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 20px;
+    font-size: 18px;
+    font-variant-numeric: lining-nums;
 }
 
 .step-title {
-    font-size: 19px;
-    margin-bottom: 10px;
-    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
 }
 
 .step-desc {
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 14.5px;
     line-height: 1.6;
     max-width: 280px;
     margin: 0 auto;
+    text-wrap: pretty;
 }
 
 /* ===== CONTACT SECTION ===== */
@@ -1227,85 +1342,87 @@ input:checked + .erp-toggle-slider:before {
 
 .erp-contact-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 40px;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 32px;
     align-items: start;
 }
 
 .erp-contact-form-wrapper {
-    padding: 40px;
+    padding: 34px;
     background: var(--bg-glass);
     border: 1px solid var(--border-glass);
-    border-radius: 20px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 18px;
 }
 
 .erp-contact-form-wrapper h3 {
-    font-family: var(--font-heading);
-    font-size: 22px;
+    font-size: 21px;
+    font-weight: 600;
 }
 
 .erp-form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 14px;
+    margin-bottom: 18px;
 }
 
 .erp-contact-form-wrapper .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .erp-form-row .form-group {
     margin-bottom: 0;
 }
 
+/* Sentence case at readable size. Uppercase micro-labels above every field
+   turn a six-field form into a wall of shouting. */
 .erp-contact-form-wrapper label {
     display: block;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 13.5px;
+    font-weight: 500;
     color: var(--text-muted);
     margin-bottom: 6px;
-    font-family: var(--font-heading);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .erp-contact-form-wrapper input,
 .erp-contact-form-wrapper select,
 .erp-contact-form-wrapper textarea {
     width: 100%;
-    padding: 14px 16px;
+    padding: 12px 14px;
     background: var(--bg-input);
     border: 1px solid var(--border-color);
     border-radius: 10px;
     color: var(--text-primary);
+    /* 16px so iOS Safari does not zoom the viewport on focus. */
     font-size: 16px;
     font-family: var(--font-body);
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: border-color var(--dur) var(--ease-inout), box-shadow var(--dur) var(--ease-inout), background-color var(--dur) var(--ease-inout);
     outline: none;
     -webkit-appearance: none;
     appearance: none;
 }
 
+.erp-contact-form-wrapper input:hover,
+.erp-contact-form-wrapper select:hover,
+.erp-contact-form-wrapper textarea:hover {
+    border-color: var(--border-glass-strong);
+}
+
 .erp-contact-form-wrapper select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2399a1b3' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
     padding-right: 40px;
-}
-
-[data-theme="light"] .erp-contact-form-wrapper select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2351607a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    /* currentColor inside the data URI resolves against this, so the chevron
+       tracks the theme without a second hardcoded copy of the SVG. */
+    color: var(--text-primary);
 }
 
 .erp-contact-form-wrapper input:focus,
 .erp-contact-form-wrapper select:focus,
 .erp-contact-form-wrapper textarea:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.1);
+    box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .erp-contact-form-wrapper input::placeholder,
@@ -1315,35 +1432,69 @@ input:checked + .erp-toggle-slider:before {
 
 .erp-contact-form-wrapper textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 84px;
+    line-height: 1.6;
 }
 
-/* Info Card */
+/* Info Card.
+   The form column is roughly twice as tall, so at rest this card leaves a
+   column of dead space beside it. Sticking it keeps the "book a call" and
+   WhatsApp routes in reach for the whole scroll of the form, which is exactly
+   when someone decides they would rather just talk to a person. */
+.erp-contact-info {
+    position: sticky;
+    top: calc(var(--nav-h) + 24px);
+}
+
 .erp-contact-info-card {
-    padding: 40px;
-    text-align: center;
+    padding: 32px 28px;
     background: var(--bg-glass);
     border: 1px solid var(--border-glass);
-    border-radius: 20px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 18px;
 }
 
 .erp-contact-info-card h3 {
-    font-family: var(--font-heading);
-    font-size: 20px;
+    font-size: 19px;
+    font-weight: 600;
     margin-bottom: 8px;
 }
 
+.erp-contact-info-lead {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin: 0 0 22px;
+    text-wrap: pretty;
+}
+
+.erp-contact-info-card .btn + .btn {
+    margin-top: 10px;
+}
+
+.erp-contact-info-mail {
+    color: var(--text-muted);
+    margin: 18px 0 0;
+    font-size: 14px;
+}
+
+.erp-contact-info-mail a {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 /* ==========================================================================
-   RESPONSIVE — QuadERP
+   RESPONSIVE
    ========================================================================== */
 
 @media (max-width: 1024px) {
+    .section-padding {
+        padding: 80px 0;
+    }
+
     .erp-hero {
         min-height: auto;
-        padding: 130px 0 70px;
+        padding: calc(var(--nav-h) + 56px) 0 68px;
     }
 
     .erp-hero-content {
@@ -1357,16 +1508,13 @@ input:checked + .erp-toggle-slider:before {
         position: static;
         width: auto;
         height: auto;
-        margin: 56px -12% 0 20px;
+        max-height: none;
+        margin: 52px -12% 0 20px;
     }
 
     .erp-mockup-wrapper {
-        transform: perspective(1600px) rotateY(-4deg);
-    }
-
-    /* Touch screens have no hover to return from, so hold the resting tilt. */
-    .erp-mockup-wrapper:hover {
-        transform: perspective(1600px) rotateY(-4deg);
+        max-height: none;
+        transform: perspective(1800px) rotateY(-3deg);
     }
 
     .erp-hero-scroll-indicator {
@@ -1375,8 +1523,8 @@ input:checked + .erp-toggle-slider:before {
 
     .erp-showcase-row {
         grid-template-columns: 1fr;
-        gap: 40px;
-        margin-bottom: 80px;
+        gap: 36px;
+        margin-bottom: 72px;
     }
 
     .erp-showcase-reverse {
@@ -1387,7 +1535,7 @@ input:checked + .erp-toggle-slider:before {
        that way, so the row just needs to stop being two columns. */
     .erp-lossprev-row {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 36px;
     }
 
     .erp-proof-grid {
@@ -1402,31 +1550,34 @@ input:checked + .erp-toggle-slider:before {
         padding-left: 0;
     }
 
-    .erp-showcase-content {
-        text-align: center;
-    }
-
-    .erp-feature-list {
-        text-align: left;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
     .erp-contact-grid {
         grid-template-columns: 1fr;
     }
 
+    /* Stacked, so there is nothing to stick alongside. */
+    .erp-contact-info {
+        position: static;
+    }
+
     .pricing-grid {
         grid-template-columns: 1fr;
-        max-width: 420px;
-        margin: 0 auto;
+        max-width: 460px;
+        margin-inline: auto;
     }
 }
 
 @media (max-width: 768px) {
+    .section-padding {
+        padding: 68px 0;
+    }
+
+    .section-header {
+        margin-bottom: 40px;
+    }
+
     .process-steps {
         grid-template-columns: 1fr !important;
-        gap: 48px;
+        gap: 40px;
     }
 
     .timeline-line {
@@ -1435,26 +1586,25 @@ input:checked + .erp-toggle-slider:before {
 
     .erp-proof-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 24px 20px;
+        gap: 22px 20px;
     }
 
     .erp-hero {
-        padding: 100px 0 60px;
-        min-height: auto;
+        padding: calc(var(--nav-h) + 36px) 0 56px;
     }
 
     .erp-hero-title {
-        font-size: 32px;
+        font-size: 34px;
     }
 
     .erp-hero-subtitle {
-        font-size: 16px;
+        font-size: 16.5px;
     }
 
     .erp-hero-trust {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        gap: 9px;
     }
 
     .erp-features-grid,
@@ -1465,31 +1615,33 @@ input:checked + .erp-toggle-slider:before {
     }
 
     .erp-scenario-card {
-        padding: 32px 24px;
+        padding: 28px 22px;
     }
 
     .erp-scenarios-disclaimer {
-        margin: -20px auto 40px;
+        margin: -16px auto 36px;
         padding: 16px 18px;
         text-align: left;
     }
 
     .erp-showcase-row {
-        margin-bottom: 60px;
+        margin-bottom: 52px;
     }
 
     .erp-btn-lg {
-        padding: 14px 28px;
+        padding: 14px 26px;
         font-size: 15px;
         width: 100%;
     }
 
     .erp-hero-ctas {
         flex-direction: column;
+        align-items: stretch;
     }
 
     .erp-form-row {
         grid-template-columns: 1fr;
+        gap: 18px;
     }
 
     .erp-contact-form-wrapper {
@@ -1497,48 +1649,40 @@ input:checked + .erp-toggle-slider:before {
     }
 
     .erp-faq-item > summary {
-        padding: 18px 20px;
+        padding: 16px 18px;
         font-size: 15px;
     }
 
     .erp-faq-item > p {
-        padding: 0 20px 20px;
+        padding: 0 18px 18px;
+    }
+
+    .pricing-toggle-container {
+        flex-wrap: wrap;
     }
 }
 
 @media (max-width: 480px) {
     .erp-hero-title {
-        font-size: 28px;
+        font-size: 30px;
     }
 
-    .erp-badge {
-        font-size: 12px;
-        padding: 6px 16px;
-    }
-
-    .erp-contact-form-wrapper {
-        padding: 24px 20px;
-    }
-
+    .erp-contact-form-wrapper,
     .erp-contact-info-card {
-        padding: 24px 20px;
-    }
-
-    .erp-showcase-label {
-        font-size: 11px;
+        padding: 22px 18px;
     }
 
     .erp-showcase-content h3 {
-        font-size: 1.3rem;
+        font-size: 24px;
     }
 
     .erp-showcase-content p {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .erp-proof-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 18px;
     }
 
     .erp-pain-quote {
@@ -1562,90 +1706,3 @@ input:checked + .erp-toggle-slider:before {
         display: none;
     }
 }
-
-/* ===== LIGHT MODE OVERRIDES ===== */
-
-[data-theme="light"] .erp-hero-bg {
-    background: linear-gradient(180deg, rgba(0, 144, 199, 0.06) 0%, transparent 55%);
-}
-
-[data-theme="light"] .erp-mockup-wrapper {
-    box-shadow:
-        0 30px 80px rgba(15, 23, 42, 0.12),
-        0 0 0 1px rgba(15, 23, 42, 0.08);
-}
-
-[data-theme="light"] .glow-card:hover {
-    box-shadow: 0 0 30px rgba(0, 144, 199, 0.07);
-}
-
-[data-theme="light"] .erp-features-grid .service-card:hover {
-    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1), 0 0 20px rgba(0, 144, 199, 0.07);
-}
-
-[data-theme="light"] .erp-showcase-img-wrapper {
-    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.1);
-}
-
-[data-theme="light"] .erp-showcase-img-wrapper:hover {
-    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.14), 0 0 40px rgba(0, 144, 199, 0.07);
-}
-
-[data-theme="light"] .erp-proof-check,
-[data-theme="light"] .erp-pain-arrow {
-    background: rgba(0, 144, 199, 0.1);
-}
-
-/* The dark theme's near-black drop shadows read as smudges on a light
-   ground, so every new card surface gets the slate-tinted pair instead. */
-[data-theme="light"] .erp-pain-card:hover,
-[data-theme="light"] .erp-alternative-card:hover,
-[data-theme="light"] .erp-scenario-card:hover {
-    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1), 0 0 20px rgba(0, 144, 199, 0.07);
-}
-
-[data-theme="light"] .erp-scenarios-disclaimer {
-    background: rgba(124, 92, 219, 0.06);
-    border-color: rgba(124, 92, 219, 0.2);
-}
-
-[data-theme="light"] .erp-scenario-label {
-    background: rgba(124, 92, 219, 0.1);
-    border-color: rgba(124, 92, 219, 0.25);
-}
-
-[data-theme="light"] .pricing-card:hover {
-    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1);
-}
-
-[data-theme="light"] .pricing-card.popular-tier {
-    border-color: rgba(0, 144, 199, 0.28);
-    background: linear-gradient(180deg, rgba(0, 144, 199, 0.05), var(--bg-glass) 60%);
-    box-shadow: 0 16px 50px rgba(0, 144, 199, 0.08);
-}
-
-[data-theme="light"] .pricing-card.popular-tier:hover {
-    box-shadow: 0 20px 60px rgba(0, 144, 199, 0.12);
-}
-
-[data-theme="light"] .erp-pricing-note {
-    background: rgba(0, 144, 199, 0.04);
-    border-color: rgba(0, 144, 199, 0.12);
-}
-
-[data-theme="light"] input:checked + .erp-toggle-slider {
-    background-color: rgba(0, 144, 199, 0.1);
-    border-color: rgba(0, 144, 199, 0.3);
-}
-
-[data-theme="light"] .erp-contact-form-wrapper,
-[data-theme="light"] .erp-contact-info-card {
-    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
-}
-
-[data-theme="light"] .erp-contact-form-wrapper input:focus,
-[data-theme="light"] .erp-contact-form-wrapper select:focus,
-[data-theme="light"] .erp-contact-form-wrapper textarea:focus {
-    box-shadow: 0 0 0 3px rgba(0, 144, 199, 0.15);
-}
-
