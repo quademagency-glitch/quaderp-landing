@@ -8,7 +8,7 @@ Astro static site, deployed to Vercel at https://www.quaderp.app.
 Vercel's default `public, max-age=0, must-revalidate`: the CDN cached them but
 the browser did not, so a returning visitor revalidated the whole page's assets
 on every visit. Content-hashed files under `/_astro/` and the self-hosted fonts
-get a year and `immutable` — a hashed filename cannot go stale, because a
+get a year and `immutable`, because a hashed filename cannot go stale: a
 changed file is a different URL. Unhashed files from `public/` get a day with
 `stale-while-revalidate`. HTML stays `must-revalidate` so a deploy is live
 immediately.
@@ -28,7 +28,7 @@ print(list(Draft7Validator(json.load(open('/tmp/vercel-schema.json')))
 ```
 
 Where two rules set the same header key the last match wins, so the `/(.*)`
-catch-all here only carries security headers — it must never set
+catch-all here only carries security headers. It must never set
 `Cache-Control`, or it would override every specific rule above it.
 
 The canonical host is `www`. `src/config/site.ts` holds `SITE_URL`, and

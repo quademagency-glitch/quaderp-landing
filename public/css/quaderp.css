@@ -1,5 +1,5 @@
 /* ==========================================================================
-   QuadERP Landing Page — Styles
+   QuadERP Landing Page Styles
    Builds on the tokens defined in Layout.astro. Nothing in here hardcodes a
    colour: the light theme is a token swap, not a second stylesheet of
    overrides, which is why there is no [data-theme="light"] block at the foot

@@ -1,8 +1,8 @@
 /**
  * The links that leave this site for the app.
  *
- * SIGNUP_URL used to be declared twice — once in index.astro and once in
- * Layout.astro — with nothing keeping the two in step. They happened to
+ * SIGNUP_URL used to be declared twice, once in index.astro and once in
+ * Layout.astro, with nothing keeping the two in step. They happened to
  * agree, but a wrong URL in either place is a lost signup that looks like
  * nothing is wrong, so both now import from here.
  */
@@ -37,7 +37,7 @@ export function planSlug(name: string): string {
  *
  * The API re-resolves the slug against platform_plans and falls back to
  * Single Branch if it does not recognise it, so a stale name here shows the
- * wrong label at worst — it can never attach a plan that does not exist.
+ * wrong label at worst. It can never attach a plan that does not exist.
  */
 export function signupUrl(planName?: string): string {
   return planName ? `${SIGNUP_URL}?plan=${planSlug(planName)}` : SIGNUP_URL;
@@ -47,7 +47,7 @@ export function signupUrl(planName?: string): string {
  * The origin the site is actually served from.
  *
  * Vercel 308s the apex to www, but canonical and og:url both pointed at the
- * apex — so every crawler and every social scraper was handed a URL that
+ * apex, so every crawler and every social scraper was handed a URL that
  * redirects, and the page competed with itself for its own canonical. This is
  * the one place that decides which host is authoritative.
  *

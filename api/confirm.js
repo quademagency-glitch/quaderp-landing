@@ -97,7 +97,7 @@ function buildNotification(f) {
         // Always rendered, never conditional: "they did not ask for a demo" is
         // information worth reading, and an omitted row reads as an oversight.
         row('Wants a live demo', f.wants_demo
-            ? '<strong style="color:#0090c7;">Yes — send a booking link</strong>'
+            ? '<strong style="color:#0090c7;">Yes, send a booking link</strong>'
             : '<span style="color:#94a3b8;">No</span>') +
         row('Source', escapeHtml(f.source));
 
@@ -171,7 +171,7 @@ function buildConfirmation({ firstName, plan, wantsDemo }) {
         ? `<p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#51607a;text-align:center;">You told us you're interested in the <strong style="color:#0f172a;">${safePlan}</strong> plan, so we'll tailor our follow-up around that.</p>`
         : '';
     const demoLineHtml = wantsDemo
-        ? `<p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#51607a;text-align:center;">You asked for a <strong style="color:#0f172a;">live demo</strong> — we'll bring a booking link when we reply, or you can pick a slot yourself below.</p>`
+        ? `<p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#51607a;text-align:center;">You asked for a <strong style="color:#0f172a;">live demo</strong>. We'll bring a booking link when we reply, or you can pick a slot yourself below.</p>`
         : '';
 
     const html = `<!DOCTYPE html>
@@ -211,7 +211,7 @@ function buildConfirmation({ firstName, plan, wantsDemo }) {
     const text = `Hi ${firstName},
 
 Thanks for reaching out about QuadERP. We've received your details and our team will get back to you within 24 hours.
-${plan ? `\nYou told us you're interested in the ${plan} plan, so we'll tailor our follow-up around that.\n` : ''}${wantsDemo ? `\nYou asked for a live demo — we'll bring a booking link when we reply, or you can pick a slot yourself below.\n` : ''}
+${plan ? `\nYou told us you're interested in the ${plan} plan, so we'll tailor our follow-up around that.\n` : ''}${wantsDemo ? `\nYou asked for a live demo. We'll bring a booking link when we reply, or you can pick a slot yourself below.\n` : ''}
 While you wait, you can:
 - Book a free 15-min demo call: ${CALENDLY_URL}
 - Chat with us on WhatsApp: ${WHATSAPP_URL}
@@ -276,7 +276,7 @@ export default async function handler(req, res) {
     // and leave the details in the function log for whoever set it up.
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
-        console.warn('[contact] RESEND_API_KEY not set — emails simulated.', {
+        console.warn('[contact] RESEND_API_KEY not set, emails simulated.', {
             notifyTo,
             lead: { name: f.name, business_name: f.business_name, email: f.email, wants_demo: f.wants_demo },
         });
