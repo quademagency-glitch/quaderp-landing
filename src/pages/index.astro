@@ -309,8 +309,8 @@ const featureCategories = [
 ];
 
 /* The four promises that answer "what am I risking?".
-   Every one of these was already on the page, buried in the FAQ accordion —
-   which is to say, behind a click, below the pricing table, at exactly the
+   Every one of these was already on the page, buried in the FAQ accordion.
+   That is to say behind a click, below the pricing table, at exactly the
    moment the reader has decided the price is the problem. Stating them at the
    decision point is not a new claim; it is the same claim, in time to matter. */
 const guarantees = [
@@ -625,7 +625,7 @@ const jsonLd = [
                      This is the one link on the page that opens a new tab, and
                      deliberately: a visitor poking at the demo has not decided
                      anything yet, and closing it should put them back here
-                     rather than on a blank page. Signup is the opposite — it
+                     rather than on a blank page. Signup is the opposite. It
                      is the end of the visit, so it takes over the tab. -->
                 <div class="erp-demo-cta">
                     <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill" data-track="demo_open" data-track-where="showcase">
@@ -996,7 +996,7 @@ const jsonLd = [
                             {/* Phone first, and email is no longer required.
                                 Every reply to this form goes out on WhatsApp,
                                 so the email address was a mandatory field we
-                                did not need — and typing one on a phone is the
+                                did not need, and typing one on a phone is the
                                 most expensive thing we were asking for.
                                 api/confirm.js already guards every use of it,
                                 so an empty address costs nothing downstream:
@@ -1183,7 +1183,7 @@ const jsonLd = [
             formData.set('wants_demo', wantsDemo ? 'Yes' : 'No');
             formData.set(
                 '_subject',
-                `New QuadERP Request: ${bizName}${subjectTag ? ` (${subjectTag})` : ''}${wantsDemo ? ' — wants demo' : ''}`,
+                `New QuadERP Request: ${bizName}${subjectTag ? ` (${subjectTag})` : ''}${wantsDemo ? ' (wants demo)' : ''}`,
             );
 
             try {
@@ -1236,7 +1236,7 @@ const jsonLd = [
         /* Observes the tier grid, not the whole #erp-pricing section, and at a
            threshold of 0. The section runs the grid, the guarantees, the
            comparison table and the FAQ, so on a phone it is several viewports
-           tall — a 25% threshold against it could never be satisfied, and the
+           tall. A 25% threshold against it could never be satisfied, and the
            event simply never fired. The grid is the thing whose appearance
            actually means "this person has seen the prices". */
         const pricingGrid = document.querySelector('#erp-pricing .pricing-grid');
@@ -1484,7 +1484,7 @@ const jsonLd = [
         color: var(--accent);
     }
 
-    /* "I'd like a live demo" — a real checkbox kept in the accessibility tree
+    /* "I'd like a live demo" as a real checkbox, kept in the accessibility tree
        (focusable, announced, keyboard-toggled) with the painted box drawn
        beside it, since the native control cannot be styled to match. */
     .erp-demo-toggle {
