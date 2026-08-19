@@ -42,3 +42,21 @@ export function planSlug(name: string): string {
 export function signupUrl(planName?: string): string {
   return planName ? `${SIGNUP_URL}?plan=${planSlug(planName)}` : SIGNUP_URL;
 }
+
+/**
+ * The origin the site is actually served from.
+ *
+ * Vercel 308s the apex to www, but canonical and og:url both pointed at the
+ * apex — so every crawler and every social scraper was handed a URL that
+ * redirects, and the page competed with itself for its own canonical. This is
+ * the one place that decides which host is authoritative.
+ *
+ * If you ever flip Vercel to serve the apex instead, change this and nothing
+ * else needs to move.
+ */
+export const SITE_URL = "https://www.quaderp.app";
+
+/** Absolute URL for a path, for the tags that cannot take a relative one. */
+export function absUrl(path: string): string {
+  return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}

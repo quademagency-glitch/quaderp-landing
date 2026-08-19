@@ -181,7 +181,7 @@ function buildConfirmation({ firstName, plan, wantsDemo }) {
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(15,23,42,0.06);">
         <tr><td style="background-color:#0d0a28;padding:28px 32px;text-align:center;">
-          <img src="https://quaderp.app/images/QuadERP_app_icon_1024.png" width="44" height="44" alt="QuadERP" style="display:inline-block;vertical-align:middle;border-radius:10px;">
+          <img src="https://www.quaderp.app/images/email-logo.png" width="44" height="44" alt="QuadERP" style="display:inline-block;vertical-align:middle;border-radius:10px;">
           <span style="display:inline-block;vertical-align:middle;margin-left:10px;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.02em;">Quad<span style="color:#00aeef;">ERP</span></span>
         </td></tr>
         <tr><td style="padding:40px 32px 8px 32px;">

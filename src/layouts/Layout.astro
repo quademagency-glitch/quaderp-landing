@@ -2,11 +2,21 @@
 interface Props {
 	title: string;
     description: string;
+    /* Structured data blocks. Passed in rather than hardcoded here because the
+       page owns the content the schema describes (its FAQ, its offers) and a
+       copy of it in the layout would drift the first time either changed. */
+    jsonLd?: Record<string, unknown>[];
 }
 
-const { title, description } = Astro.props;
+const { title, description, jsonLd = [] } = Astro.props;
 
-import { SIGNUP_URL } from '../config/site';
+import { SIGNUP_URL, SITE_URL, absUrl } from '../config/site';
+import { GA_ID } from '../config/analytics';
+
+/* Derived, not literal. The old tags hardcoded the apex, which 308s to www,
+   so every crawler and scraper was pointed at a redirect. */
+const canonical = new URL(Astro.url.pathname, SITE_URL).href;
+const ogImage = absUrl('/images/og-cover.jpg');
 
 const whatsappNumber = "233530890302";
 const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
@@ -22,39 +32,65 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="any" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-		<link rel="canonical" href="https://quaderp.app" />
+		<link rel="canonical" href={canonical} />
 		<meta name="generator" content={Astro.generator} />
+		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 
 		<!-- Paints the browser chrome to match whichever ground is showing. -->
 		<meta name="theme-color" content="#f7f7fb" media="(prefers-color-scheme: light)" />
 		<meta name="theme-color" content="#08071a" media="(prefers-color-scheme: dark)" />
 
-		<!-- Open Graph / Social sharing -->
+		<!-- Open Graph / Social sharing.
+		     og:image was the 1800x1125 dashboard PNG: 305KB for a card that gets
+		     rendered at 1200x630, and cropped to that aspect by every scraper.
+		     og-cover.jpg is built to the right aspect at 33KB. -->
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://quaderp.app" />
-		<meta property="og:image" content="https://quaderp.app/images/quaderp-dashboard.png" />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="The QuadERP dashboard, showing the day's sales in cedis alongside stock and theft alerts" />
+		<meta property="og:locale" content="en_GH" />
 		<meta property="og:site_name" content="QuadERP" />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content="https://quaderp.app/images/quaderp-dashboard.png" />
+		<meta name="twitter:image" content={ogImage} />
 
 		<title>{title}</title>
-        <link rel="stylesheet" href="/css/quaderp.css" />
 
-		<!-- Non-blocking Google Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-        <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet"></noscript>
+		<!-- Fonts are self-hosted.
+		     They used to come from Google, which cost two DNS lookups and two TLS
+		     handshakes to fonts.googleapis.com and fonts.gstatic.com before a
+		     single glyph could be requested. On a high-latency mobile connection,
+		     which is most of this audience, that is most of a second spent before
+		     the download starts. Served from our own origin they arrive on the
+		     connection the browser has already opened, and they can carry a
+		     year-long immutable cache header (see vercel.json).
+
+		     Latin subset only, and Inter is the variable file, so 400/500/600 are
+		     one 47KB download rather than three. -->
+		<link rel="preload" href="/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href="/fonts/poppins-latin-600.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="stylesheet" href="/css/quaderp.css" />
+
+		{jsonLd.map((schema) => (
+			<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+		))}
 
         <!-- Applied before paint to avoid a flash of the wrong theme. An
              explicit choice wins; with nothing stored we follow the OS rather
              than forcing everyone onto light. -->
         <script>
+            /* Marks the document as scripted before first paint. The scroll
+               reveals park every section below the hero at opacity: 0, and that
+               rule is now scoped to .js — so if this script never runs, or a
+               network blip costs us the page's JS, the visitor gets the whole
+               page rather than a hero above a column of blank space. */
+            document.documentElement.classList.add('js');
+
             const stored = localStorage.getItem('quaderp-theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             document.documentElement.setAttribute(
@@ -63,6 +99,46 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
             );
         </script>
         <script is:inline src="https://analytics.ahrefs.com/analytics.js" data-key="K8bWFBn6V2/49PsFCMRFcA" async></script>
+
+        <!-- Conversion tracking.
+             Ahrefs above counts visits. This counts what they did: opened the
+             demo, reached pricing, messaged us, started a trial. Without it
+             there is no way to tell which part of the page is losing people.
+
+             dataLayer is populated unconditionally, so events are being
+             recorded from the moment this ships. GA4 only loads if
+             PUBLIC_GA_ID is set, so nothing is sent anywhere until you say so. -->
+        <script is:inline define:vars={{ GA_ID }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { window.dataLayer.push(arguments); }
+            window.gtag = gtag;
+
+            window.qerpTrack = function (name, props) {
+                window.dataLayer.push(Object.assign({ event: name }, props || {}));
+            };
+
+            /* Declarative rather than a listener per button: a CTA is tracked
+               by adding data-track to it, so a new one cannot be added without
+               the tracking coming with it. Delegated, so it also covers the
+               buttons that are hidden at load (mobile drawer, success card). */
+            document.addEventListener('click', function (e) {
+                var el = e.target instanceof Element ? e.target.closest('[data-track]') : null;
+                if (!el) return;
+                window.qerpTrack(el.getAttribute('data-track'), {
+                    label: el.getAttribute('data-track-label') || undefined,
+                    location: el.getAttribute('data-track-where') || undefined,
+                });
+            });
+
+            if (GA_ID) {
+                var ga = document.createElement('script');
+                ga.async = true;
+                ga.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+                document.head.appendChild(ga);
+                gtag('js', new Date());
+                gtag('config', GA_ID);
+            }
+        </script>
 	</head>
 	<body>
         <a href="#erp-main" class="erp-skip-link">Skip to content</a>
@@ -74,11 +150,15 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                     <img src="/images/QuadERP_icon.svg" alt="" width="40" height="40" />
                     <span class="erp-logo-text">Quad<span class="erp-logo-mark">ERP</span></span>
                 </a>
+                {/* The parent-company link used to sit here, which put an
+                    exit to another site in the first thing a visitor sees. It
+                    is still in the footer, where somebody looking for who
+                    builds this will go and find it. */}
                 <nav class="erp-nav-links" aria-label="Primary">
+                    <a href="#erp-pains">Why</a>
                     <a href="#erp-features">Features</a>
-                    <a href="#erp-showcase">Platform</a>
+                    <a href="#erp-showcase">See It</a>
                     <a href="#erp-pricing">Pricing</a>
-                    <a href="https://quademdigital.com" target="_blank" rel="noopener noreferrer">By Quadem Digital</a>
                 </nav>
                 <div class="erp-nav-cta">
                     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch colour theme">
@@ -88,7 +168,7 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                     <button class="erp-hamburger" id="hamburgerBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
                         <span></span><span></span><span></span>
                     </button>
-                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill erp-nav-cta-btn">Start Free Trial</a>
+                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill erp-nav-cta-btn" data-track="trial_start" data-track-where="nav">Start Free Trial</a>
                 </div>
             </div>
         </header>
@@ -97,14 +177,14 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
         <div class="erp-mobile-nav" id="mobileNav" aria-hidden="true">
             <div class="erp-mobile-nav-inner">
                 <nav aria-label="Mobile">
+                    <a href="#erp-pains">Why</a>
                     <a href="#erp-features">Features</a>
-                    <a href="#erp-showcase">Platform</a>
+                    <a href="#erp-showcase">See It</a>
                     <a href="#erp-pricing">Pricing</a>
-                    <a href="https://quademdigital.com" target="_blank" rel="noopener noreferrer">By Quadem Digital</a>
                 </nav>
                 <div class="erp-mobile-nav-cta">
-                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill w-100">Start Free Trial</a>
-                    <a href="#erp-contact" class="btn btn-ghost btn-pill w-100 erp-mobile-nav-cta-alt">Talk to Us First</a>
+                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill w-100" data-track="trial_start" data-track-where="mobile-nav">Start Free Trial</a>
+                    <a href="#erp-contact" class="btn btn-ghost btn-pill w-100 erp-mobile-nav-cta-alt" data-track="plan_select" data-track-where="mobile-nav">Talk to Us First</a>
                 </div>
             </div>
         </div>
@@ -119,6 +199,8 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
         <a
             href={whatsappLink}
             class="erp-whatsapp-fab"
+            data-track="whatsapp_click"
+            data-track-where="fab"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat with QuadERP on WhatsApp"
@@ -245,6 +327,50 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
 </html>
 
 <style is:global>
+    /* ==========================================================================
+       SELF-HOSTED FACES
+       Latin subset only. font-display: swap so text paints in the fallback
+       immediately and reflows once the face lands, rather than holding the
+       first paint hostage to a font download.
+       ========================================================================== */
+    @font-face {
+        font-family: 'Inter';
+        /* The variable file. One download covers every weight the page asks
+           for, which is why 400/500/600 are not three separate requests. */
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+        src: url('/fonts/inter-latin-var.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+        font-family: 'Poppins';
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+        src: url('/fonts/poppins-latin-500.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+        font-family: 'Poppins';
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+        src: url('/fonts/poppins-latin-600.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+        font-family: 'Poppins';
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+        src: url('/fonts/poppins-latin-700.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
     *, *::before, *::after {
         box-sizing: border-box;
     }
