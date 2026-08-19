@@ -1,6 +1,26 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { SIGNUP_URL, DEMO_URL, signupUrl } from '../config/site';
+import { Image } from 'astro:assets';
+import { SIGNUP_URL, DEMO_URL, signupUrl, SITE_URL, absUrl } from '../config/site';
+
+/* Imported rather than referenced by path out of /public. Astro only optimises
+   what goes through the asset pipeline: these four screenshots were shipping as
+   1800px PNGs totalling 1.2MB, which on a mid-range phone on Ghanaian mobile
+   data was the whole reason the page felt heavy. Imported, each one is emitted
+   as WebP at several widths with a content hash in the filename, so the browser
+   downloads the size it actually needs and can cache it for a year. */
+import dashboardImg from '../assets/quaderp-dashboard.png';
+import alertsImg from '../assets/quaderp-alerts.png';
+import inventoryImg from '../assets/quaderp-inventory.png';
+import posImg from '../assets/quaderp-pos.png';
+
+/* The hero mockup is the LCP element on every viewport, so it gets its own
+   width ladder and an eager fetch. Everything below the fold shares the
+   narrower ladder: those never render wider than a half-container column. */
+const HERO_WIDTHS = [480, 720, 960, 1280, 1600];
+const HERO_SIZES = '(max-width: 900px) 100vw, 68vw';
+const SHOT_WIDTHS = [420, 640, 900, 1200];
+const SHOT_SIZES = '(max-width: 900px) 100vw, 46vw';
 
 const whatsappNumber = "233530890302";
 const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
@@ -288,6 +308,18 @@ const featureCategories = [
     }
 ];
 
+/* The four promises that answer "what am I risking?".
+   Every one of these was already on the page, buried in the FAQ accordion —
+   which is to say, behind a click, below the pricing table, at exactly the
+   moment the reader has decided the price is the problem. Stating them at the
+   decision point is not a new claim; it is the same claim, in time to matter. */
+const guarantees = [
+    { title: "30 days, no card", body: "Nothing to cancel and nothing to charge back. If you walk away you were never billed." },
+    { title: "Setup billed only if you stay", body: "The one-time setup fee falls due when the trial converts, not when it starts." },
+    { title: "Your data leaves with you", body: "Ask within 30 days of cancelling and we export your products, sales, customers and ledger." },
+    { title: "Support in your timezone", body: "WhatsApp us and you get a person here, usually the same day." }
+];
+
 const pricingFaqs = [
     {
         q: "Is the free trial really free?",
@@ -322,11 +354,89 @@ const pricingFaqs = [
         a: "It is twelve months for the price of eleven. Same product, one less invoice to think about during the year."
     }
 ];
+
+/* ==========================================================================
+   STRUCTURED DATA
+   The page had none. These are the three things a search engine cannot infer
+   reliably from prose: what the product is, what it costs, and what questions
+   it answers. The FAQ block is built from the same `pricingFaqs` array the
+   page renders, so the markup and the schema cannot disagree.
+   ========================================================================== */
+const jsonLd = [
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        name: "QuadERP",
+        applicationCategory: "BusinessApplication",
+        applicationSubCategory: "Point of Sale, Inventory Management, Retail ERP",
+        operatingSystem: "Web browser",
+        url: SITE_URL,
+        image: absUrl("/images/og-cover.jpg"),
+        description:
+            "Store management software for retail shops, pharmacies and multi-branch businesses in Ghana. Point of sale with Mobile Money, live stock across branches, loss prevention and receivables.",
+        inLanguage: "en-GH",
+        offers: defaultPricingPlans
+            /* Franchise is quoted by hand, and a schema Offer with no price is
+               worse than no Offer: it renders as a blank price in results. */
+            .filter((plan) => plan.selfServe)
+            .map((plan) => ({
+                "@type": "Offer",
+                name: plan.name,
+                price: plan.monthlyPrice.replace(/[^0-9.]/g, ""),
+                priceCurrency: "GHS",
+                url: signupUrl(plan.name),
+                availability: "https://schema.org/InStock",
+                description: plan.description,
+            })),
+        featureList: defaultFeatures.map((f) => f.title),
+        publisher: {
+            "@type": "Organization",
+            name: "Quadem Digital Enterprise",
+            url: "https://quademdigital.com",
+        },
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "QuadERP",
+        url: SITE_URL,
+        logo: absUrl("/images/QuadERP_icon.svg"),
+        parentOrganization: {
+            "@type": "Organization",
+            name: "Quadem Digital Enterprise",
+            url: "https://quademdigital.com",
+        },
+        areaServed: { "@type": "Country", name: "Ghana" },
+        contactPoint: {
+            "@type": "ContactPoint",
+            contactType: "sales",
+            email: "info@quaderp.app",
+            telephone: `+${whatsappNumber}`,
+            availableLanguage: "English",
+        },
+        sameAs: [
+            "https://www.instagram.com/quaderp.app/",
+            "https://x.com/QuadERPApp",
+            "https://web.facebook.com/QuadERP",
+            "https://www.linkedin.com/showcase/quaderp",
+        ],
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: pricingFaqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.q,
+            acceptedAnswer: { "@type": "Answer", text: faq.a },
+        })),
+    },
+];
 ---
 
 <Layout
     title="QuadERP | Store Management Software for Retail in Ghana"
     description="QuadERP helps Ghanaian shops track sales, manage stock across branches, catch staff theft, and know who owes them. Free for 30 days, no card needed."
+    jsonLd={jsonLd}
 >
     <!-- ===== HERO ===== -->
     <section class="erp-hero" id="erp-hero">
@@ -345,12 +455,14 @@ const pricingFaqs = [
                     See what's selling, what's in stock, and what your staff are doing across every branch, right from your phone.
                 </p>
                 <div class="erp-hero-ctas hero-reveal hero-delay-3">
-                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill erp-btn-lg">Start Your 30-Day Free Trial</a>
-                    {/* Scrolls down to the demo section rather than jumping
-                        straight into the sandbox: the owner gets to see what
-                        the screens look like before deciding to open one. The
-                        sandbox link itself lives at the end of that section. */}
-                    <a href="#erp-showcase" class="btn btn-ghost btn-pill erp-btn-lg">
+                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill erp-btn-lg" data-track="trial_start" data-track-where="hero">Start Your 30-Day Free Trial</a>
+                    {/* Opens the sandbox. It used to scroll to the showcase
+                        instead, so a button labelled "Try Live Demo" did not
+                        try the live demo: it moved you down the page to hunt
+                        for a second button that did. The screenshots are still
+                        there for anyone who scrolls; this no longer makes the
+                        people who already want the product go looking. */}
+                    <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" data-track="demo_open" data-track-where="hero" class="btn btn-ghost btn-pill erp-btn-lg">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 9px;" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.3-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14z"/></svg>
                         Try Live Demo
                     </a>
@@ -366,7 +478,17 @@ const pricingFaqs = [
         <div class="erp-hero-visual hero-reveal-x hero-delay-5">
             <div class="erp-hero-parallax" id="heroParallax">
                 <div class="erp-mockup-wrapper">
-                    <img src="/images/quaderp-dashboard.png" alt="The QuadERP dashboard showing today's sales in cedis, stock alerts and theft alerts" class="erp-mockup-img" width="1800" height="1125" fetchpriority="high" />
+                    <Image
+                        src={dashboardImg}
+                        alt="The QuadERP dashboard showing today's sales in cedis, stock alerts and theft alerts"
+                        class="erp-mockup-img"
+                        widths={HERO_WIDTHS}
+                        sizes={HERO_SIZES}
+                        format="webp"
+                        quality={72}
+                        loading="eager"
+                        fetchpriority="high"
+                    />
                 </div>
             </div>
         </div>
@@ -453,7 +575,16 @@ const pricingFaqs = [
                 </div>
                 <div class="erp-lossprev-image animate-on-scroll slide-left delay-200">
                     <div class="erp-showcase-img-wrapper">
-                        <img src="/images/quaderp-alerts.png" alt="QuadERP loss prevention alerts, each naming the staff member, the alert type and the time" width="1800" height="1041" loading="lazy" decoding="async" />
+                        <Image
+                            src={alertsImg}
+                            alt="QuadERP loss prevention alerts, each naming the staff member, the alert type and the time"
+                            widths={SHOT_WIDTHS}
+                            sizes={SHOT_SIZES}
+                            format="webp"
+                            quality={72}
+                            loading="lazy"
+                            decoding="async"
+                        />
                     </div>
                 </div>
             </div>
@@ -497,7 +628,7 @@ const pricingFaqs = [
                      rather than on a blank page. Signup is the opposite — it
                      is the end of the visit, so it takes over the tab. -->
                 <div class="erp-demo-cta">
-                    <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill">
+                    <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill" data-track="demo_open" data-track-where="showcase">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 9px;" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.3-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14z"/></svg>
                         Open the Live Demo
                     </a>
@@ -509,7 +640,16 @@ const pricingFaqs = [
             <div class="erp-showcase-row">
                 <div class="erp-showcase-image animate-on-scroll slide-right">
                     <div class="erp-showcase-img-wrapper">
-                        <img src="/images/quaderp-dashboard.png" alt="QuadERP sales dashboard showing today's takings, product count, stock alerts and recent activity" width="1800" height="1125" loading="lazy" decoding="async" />
+                        <Image
+                            src={dashboardImg}
+                            alt="QuadERP sales dashboard showing today's takings, product count, stock alerts and recent activity"
+                            widths={SHOT_WIDTHS}
+                            sizes={SHOT_SIZES}
+                            format="webp"
+                            quality={72}
+                            loading="lazy"
+                            decoding="async"
+                        />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-left delay-200">
@@ -529,7 +669,16 @@ const pricingFaqs = [
             <div class="erp-showcase-row erp-showcase-reverse">
                 <div class="erp-showcase-image animate-on-scroll slide-left">
                     <div class="erp-showcase-img-wrapper">
-                        <img src="/images/quaderp-inventory.png" alt="QuadERP inventory screen listing products with stock levels and low-stock status" width="1800" height="1091" loading="lazy" decoding="async" />
+                        <Image
+                            src={inventoryImg}
+                            alt="QuadERP inventory screen listing products with stock levels and low-stock status"
+                            widths={SHOT_WIDTHS}
+                            sizes={SHOT_SIZES}
+                            format="webp"
+                            quality={72}
+                            loading="lazy"
+                            decoding="async"
+                        />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-right delay-200">
@@ -549,7 +698,16 @@ const pricingFaqs = [
             <div class="erp-showcase-row">
                 <div class="erp-showcase-image animate-on-scroll slide-right">
                     <div class="erp-showcase-img-wrapper">
-                        <img src="/images/quaderp-pos.png" alt="The QuadERP POS terminal with a basket of goods priced in cedis and a running total" width="1800" height="814" loading="lazy" decoding="async" />
+                        <Image
+                            src={posImg}
+                            alt="The QuadERP POS terminal with a basket of goods priced in cedis and a running total"
+                            widths={SHOT_WIDTHS}
+                            sizes={SHOT_SIZES}
+                            format="webp"
+                            quality={72}
+                            loading="lazy"
+                            decoding="async"
+                        />
                     </div>
                 </div>
                 <div class="erp-showcase-content animate-on-scroll slide-left delay-200">
@@ -594,15 +752,19 @@ const pricingFaqs = [
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
                 <span class="erp-eyebrow">Worked examples</span>
-                <h2><span class="hl-soft">What This Looks Like</span> in a Real Shop</h2>
-                <p>Two worked examples on typical shop figures, so you can run the same sums on your own numbers.</p>
+                <h2><span class="hl-soft">Run the Numbers</span> on Your Own Shop</h2>
+                <p>Two worked examples on ordinary retail figures. Swap in yours and see what the same sums say.</p>
             </div>
 
+            {/* The disclosure stays: these are composites and the page has to
+                say so. What it no longer does is open by announcing that we
+                have no customers yet. "Illustrations, not customer stories"
+                discloses exactly the same thing, at the moment a reader needs
+                it, without handing them the objection first. */}
             <p class="erp-scenarios-disclaimer animate-on-scroll slide-up">
-                <strong>These are illustrations, not customer stories.</strong>
-                QuadERP is new to market and we are not going to put invented people on our website.
-                The businesses below are composites, and the figures are arithmetic on ordinary retail
-                numbers, shown so you can check the maths against your own shop.
+                <strong>Illustrations, not customer stories.</strong>
+                The shops below are composites and the figures are arithmetic on ordinary retail
+                numbers. We would rather show you the maths than put invented people on a website.
             </p>
 
             <div class="erp-scenarios-grid">
@@ -700,9 +862,15 @@ const pricingFaqs = [
                                 <li>{feature}</li>
                             ))}
                         </ul>
-                        <a href={plan.selfServe ? signupUrl(plan.name) : plan.href} class={`btn ${plan.isPopular ? 'btn-primary' : 'btn-ghost'} btn-pill tier-btn`}>{plan.buttonText}</a>
+                        <a
+                            href={plan.selfServe ? signupUrl(plan.name) : plan.href}
+                            class={`btn ${plan.isPopular ? 'btn-primary' : 'btn-ghost'} btn-pill tier-btn`}
+                            data-track={plan.selfServe ? "trial_start" : "plan_select"}
+                            data-track-label={plan.name}
+                            data-track-where="pricing"
+                        >{plan.buttonText}</a>
                         {plan.selfServe && (
-                            <a href="#erp-contact" data-plan={plan.name} class="tier-alt-link">Prefer we walk you through it first?</a>
+                            <a href="#erp-contact" data-plan={plan.name} class="tier-alt-link" data-track="plan_select" data-track-label={plan.name} data-track-where="pricing-assist">Prefer we walk you through it first?</a>
                         )}
                     </div>
                 ))}
@@ -711,6 +879,18 @@ const pricingFaqs = [
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>
                 <p>Every plan starts with the same 30-day free trial. No card, nothing to cancel.</p>
             </div>
+
+            <ul class="erp-guarantees animate-on-scroll slide-up delay-100">
+                {guarantees.map((g) => (
+                    <li class="erp-guarantee">
+                        <span class="erp-guarantee-check" aria-hidden="true">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </span>
+                        <strong>{g.title}</strong>
+                        <span>{g.body}</span>
+                    </li>
+                ))}
+            </ul>
 
             <!-- Compare Features Matrix -->
             <div class="erp-compare-features animate-on-scroll slide-up delay-200">
@@ -775,7 +955,7 @@ const pricingFaqs = [
                     ))}
                 </div>
                 <p class="erp-faq-footer">
-                    Something we haven't answered? <a href={whatsappLink} target="_blank" rel="noopener noreferrer">Ask us on WhatsApp</a>, we usually reply the same day.
+                    Something we haven't answered? <a href={whatsappLink} target="_blank" rel="noopener noreferrer" data-track="whatsapp_click" data-track-where="faq">Ask us on WhatsApp</a>, we usually reply the same day.
                 </p>
             </div>
         </div>
@@ -795,7 +975,7 @@ const pricingFaqs = [
                 <div class="erp-contact-form-wrapper animate-on-scroll slide-right">
                     <div id="erpFormView">
                         <h3 class="erp-form-title">Request a Setup</h3>
-                        <p class="erp-form-lead">Fill in your details and we'll reach out within 24 hours.</p>
+                        <p class="erp-form-lead">Four boxes and we'll reach out within 24 hours, usually on WhatsApp.</p>
 
                         <form id="erpContactForm" action="https://formspree.io/f/xgobwrdw" method="POST">
                             <input type="hidden" name="_subject" value="QuadERP Setup Request" />
@@ -805,29 +985,38 @@ const pricingFaqs = [
                             <div class="erp-form-row">
                                 <div class="form-group">
                                     <label for="erp-name">Your Name</label>
-                                    <input type="text" id="erp-name" name="name" required placeholder="e.g. Kofi Mensah" />
+                                    <input type="text" id="erp-name" name="name" required placeholder="e.g. Kofi Mensah" autocomplete="name" />
                                 </div>
                                 <div class="form-group">
                                     <label for="erp-business-name">Business / Store Name</label>
-                                    <input type="text" id="erp-business-name" name="business_name" required placeholder="e.g. Mensah Pharmacy" />
+                                    <input type="text" id="erp-business-name" name="business_name" required placeholder="e.g. Mensah Pharmacy" autocomplete="organization" />
                                 </div>
                             </div>
 
+                            {/* Phone first, and email is no longer required.
+                                Every reply to this form goes out on WhatsApp,
+                                so the email address was a mandatory field we
+                                did not need — and typing one on a phone is the
+                                most expensive thing we were asking for.
+                                api/confirm.js already guards every use of it,
+                                so an empty address costs nothing downstream:
+                                the lead notification still sends, only the
+                                customer confirmation is skipped. */}
                             <div class="erp-form-row">
-                                <div class="form-group">
-                                    <label for="erp-email">Email Address</label>
-                                    <input type="email" id="erp-email" name="email" required placeholder="you@business.com" />
-                                </div>
                                 <div class="form-group">
                                     <label for="erp-phone">Phone / WhatsApp</label>
-                                    <input type="tel" id="erp-phone" name="phone" required placeholder="e.g. 0530 890 302" />
+                                    <input type="tel" id="erp-phone" name="phone" required placeholder="e.g. 0530 890 302" autocomplete="tel" inputmode="tel" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="erp-email">Email Address <span class="form-optional">(optional)</span></label>
+                                    <input type="email" id="erp-email" name="email" placeholder="you@business.com" autocomplete="email" inputmode="email" />
                                 </div>
                             </div>
 
                             <div class="erp-form-row">
                                 <div class="form-group">
-                                    <label for="erp-business">Business Type</label>
-                                    <select id="erp-business" name="business_type" required>
+                                    <label for="erp-business">Business Type <span class="form-optional">(optional)</span></label>
+                                    <select id="erp-business" name="business_type">
                                         <option value="" disabled selected>Select business type</option>
                                         <option value="Retail Store">Retail Store</option>
                                         <option value="Supermarket">Supermarket</option>
@@ -892,11 +1081,11 @@ const pricingFaqs = [
                         <h3>We've Got Your Request!</h3>
                         <p id="erpSuccessLead">We'll reach out within 24 hours. While you wait:</p>
                         <div class="erp-success-actions">
-                            <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill w-100">
+                            <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill w-100" data-track="call_book">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                 Book a Demo Call
                             </a>
-                            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill w-100">
+                            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill w-100" data-track="whatsapp_click" data-track-where="contact">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                                 Chat on WhatsApp
                             </a>
@@ -909,11 +1098,11 @@ const pricingFaqs = [
                     <div class="erp-contact-info-card">
                         <h3>Prefer to Talk?</h3>
                         <p class="erp-contact-info-lead">Book a free 15-minute demo call. We'll walk you through QuadERP live and get you set up.</p>
-                        <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill w-100">
+                        <a href="https://calendly.com/quaderp/30min" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-pill w-100" data-track="call_book">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                             Book a Demo Call
                         </a>
-                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill w-100">
+                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill w-100" data-track="whatsapp_click" data-track-where="contact">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                             Chat on WhatsApp
                         </a>
@@ -925,6 +1114,14 @@ const pricingFaqs = [
     </section>
 
     <script>
+        import { EVENTS } from '../config/analytics';
+
+        declare global {
+            interface Window {
+                qerpTrack?: (name: string, props?: Record<string, unknown>) => void;
+            }
+        }
+
         // Hero parallax: the mockup lags the scroll slightly, so it reads as sitting
         // deeper than the copy. Purely decorative, so it stays off for reduced motion.
         const heroParallax = document.getElementById('heroParallax');
@@ -997,6 +1194,14 @@ const pricingFaqs = [
                 });
 
                 if (res.ok) {
+                    // Fired on a confirmed 2xx, not on click: a submit that
+                    // failed is not a lead, and counting it as one would make
+                    // the funnel look healthier than it is.
+                    window.qerpTrack?.(EVENTS.LEAD_SUBMIT, {
+                        label: planPick || bizType || 'unspecified',
+                        wants_demo: wantsDemo,
+                    });
+
                     const formView = document.getElementById('erpFormView');
                     const successCard = document.getElementById('erpSuccessCard');
                     const successLead = document.getElementById('erpSuccessLead');
@@ -1024,6 +1229,27 @@ const pricingFaqs = [
                 erpSubmitBtn.textContent = 'Try Again';
             }
         });
+
+        // Reaching pricing is the step that matters most in the funnel: it
+        // separates "bounced off the hero" from "read the pitch, saw the
+        // price, left anyway". Those two need completely different fixes.
+        /* Observes the tier grid, not the whole #erp-pricing section, and at a
+           threshold of 0. The section runs the grid, the guarantees, the
+           comparison table and the FAQ, so on a phone it is several viewports
+           tall — a 25% threshold against it could never be satisfied, and the
+           event simply never fired. The grid is the thing whose appearance
+           actually means "this person has seen the prices". */
+        const pricingGrid = document.querySelector('#erp-pricing .pricing-grid');
+        if (pricingGrid) {
+            const pricingSeen = new IntersectionObserver((entries) => {
+                for (const entry of entries) {
+                    if (!entry.isIntersecting) continue;
+                    window.qerpTrack?.(EVENTS.PRICING_VIEW);
+                    pricingSeen.disconnect();
+                }
+            }, { threshold: 0 });
+            pricingSeen.observe(pricingGrid);
+        }
 
         // Pricing toggle
         const pricingToggle = document.getElementById('pricing-toggle') as HTMLInputElement | null;

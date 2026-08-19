@@ -101,16 +101,21 @@
    Shorter and shallower than before (14px over 380ms, was 28px over 700ms).
    A long slow slide is legible as an effect; a short one just makes the
    section feel like it settled into place. */
-.animate-on-scroll {
+/* Scoped to .js, which Layout.astro sets before first paint.
+   Unscoped, this hid every section below the hero until IntersectionObserver
+   had run: any failure to execute the page's JS left a hero sitting above a
+   screenful of nothing, and that is also what a crawler that does not render
+   sees. The reveal is decoration, so it only applies where it can be undone. */
+.js .animate-on-scroll {
     opacity: 0;
     transition:
         opacity var(--dur-slow) var(--ease-out),
         transform var(--dur-slow) var(--ease-out);
 }
-.animate-on-scroll.slide-up { transform: translateY(14px); }
-.animate-on-scroll.slide-left { transform: translateX(14px); }
-.animate-on-scroll.slide-right { transform: translateX(-14px); }
-.animate-on-scroll.in-view { opacity: 1; transform: none; }
+.js .animate-on-scroll.slide-up { transform: translateY(14px); }
+.js .animate-on-scroll.slide-left { transform: translateX(14px); }
+.js .animate-on-scroll.slide-right { transform: translateX(-14px); }
+.js .animate-on-scroll.in-view { opacity: 1; transform: none; }
 
 /* Stagger inside a row, not a queue. 100/200/300ms meant the third card in a
    grid arrived a third of a second after the first, which is long enough to
@@ -120,7 +125,7 @@
 .delay-300 { transition-delay: 180ms; }
 
 @media (prefers-reduced-motion: reduce) {
-    .animate-on-scroll {
+    .js .animate-on-scroll {
         opacity: 1;
         transform: none;
         transition: none;
@@ -1704,5 +1709,72 @@
 
     .erp-whatsapp-fab-label {
         display: none;
+    }
+}
+
+/* ===== GUARANTEES =====
+   Sits directly under the pricing grid. This is where the reader has just seen
+   a number with a setup fee attached and is deciding whether the risk is worth
+   it, so it answers the risk rather than restating the offer. Four across on
+   desktop, stacking to two and then one, because the titles are short enough
+   to stay legible in a narrow column. */
+.erp-guarantees {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.erp-guarantee {
+    position: relative;
+    padding: 20px 20px 20px 46px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 14px;
+}
+
+.erp-guarantee-check {
+    position: absolute;
+    top: 20px;
+    left: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.erp-guarantee strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+}
+
+.erp-guarantee span {
+    display: block;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-muted);
+    text-wrap: pretty;
+}
+
+@media (max-width: 980px) {
+    .erp-guarantees {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .erp-guarantees {
+        grid-template-columns: 1fr;
     }
 }

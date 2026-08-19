@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Static rather than generated: this is a one-page site, so an integration and
+  a build step would be ceremony around a single URL. If a second page is ever
+  added, swap this for @astrojs/sitemap rather than hand-maintaining the list.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.quaderp.app/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
