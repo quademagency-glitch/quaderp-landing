@@ -1,0 +1,69 @@
+---
+/**
+ * The last thing on the page.
+ *
+ * Every route through this page used to end on the contact form: eight fields
+ * and a heading that asks you to request a setup. A reader who has scrolled
+ * past that has said no to the biggest ask on the page, and then the page
+ * simply stops. This gives them the two smallest asks instead, the ones that
+ * cost nothing and need no salesperson, on the way out.
+ *
+ * No new claims. The trial length, the card, the sandbox and the same-day
+ * WhatsApp reply are all stated elsewhere on this page already.
+ */
+import { DEMO_URL, appHref } from '../config/site';
+
+interface Props {
+    /** Built in index.astro, which already holds the number and the message. */
+    whatsappLink: string;
+    /** Astro.url.pathname from the page, so attribution records where from. */
+    lp: string;
+}
+
+const { whatsappLink, lp } = Astro.props;
+---
+
+<section class="erp-closing section-padding section-alt" id="erp-closing">
+    <div class="container">
+        <div class="section-header animate-on-scroll slide-up">
+            <span class="erp-eyebrow">Ready when you are</span>
+            <h2>Start Free, or Just Look Around First</h2>
+            <p>
+                The trial runs 30 days and takes no card. The sandbox takes no account at all.
+                Nothing to install either way: it runs in the browser, on the phones and laptops
+                your shop already has.
+            </p>
+        </div>
+
+        <div class="erp-closing-ctas animate-on-scroll slide-up delay-100">
+            <a
+                href={appHref({ cta: 'closing', lp })}
+                class="btn btn-primary btn-pill erp-btn-lg"
+                data-track="trial_start"
+                data-track-where="closing"
+            >
+                Start Your 30-Day Free Trial
+            </a>
+            <a
+                href={DEMO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-ghost btn-pill erp-btn-lg"
+                data-track="demo_open"
+                data-track-where="closing"
+            >
+                Try Live Demo
+            </a>
+        </div>
+
+        <p class="erp-closing-note animate-on-scroll slide-up delay-200">
+            Still deciding? <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-track="whatsapp_click"
+                data-track-where="closing">Ask us on WhatsApp</a
+            >, we usually reply the same day.
+        </p>
+    </div>
+</section>
