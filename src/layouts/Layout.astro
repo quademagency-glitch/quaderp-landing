@@ -10,13 +10,21 @@ interface Props {
 
 const { title, description, jsonLd = [] } = Astro.props;
 
-import { SIGNUP_URL, SITE_URL, absUrl } from '../config/site';
+import { SITE_URL, absUrl, appHref } from '../config/site';
 import { GA_ID } from '../config/analytics';
 
 /* Derived, not literal. The old tags hardcoded the apex, which 308s to www,
    so every crawler and scraper was pointed at a redirect. */
 const canonical = new URL(Astro.url.pathname, SITE_URL).href;
 const ogImage = absUrl('/images/og-cover.jpg');
+
+/* The chrome's own CTAs. Neither the navbar nor the drawer knows which tier
+   the visitor wants, so neither claims one: they carry where the click came
+   from and let the signup page ask. Attaching a plan here would have sent a
+   five-branch chain to the Single Branch card. */
+const lp = Astro.url.pathname;
+const navSignupHref = appHref({ cta: 'nav', lp });
+const drawerSignupHref = appHref({ cta: 'mobile-nav', lp });
 
 const whatsappNumber = "233530890302";
 const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
@@ -175,7 +183,7 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                     <button class="erp-hamburger" id="hamburgerBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
                         <span></span><span></span><span></span>
                     </button>
-                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill erp-nav-cta-btn" data-track="trial_start" data-track-where="nav">Start Free Trial</a>
+                    <a href={navSignupHref} class="btn btn-primary btn-pill erp-nav-cta-btn" data-track="trial_start" data-track-where="nav">Start Free Trial</a>
                 </div>
             </div>
         </header>
@@ -190,7 +198,7 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                     <a href="#erp-pricing">Pricing</a>
                 </nav>
                 <div class="erp-mobile-nav-cta">
-                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill w-100" data-track="trial_start" data-track-where="mobile-nav">Start Free Trial</a>
+                    <a href={drawerSignupHref} class="btn btn-primary btn-pill w-100" data-track="trial_start" data-track-where="mobile-nav">Start Free Trial</a>
                     <a href="#erp-contact" class="btn btn-ghost btn-pill w-100 erp-mobile-nav-cta-alt" data-track="plan_select" data-track-where="mobile-nav">Talk to Us First</a>
                 </div>
             </div>
@@ -284,6 +292,53 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
         </footer>
 
         <script>
+            /* Carry the campaign across to the app.
+
+               app.quaderp.app is a separate origin, so it shares no cookie, no
+               storage and no analytics session with this page. The href itself
+               is the only channel. Build time already put `cta` and `lp` on
+               these links; this adds the part that is only knowable at runtime.
+
+               Done on load rather than in a click handler so that a middle
+               click, a ctrl-click and "copy link address" all keep it. */
+            const CAMPAIGN_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+            const carry: Record<string, string> = {};
+
+            for (const key of CAMPAIGN_KEYS) {
+                const value = new URL(window.location.href).searchParams.get(key);
+                if (value) carry[key] = value.slice(0, 120);
+            }
+
+            /* No campaign tags, so fall back to who sent them. Hostname only:
+               a full referrer URL can carry someone's search terms or a path
+               that identifies them, and none of that belongs in our database. */
+            if (Object.keys(carry).length === 0 && document.referrer) {
+                try {
+                    const host = new URL(document.referrer).hostname;
+                    if (host && host !== window.location.hostname) {
+                        carry.ref = host.replace(/[^a-zA-Z0-9.-]/g, '').slice(0, 40);
+                    }
+                } catch {
+                    /* A referrer we cannot parse is not worth a broken page. */
+                }
+            }
+
+            if (Object.keys(carry).length > 0) {
+                /* Signup and the sandbox only. The footer's Privacy and Terms
+                   links point at the same origin and tagging those would put
+                   campaign parameters on a legal page for no reason. */
+                const selector = 'a[href^="https://app.quaderp.app/signup"], a[href^="https://app.quaderp.app/login"]';
+                document.querySelectorAll<HTMLAnchorElement>(selector).forEach((link) => {
+                    const url = new URL(link.href);
+                    for (const [key, value] of Object.entries(carry)) {
+                        /* Never overwrite: an explicit value in the markup is
+                           deliberate and outranks anything inferred here. */
+                        if (!url.searchParams.has(key)) url.searchParams.set(key, value);
+                    }
+                    link.href = url.href;
+                });
+            }
+
             // Scroll-reveal
             const observer = new IntersectionObserver((entries) => {
                 for (const entry of entries) {
