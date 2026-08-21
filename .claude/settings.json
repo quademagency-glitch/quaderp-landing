@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4321/)",
-      "Bash(node -e \"require\\('playwright'\\)\")"
+      "Bash(node -e \"require\\('playwright'\\)\")",
+      "Bash(PUBLIC_GA_ID=G-TEST12345 npx astro build)",
+      "Bash(curl -sS https://www.quaderp.app/)"
     ]
   }
 }
