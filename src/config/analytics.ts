@@ -7,9 +7,14 @@
  * "The landing page converts badly" was unfalsifiable.
  *
  * This is deliberately provider-agnostic. Every event is pushed to
- * `window.dataLayer`, which is what GA4, Google Tag Manager and most others
- * read, so wiring a provider later is a matter of setting PUBLIC_GA_ID (or
- * pasting a GTM snippet) rather than re-instrumenting the markup.
+ * `window.dataLayer` as an object, which is the shape a Google Tag Manager
+ * container reads, so pasting a GTM snippet needs no change here.
+ *
+ * GA4 is the trap, and this file used to describe it wrongly. gtag.js does
+ * not read object pushes. It only processes entries shaped like an
+ * `arguments` object, so the layout hands every event to gtag('event', ...)
+ * as well. Setting PUBLIC_GA_ID without that bridge gives you pageviews and
+ * not one of the events below, while looking configured from the dashboard.
  *
  * With no provider configured the calls are harmless: the events queue on
  * dataLayer and nothing ships them anywhere.
