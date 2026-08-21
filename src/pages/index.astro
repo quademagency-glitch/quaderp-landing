@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { SIGNUP_URL, DEMO_URL, signupUrl, SITE_URL, absUrl } from '../config/site';
+import { DEMO_URL, signupUrl, appHref, SITE_URL, absUrl } from '../config/site';
 
 /* Imported rather than referenced by path out of /public. Astro only optimises
    what goes through the asset pipeline: these four screenshots were shipping as
@@ -455,7 +455,7 @@ const jsonLd = [
                     See what's selling, what's in stock, and what your staff are doing across every branch, right from your phone.
                 </p>
                 <div class="erp-hero-ctas hero-reveal hero-delay-3">
-                    <a href={SIGNUP_URL} class="btn btn-primary btn-pill erp-btn-lg" data-track="trial_start" data-track-where="hero">Start Your 30-Day Free Trial</a>
+                    <a href={appHref({ cta: 'hero', lp: Astro.url.pathname })} class="btn btn-primary btn-pill erp-btn-lg" data-track="trial_start" data-track-where="hero">Start Your 30-Day Free Trial</a>
                     {/* Opens the sandbox. It used to scroll to the showcase
                         instead, so a button labelled "Try Live Demo" did not
                         try the live demo: it moved you down the page to hunt
@@ -863,7 +863,7 @@ const jsonLd = [
                             ))}
                         </ul>
                         <a
-                            href={plan.selfServe ? signupUrl(plan.name) : plan.href}
+                            href={plan.selfServe ? appHref({ plan: plan.name, cta: 'pricing', lp: Astro.url.pathname }) : plan.href}
                             class={`btn ${plan.isPopular ? 'btn-primary' : 'btn-ghost'} btn-pill tier-btn`}
                             data-track={plan.selfServe ? "trial_start" : "plan_select"}
                             data-track-label={plan.name}

@@ -43,6 +43,43 @@ export function signupUrl(planName?: string): string {
   return planName ? `${SIGNUP_URL}?plan=${planSlug(planName)}` : SIGNUP_URL;
 }
 
+interface AppLinkOptions {
+  /** The tier the visitor actually chose. Omit where they have not chosen. */
+  plan?: string;
+  /** Which control was clicked: nav, mobile-nav, hero, pricing, closing. */
+  cta?: string;
+  /** The page the click came from. Pass Astro.url.pathname. */
+  lp?: string;
+  /** Defaults to signup. Pass DEMO_URL to decorate a sandbox link. */
+  base?: string;
+}
+
+/**
+ * An app-bound link that says where it came from.
+ *
+ * The two sites are separate origins, so nothing is shared between them: no
+ * storage, no cookie, no analytics session. Until now the only thing that
+ * crossed was `?plan`, which meant a finished signup could never be traced
+ * to the page, the section or the campaign that produced it. Every question
+ * worth asking about this funnel ends at the domain boundary.
+ *
+ * Deliberately kept separate from signupUrl above, which feeds Offer.url in
+ * the JSON-LD. Schema URLs have to stay canonical, and a tracking parameter
+ * in structured data is both noise and a duplicate-URL signal.
+ *
+ * Campaign parameters are not added here. They are only knowable at runtime,
+ * so Layout.astro appends them on load. This half is build-time, so it
+ * survives a visitor with JavaScript off.
+ */
+export function appHref(options: AppLinkOptions = {}): string {
+  const { plan, cta, lp, base = SIGNUP_URL } = options;
+  const url = new URL(base);
+  if (plan) url.searchParams.set("plan", planSlug(plan));
+  if (cta) url.searchParams.set("cta", cta);
+  if (lp) url.searchParams.set("lp", lp);
+  return url.href;
+}
+
 /**
  * The origin the site is actually served from.
  *
