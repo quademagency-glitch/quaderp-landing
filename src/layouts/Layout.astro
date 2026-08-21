@@ -105,16 +105,23 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
              demo, reached pricing, messaged us, started a trial. Without it
              there is no way to tell which part of the page is losing people.
 
-             dataLayer is populated unconditionally, so events are being
-             recorded from the moment this ships. GA4 only loads if
-             PUBLIC_GA_ID is set, so nothing is sent anywhere until you say so. -->
+             Nothing leaves the browser until PUBLIC_GA_ID is set. Unset, the
+             events still queue on dataLayer, which is good for reading in a
+             console and nothing else. -->
         <script is:inline define:vars={{ GA_ID }}>
             window.dataLayer = window.dataLayer || [];
             function gtag() { window.dataLayer.push(arguments); }
             window.gtag = gtag;
 
             window.qerpTrack = function (name, props) {
+                /* Two shapes, and both are needed. The object push is what a
+                   GTM container reads. gtag.js does not read it: it only
+                   processes entries shaped like an `arguments` object, which
+                   is what gtag() above pushes. Without the second line a GA4
+                   property records pageviews and not one single event below,
+                   while looking from the dashboard exactly like it works. */
                 window.dataLayer.push(Object.assign({ event: name }, props || {}));
+                if (GA_ID) gtag('event', name, props || {});
             };
 
             /* Declarative rather than a listener per button: a CTA is tracked
@@ -262,6 +269,16 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                 </div>
                 <div class="erp-footer-bottom">
                     <p class="erp-footer-copyright">&copy; {new Date().getFullYear()} Quadem Digital Enterprise. All rights reserved.</p>
+                    {/* The site collects a name, a phone number and sometimes
+                        an email through the contact form, and once PUBLIC_GA_ID
+                        is set it also sets analytics cookies. Neither is
+                        defensible with no route to the policy from the page
+                        doing the collecting. Both pages already exist on the
+                        app, so this links rather than duplicates them. */}
+                    <nav class="erp-footer-legal" aria-label="Legal">
+                        <a href="https://app.quaderp.app/privacy">Privacy</a>
+                        <a href="https://app.quaderp.app/terms">Terms</a>
+                    </nav>
                 </div>
             </div>
         </footer>
@@ -982,6 +999,11 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     }
 
     .erp-footer-bottom {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 28px;
         border-top: 1px solid var(--border-glass);
         padding-top: 24px;
     }
@@ -990,6 +1012,21 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
         margin: 0;
         font-size: 13.5px;
         color: var(--text-muted);
+    }
+
+    .erp-footer-legal {
+        display: flex;
+        gap: 22px;
+    }
+
+    .erp-footer-legal a {
+        font-size: 13.5px;
+        color: var(--text-muted);
+        transition: color var(--dur) var(--ease-inout);
+    }
+
+    .erp-footer-legal a:hover {
+        color: var(--accent);
     }
 
     @media (min-width: 769px) {
