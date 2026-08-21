@@ -11,6 +11,15 @@ interface Props {
 const { title, description, jsonLd = [] } = Astro.props;
 
 import { SITE_URL, absUrl, appHref } from '../config/site';
+
+/* Imported rather than linked from public/, so Astro emits it hashed under
+   /_astro/ and vercel.json's immutable year-long rule covers it. As
+   /css/quaderp.css it was served max-age=86400, which meant a returning
+   visitor inside that day got yesterday's stylesheet against today's markup:
+   any page using a class that did not exist yet rendered unstyled until the
+   cache expired. A hashed filename cannot go stale, because changed CSS is a
+   different URL. */
+import '../styles/quaderp.css';
 import { GA_ID } from '../config/analytics';
 
 /* Derived, not literal. The old tags hardcoded the apex, which 308s to www,
@@ -82,7 +91,6 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
 		     one 47KB download rather than three. -->
 		<link rel="preload" href="/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/poppins-latin-600.woff2" as="font" type="font/woff2" crossorigin />
-		<link rel="stylesheet" href="/css/quaderp.css" />
 
 		{jsonLd.map((schema) => (
 			<script type="application/ld+json" set:html={JSON.stringify(schema)} />
