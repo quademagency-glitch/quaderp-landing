@@ -39,7 +39,7 @@ export const PAGES: Record<string, PageMeta> = {
     path: "/pos-system-ghana/",
     title: "POS System for Shops in Ghana | QuadERP",
     description:
-      "A point of sale that runs in the browser on the phone or laptop you already own. Mobile Money, cedis, and it keeps selling when the network drops. Free for 30 days.",
+      "A point of sale that runs in the browser on the phone or laptop you already own. Mobile Money, cedis, and it sells when the network drops. Free 30 days.",
     h1: "A POS System Built for How Ghanaian Shops Actually Sell",
     intro:
       "No terminal to buy, no card reader to wait for. It runs in the browser on the phone or laptop you already have, takes Mobile Money and cash, and keeps working when the network goes.",
@@ -51,7 +51,7 @@ export const PAGES: Record<string, PageMeta> = {
     path: "/inventory-management-software/",
     title: "Inventory Management Software for Small Businesses | QuadERP",
     description:
-      "Know what is in stock, in every branch, without counting. Reorder alerts, stock takes on a phone, and transfers between shops. Built for small retail businesses in Ghana.",
+      "Know what is in stock, in every branch, without counting. Reorder alerts, stock takes on a phone, and transfers between shops. For small retail in Ghana.",
     h1: "Stop Finding Out You Are Out of Stock From a Customer",
     intro:
       "Counts that match the shelf, alerts before a fast mover runs dry, and one number for stock across every branch you run.",
@@ -111,7 +111,7 @@ export const PAGES: Record<string, PageMeta> = {
     path: "/security-and-uptime/",
     title: "Security, Outages and Your Data | QuadERP",
     description:
-      "What happens when the network drops or the power goes, who can see your data, where it is kept, and how to take it with you. Written plainly, including the limits.",
+      "What happens when the network drops or the power goes, who can see your data, where it is kept, and how to take it with you. Including the limits.",
     h1: "What Happens When the Network Goes Down",
     intro:
       "Putting your till in a browser raises fair questions. Here are the answers, including the parts that are not reassuring.",
