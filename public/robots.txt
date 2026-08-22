@@ -1,4 +1,4 @@
-# QuadERP — https://www.quaderp.app
+# QuadERP, https://www.quaderp.app
 # There was no robots.txt at all before this, and no sitemap for a crawler to
 # find. Both are the cheapest possible discovery signal.
 
