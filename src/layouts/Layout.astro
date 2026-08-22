@@ -12,14 +12,26 @@ const { title, description, jsonLd = [] } = Astro.props;
 
 import { SITE_URL, absUrl, appHref } from '../config/site';
 
-/* Imported rather than linked from public/, so Astro emits it hashed under
-   /_astro/ and vercel.json's immutable year-long rule covers it. As
-   /css/quaderp.css it was served max-age=86400, which meant a returning
-   visitor inside that day got yesterday's stylesheet against today's markup:
-   any page using a class that did not exist yet rendered unstyled until the
-   cache expired. A hashed filename cannot go stale, because changed CSS is a
-   different URL. */
-import '../styles/quaderp.css';
+/* Taken as a URL rather than imported for its side effect, which matters more
+   than it looks.
+ 
+   It has to leave public/: served as /css/quaderp.css under a filename that
+   never changes and a one-day cache, a returning visitor could hold yesterday's
+   stylesheet against today's markup, and the first page to use a new class
+   would render unstyled with nothing to show why.
+ 
+   But a plain `import` folds it into the page's CSS bundle together with every
+   component's scoped styles, and that one merged file measurably costs more
+   than the two separate ones did: the browser downloads one larger stylesheet
+   instead of two in parallel, then parses and recalculates it in a single task
+   that lands after first paint. Measured on this page it was one 489ms task
+   instead of four short ones, 170ms of total blocking time against ~0, and
+   Lighthouse mobile 96 against 99.
+ 
+   `?url` emits the file as its own hashed asset under /_astro/ and hands back
+   the path, so it keeps the immutable cache and keeps loading alongside the
+   component bundle rather than inside it. */
+import quaderpCss from '../styles/quaderp.css?url';
 import { GA_ID } from '../config/analytics';
 
 /* Derived, not literal. The old tags hardcoded the apex, which 308s to www,
@@ -91,6 +103,7 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
 		     one 47KB download rather than three. -->
 		<link rel="preload" href="/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/poppins-latin-600.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="stylesheet" href={quaderpCss} />
 
 		{jsonLd.map((schema) => (
 			<script type="application/ld+json" set:html={JSON.stringify(schema)} />
