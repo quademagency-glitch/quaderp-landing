@@ -216,7 +216,13 @@ const defaultPricingPlans: PricingPlan[] = [
             "Legacy Data Migration",
             "On-site Staff Training",
             "Dedicated Account Manager",
-            "Custom SLA & 99.9% Uptime"
+            /* The uptime figure that used to sit in this bullet was not
+               measured by anything. /security-and-uptime/ now says in as
+               many words that we do not publish an uptime percentage, so
+               the site was contradicting itself on the one claim a buyer
+               would go and check. A Franchise SLA is negotiated per
+               contract, which is true and is the part worth selling. */
+            "Custom SLA, Agreed in Your Contract"
         ],
         isPopular: false, buttonText: "Talk to Sales", href: "#erp-contact",
         /* "+ Custom Quote one-time setup" reads as broken English, and the
@@ -305,7 +311,7 @@ const featureCategories = [
             { name: "Custom API Integrations", single: "No", multi: "No", franchise: "Yes" },
             { name: "Legacy Data Migration", single: "No", multi: "No", franchise: "Yes" },
             { name: "On-site Staff Training", single: "No", multi: "No", franchise: "Yes" },
-            { name: "Custom SLA (99.9% Uptime)", single: "No", multi: "No", franchise: "Yes" }
+            { name: "Custom SLA", single: "No", multi: "No", franchise: "Yes" }
         ]
     }
 ];
