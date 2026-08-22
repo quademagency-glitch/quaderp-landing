@@ -1,0 +1,93 @@
+---
+/**
+ * Links out to the other pages, with their own words as the anchor text.
+ *
+ * The site's internal link graph was a single node for its whole life: one
+ * page, whose only internal link was the logo pointing at itself. Crawlers
+ * follow links to decide what else exists and how much a page matters, and
+ * there was nothing to follow.
+ */
+import { PAGES } from '../config/pages';
+
+interface Props {
+  keys: string[];
+  heading?: string;
+}
+
+const { keys, heading = 'While you are here' } = Astro.props;
+const pages = keys.map((key) => PAGES[key]).filter(Boolean);
+---
+
+{pages.length > 0 && (
+    <nav class="erp-related" aria-label="Related pages">
+        <h2 class="erp-related-heading">{heading}</h2>
+        <ul class="erp-related-list">
+            {pages.map((page) => (
+                <li>
+                    <a href={page.path}>
+                        <span class="erp-related-title">{page.h1}</span>
+                        <span class="erp-related-desc">{page.intro}</span>
+                    </a>
+                </li>
+            ))}
+        </ul>
+    </nav>
+)}
+
+<style>
+    .erp-related {
+        margin-top: 64px;
+        padding-top: 40px;
+        border-top: 1px solid var(--border-glass);
+    }
+
+    .erp-related-heading {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 22px;
+    }
+
+    .erp-related-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+    }
+
+    .erp-related-list a {
+        display: block;
+        height: 100%;
+        padding: 18px 20px;
+        border: 1px solid var(--border-glass);
+        border-radius: 14px;
+        background: var(--bg-glass);
+        transition: border-color var(--dur) var(--ease-inout), background-color var(--dur) var(--ease-inout);
+    }
+
+    .erp-related-list a:hover {
+        border-color: var(--accent-line);
+        background: var(--bg-glass-hover);
+    }
+
+    .erp-related-title {
+        display: block;
+        font-family: var(--font-heading);
+        font-size: 15.5px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+        letter-spacing: -0.01em;
+    }
+
+    .erp-related-desc {
+        display: block;
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: var(--text-muted);
+    }
+</style>

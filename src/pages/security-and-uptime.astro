@@ -1,0 +1,124 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const faqs = [
+  {
+    q: 'Can I keep selling when the internet goes down?',
+    a: 'Yes. The cashier can take payment and the sale is held on that device until you press Sync. The limits are real and they are listed on this page: sync is manual, the queue lives on the device that took the sale, and only selling is queued.',
+  },
+  {
+    q: 'What happens when the power goes off?',
+    a: 'It runs in a browser on your own phone or laptop, so it runs on that device’s battery. We are not going to claim anything about your mains supply, and a system that told you otherwise would be lying.',
+  },
+  {
+    q: 'Can another business see my data?',
+    a: 'No. Separation is enforced in the database itself with row level security, not only in the application, so a bug in a screen cannot reach another business’s rows. Permissions are checked on the server for every request.',
+  },
+  {
+    q: 'Where is my data kept?',
+    a: 'On Supabase, in their Stockholm region. That is a fair thing to ask about and we would rather answer it than bury it. What it means in practice is that your records sit in the EU under that provider’s security posture, and that you can pull them out yourself whenever you want.',
+  },
+  {
+    q: 'What is your uptime figure?',
+    a: 'We do not publish one for the standard plans, because we do not currently measure it in a way that would make the number honest. When we do, it will be on a status page rather than in a marketing sentence.',
+  },
+];
+---
+
+<PageLayout page="security-and-uptime" faqs={faqs} faqHeading="The questions that come up before signing">
+    <p>
+        Putting your till in a browser raises fair questions, and most vendor answers to them are
+        written to reassure rather than to inform. This page is the opposite. Every claim below is
+        something the system actually does today, and where the answer is unflattering it is
+        written out rather than left off.
+    </p>
+
+    <h2>When the network drops</h2>
+    <p>
+        A cashier can keep selling. The app itself is cached on the device after the first visit,
+        your products and customers are held locally, and a sale taken with no connection is
+        stored on that device and sent when the connection returns.
+    </p>
+    <p>Now the parts most pages would leave out.</p>
+    <ul>
+        <li><strong>Sync is manual.</strong> Coming back online does not replay the queue by itself. Somebody presses Sync.</li>
+        <li><strong>The queue is on that one device.</strong> If the sale was taken on a particular phone, that phone is what holds it. A different device cannot recover it.</li>
+        <li><strong>Only selling is queued.</strong> Stock adjustments, purchase orders and the rest still need a connection.</li>
+        <li><strong>The local product list has to have been loaded once online.</strong> A brand new device that has never connected has nothing cached.</li>
+        <li><strong>Retries are capped.</strong> After five failed attempts a queued sale stops retrying and is flagged for someone to deal with, rather than silently disappearing or endlessly re-sending.</li>
+    </ul>
+    <p>
+        The honest summary is that you can keep trading through an outage, and that recovering
+        afterwards is something a person does deliberately rather than something that happens on
+        its own.
+    </p>
+
+    <h2>When the power goes</h2>
+    <p>
+        There is no server in your shop to lose. It is a browser application on your own phone or
+        laptop, so it lasts as long as that device's battery does. We are not going to imply
+        anything about your mains supply, because we have no control over it and neither does any
+        other software vendor who tells you otherwise.
+    </p>
+
+    <h2>One business cannot see another</h2>
+    <p>
+        Separation is enforced in the database with row level security, which matters because it
+        means the rule holds underneath the application rather than inside it. A mistake in a
+        screen cannot reach another business's rows, because the database itself will not return
+        them.
+    </p>
+    <p>
+        On top of that, what each staff member may do is checked on the server for every request,
+        not hidden in the interface. Hiding a button is a presentation choice. Refusing the
+        request is a control.
+    </p>
+
+    <h2>There is a record of who did what</h2>
+    <p>
+        Sensitive actions are written to an audit log, and the log strips sensitive values before
+        it stores them. This is the same machinery behind the loss-prevention side of the product:
+        a question like "who voided that sale" has an answer that does not depend on anyone's
+        memory.
+    </p>
+
+    <h2>Your data leaves with you</h2>
+    <p>
+        There is an export button in the app. It produces a zip of your business's data, it is
+        available to anyone on your team with permission to manage the business, and it is
+        rate-limited and logged like any other sensitive action. You press it yourself. You do not
+        email us and wait, and there is no retention period during which we hold your records
+        hostage while you decide.
+    </p>
+    <p>
+        It is worth asking any vendor you are considering whether they can say the same, because
+        the ones who cannot tend not to raise the subject.
+    </p>
+
+    <h2>Accounts are rate-limited</h2>
+    <p>
+        Signup and login attempts from a single address are capped per hour. It is a small thing
+        and it is the difference between someone being able to grind at your login page and not.
+    </p>
+
+    <h2>What we will not claim</h2>
+    <div class="erp-page-note">
+        <p>
+            <strong>We do not publish an uptime percentage for the standard plans.</strong> We do
+            not currently measure it in a way that would make the figure honest, and a number
+            nobody measures is decoration. When there is a status page, the number will be on it.
+        </p>
+        <p style="margin-bottom: 0;">
+            <strong>Nothing here is a security certification.</strong> These are the controls the
+            product has. They are not an audit, we have not been through one, and we are not going
+            to describe ourselves with a word that implies we have.
+        </p>
+    </div>
+
+    <h2>Still worried about something</h2>
+    <p>
+        Ask before you buy rather than after. The
+        <a href="/#erp-contact">contact section on the homepage</a> reaches a person, and the
+        answer will be the same shape as this page.
+    </p>
+</PageLayout>

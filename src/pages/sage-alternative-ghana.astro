@@ -1,0 +1,77 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const CHECKED_ON = '22 August 2026';
+
+const faqs = [
+  {
+    q: 'My accountant asked for Sage. What do I tell them?',
+    a: 'That you are running the shop on QuadERP and will export whatever they need. Their work happens in their tool, yours happens at the counter, and the export is the handover between the two.',
+  },
+  {
+    q: 'Does QuadERP produce accounts my accountant can use?',
+    a: 'It produces a profit and loss and an aged receivables list, plus a full export of the underlying records. It does not produce a trial balance or a balance sheet, so those get built from the export.',
+  },
+  {
+    q: 'Is training included?',
+    a: 'Yes. We set the system up and train whoever is going to stand behind the counter, which is normally not the owner. That is included in the setup fee, which is only charged if you stay.',
+  },
+];
+---
+
+<PageLayout page="sage-alternative-ghana" faqs={faqs} faqHeading="Questions people ask when comparing">
+    <p>
+        Sage is built for people whose job is accounts. That is a real audience and it is well
+        served. The awkward part is that in a small retail business, the person who has to use the
+        system every day is a cashier, and the person who wants to look at it in the evening is
+        the owner. Neither of them is an accountant.
+    </p>
+
+    <h2>Who is actually going to use it</h2>
+    <p>
+        This is the question that decides the purchase, and it is usually asked last. A system
+        designed around a chart of accounts assumes a user who thinks in a chart of accounts.
+        Hand that to someone serving customers at a counter and one of two things happens: they
+        do not use it, or somebody re-enters the day's takings afterwards.
+    </p>
+    <p>
+        QuadERP is designed around the counter first. Ringing up a sale is the primary action, and
+        the money follows from it rather than being typed in separately.
+    </p>
+
+    <div class="erp-compare-wrap">
+        <table class="erp-compare-table">
+            <thead>
+                <tr><th>Designed around</th><th>QuadERP</th><th>An accounts package</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>The primary user</td><td>Whoever is at the counter</td><td>Whoever keeps the books</td></tr>
+                <tr><td>The first action of the day</td><td>Sell something</td><td>Record a transaction</td></tr>
+                <tr><td>Stock on the shelf</td><td>Central</td><td>Varies, often an add-on</td></tr>
+                <tr><td>Several branches</td><td>Yes, on Multi-Branch</td><td>Varies by tier</td></tr>
+                <tr><td>Double entry and statutory reporting</td><td>No</td><td>Yes</td></tr>
+                <tr><td>Setup and staff training</td><td>We do it</td><td>Usually a reseller or consultant</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="erp-checked-on">
+        The QuadERP column is checked against what ships today. The right-hand column describes
+        accounts packages as a category, not one vendor's current tier list. Checked {CHECKED_ON}.
+    </p>
+
+    <h2>We are not asking you to sack your accountant</h2>
+    <p>
+        Keep them. What changes is what you hand over: real records with dates, staff names and
+        receipts attached, instead of a bag and a best guess. That normally makes their job
+        smaller. What QuadERP does not do on the accounts side is written out plainly on
+        <a href="/accounting-software-ghana/">the accounting page</a>, including no VAT return and
+        no filing.
+    </p>
+
+    <h2>What you get instead</h2>
+    <p>
+        A till that runs on a phone, stock that moves when you sell, alerts before you run out,
+        a record of which staff member did what, and a number for takings you can look at from
+        home. Priced in cedis, set up by us, free for thirty days.
+    </p>
+</PageLayout>

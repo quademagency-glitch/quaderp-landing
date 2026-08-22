@@ -1,0 +1,92 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const faqs = [
+  {
+    q: 'How do I get my existing stock into it?',
+    a: 'We do it as part of setup. You hand over whatever you already have, a spreadsheet, an exercise book, or the contents of the shelves, and we load it and check the counts with you before you start selling on it.',
+  },
+  {
+    q: 'Can I do a stock take on a phone?',
+    a: 'Yes. Counting is done on a phone against the list, so the person counting does not have to walk back to a computer to enter anything.',
+  },
+  {
+    q: 'Does it handle more than one branch?',
+    a: 'Yes, on the Multi-Branch plan. Each location has its own stock, you can transfer between them, and the owner sees one number across all of them.',
+  },
+  {
+    q: 'Will it tell me what to reorder?',
+    a: 'It flags products that have fallen below the level you set for them. It does not place the order for you, and it does not guess your supplier lead times.',
+  },
+  {
+    q: 'What about items with serial numbers?',
+    a: 'Individual items can be tracked by serial or pack code, which is what you want for phones, appliances and anything else where the specific unit matters for a warranty or a return.',
+  },
+];
+---
+
+<PageLayout page="inventory-management-software" faqs={faqs} faqHeading="Questions people ask about stock">
+    <p>
+        Most shops do not lose money on stock in one dramatic event. They lose it in small,
+        boring, repeated ways: a fast mover that runs out on a Friday, a slow mover that ties up
+        cash on a shelf for eight months, and a count in a book that stopped matching the shelf
+        some time last year and nobody knows when.
+    </p>
+
+    <h2>The count matches the shelf, because selling updates it</h2>
+    <p>
+        Stock moves when a sale is rung up, not when someone remembers to write it down. That one
+        change removes the whole category of problem where the sales record and the stock record
+        are two documents that have to be reconciled by hand and quietly never are.
+    </p>
+
+    <h2>Alerts before you run out, not after</h2>
+    <p>
+        Set a level per product and the system flags it when it drops below. The point is not the
+        alert, it is the timing: knowing on Tuesday that you will be out by Friday is a purchase
+        order, and knowing on Friday is a customer walking to the shop down the road.
+    </p>
+    <p>
+        It will not place the order for you and it does not guess your supplier's lead time. It
+        tells you what is running down. The decision stays yours.
+    </p>
+
+    <h2>Stock takes on a phone, against the list</h2>
+    <p>
+        Counting is done on a phone, walking the shelves, against the list the system holds. The
+        variance comes out at the end: what you should have, what you actually have, and the gap.
+        The gap is the number worth looking at, and most owners have never had it in a form they
+        could look at.
+    </p>
+
+    <h2>More than one shop, one number</h2>
+    <p>
+        Each branch has its own stock. You can transfer between them, and the transfer is a record
+        rather than a phone call. The owner sees the total across every location without asking
+        two managers and adding it up.
+    </p>
+    <p>
+        This is what the Multi-Branch plan is for, and it is the point at which most shops stop
+        being able to run on a book at all.
+    </p>
+
+    <h2>Serial and pack codes for the things that need them</h2>
+    <p>
+        Phones, appliances and anything under warranty can be tracked as individual units rather
+        than as a quantity. When a customer comes back in eight months holding a receipt, the
+        specific unit is findable.
+    </p>
+
+    <h2>Where the shrinkage shows up</h2>
+    <p>
+        Stock that leaves without a sale behind it is the hardest thing to see in a paper system,
+        because the paper only records what someone chose to write down. When every movement has a
+        staff member and a timestamp against it, the pattern becomes visible without anyone having
+        to accuse anybody of anything.
+    </p>
+    <p>
+        That side of it is on the homepage under
+        <a href="/#erp-lossprev">loss prevention</a>, and it pairs with
+        <a href="/pos-system-ghana/">the POS</a>, since a sale is where most stock movement starts.
+    </p>
+</PageLayout>

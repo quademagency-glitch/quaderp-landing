@@ -1,0 +1,247 @@
+---
+/**
+ * The shell every page that is not the homepage uses.
+ *
+ * Wraps Layout rather than replacing it, so the nav, the footer, the fonts,
+ * the theme script and the conversion tracking are all the same code. What
+ * this adds is the part that has to be per page and has to be consistent:
+ * title, description, the breadcrumb, and the FAQ schema.
+ *
+ * The no-drift property from index.astro, generalised. index.astro builds its
+ * FAQPage schema from the same `pricingFaqs` array it renders, so the two can
+ * never disagree. Here the caller passes one `faqs` array; this file renders
+ * it and serialises it, and there is no second copy to forget.
+ */
+import Layout from './Layout.astro';
+import FaqList from '../components/FaqList.astro';
+import RelatedPages from '../components/RelatedPages.astro';
+import { PAGES } from '../config/pages';
+import { SITE_URL, absUrl, appHref, DEMO_URL } from '../config/site';
+import type { Faq } from '../components/FaqList.astro';
+
+interface Props {
+  /** Key into PAGES. Everything the head needs comes from there, so a page
+      cannot have a title here and a different one in the footer or sitemap. */
+  page: string;
+  faqs?: Faq[];
+  faqHeading?: string;
+}
+
+const { page, faqs = [], faqHeading = 'Questions people ask' } = Astro.props;
+const meta = PAGES[page];
+
+if (!meta) {
+  /* Fails the build rather than shipping a page with an empty title. A page
+     missing from PAGES is also missing from the sitemap and the footer, so
+     this is the moment to notice. */
+  throw new Error(`PageLayout: "${page}" is not in src/config/pages.ts`);
+}
+
+const jsonLd: Record<string, unknown>[] = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "QuadERP", item: SITE_URL + "/" },
+      { "@type": "ListItem", position: 2, name: meta.nav, item: absUrl(meta.path) },
+    ],
+  },
+];
+
+if (faqs.length > 0) {
+  jsonLd.push({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: { "@type": "Answer", text: faq.a },
+    })),
+  });
+}
+
+const trialHref = appHref({ cta: 'page-hero', lp: meta.path });
+const closingHref = appHref({ cta: 'page-closing', lp: meta.path });
+---
+
+<Layout title={meta.title} description={meta.description} jsonLd={jsonLd}>
+    <article class="erp-page">
+        <header class="erp-page-header">
+            <div class="container">
+                <p class="erp-eyebrow">
+                    <a href="/">QuadERP</a> <span aria-hidden="true">/</span> {meta.nav}
+                </p>
+                <h1 class="erp-page-title">{meta.h1}</h1>
+                <p class="erp-page-intro">{meta.intro}</p>
+                <div class="erp-page-ctas">
+                    <a href={trialHref} class="btn btn-primary btn-pill" data-track="trial_start" data-track-where="page-hero">Start your 30-day free trial</a>
+                    <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill" data-track="demo_open" data-track-where="page-hero">Open the live demo</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="container erp-page-body">
+            <slot />
+
+            {faqs.length > 0 && <FaqList faqs={faqs} heading={faqHeading} />}
+
+            <section class="erp-page-closing">
+                <h2>See it against your own stock</h2>
+                <p>
+                    Thirty days, no card. We set it up and train whoever stands behind the counter,
+                    and you pay nothing until you decide to stay.
+                </p>
+                <div class="erp-page-ctas">
+                    <a href={closingHref} class="btn btn-primary btn-pill" data-track="trial_start" data-track-where="page-closing">Start free</a>
+                    <a href="/#erp-contact" class="btn btn-ghost btn-pill">Rather talk to a person</a>
+                </div>
+            </section>
+
+            <RelatedPages keys={meta.related} />
+        </div>
+    </article>
+</Layout>
+
+<style is:global>
+    .erp-page-header {
+        padding: calc(var(--nav-h) + 56px) 0 40px;
+        border-bottom: 1px solid var(--border-glass);
+        background: var(--bg-glass);
+    }
+
+    .erp-page-header .erp-eyebrow a:hover {
+        color: var(--accent);
+    }
+
+    .erp-page-title {
+        font-size: clamp(30px, 5vw, 46px);
+        line-height: 1.12;
+        margin: 10px 0 16px;
+        max-width: 20ch;
+    }
+
+    .erp-page-intro {
+        font-size: clamp(16px, 2.2vw, 18.5px);
+        line-height: 1.6;
+        color: var(--text-muted);
+        max-width: 56ch;
+        margin: 0 0 28px;
+    }
+
+    .erp-page-ctas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .erp-page-body {
+        padding: 56px 20px 80px;
+        max-width: 760px;
+    }
+
+    /* Long-form prose lives only on these pages, so the rhythm is set here
+       rather than in the global sheet the homepage also loads. */
+    .erp-page-body h2 {
+        font-size: clamp(22px, 3.4vw, 28px);
+        margin: 48px 0 14px;
+        line-height: 1.25;
+    }
+
+    .erp-page-body h3 {
+        font-size: 18px;
+        margin: 32px 0 10px;
+    }
+
+    .erp-page-body p,
+    .erp-page-body li {
+        font-size: 16.5px;
+        line-height: 1.7;
+        color: var(--text-color);
+    }
+
+    .erp-page-body p {
+        margin: 0 0 18px;
+    }
+
+    .erp-page-body ul {
+        margin: 0 0 20px;
+        padding-left: 22px;
+    }
+
+    .erp-page-body li {
+        margin-bottom: 9px;
+    }
+
+    .erp-page-body a:not(.btn) {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .erp-page-body strong {
+        color: var(--text-primary);
+    }
+
+    /* A claim we cannot stand behind gets said out loud rather than left out,
+       which is the same rule the homepage's scenarios block follows. */
+    .erp-page-note {
+        margin: 28px 0;
+        padding: 18px 20px;
+        border: 1px solid var(--border-glass);
+        border-left: 3px solid var(--accent-line);
+        border-radius: 12px;
+        background: var(--bg-glass);
+        font-size: 15px;
+        color: var(--text-muted);
+    }
+
+    .erp-page-note strong {
+        color: var(--text-primary);
+    }
+
+    .erp-page-closing {
+        margin-top: 64px;
+        padding: 32px;
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        background: var(--bg-glass);
+    }
+
+    .erp-page-closing h2 {
+        margin-top: 0;
+    }
+
+    .erp-compare-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 8px;
+        font-size: 15.5px;
+    }
+
+    .erp-compare-table th,
+    .erp-compare-table td {
+        text-align: left;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border-glass);
+        vertical-align: top;
+    }
+
+    .erp-compare-table th {
+        font-family: var(--font-heading);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+
+    .erp-compare-wrap {
+        overflow-x: auto;
+        margin: 0 0 10px;
+    }
+
+    .erp-checked-on {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin: 0 0 24px;
+    }
+</style>
