@@ -1,0 +1,64 @@
+---
+/**
+ * The FAQ accordion, lifted out of index.astro so the new pages get the same
+ * one rather than a second copy that drifts.
+ *
+ * The markup is deliberately unchanged from the version that shipped on the
+ * homepage, including the class names, because the styling for it lives in
+ * quaderp.css and a rename here would silently unstyle it.
+ *
+ * The array passed in is the same array the caller hands to PageLayout for
+ * the FAQPage schema. One source, rendered once and serialised once, so the
+ * answer Google shows cannot disagree with the answer on the page.
+ */
+export interface Faq {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  faqs: Faq[];
+  heading?: string;
+  /* The homepage's FAQ sits inside a section that already has an h2, so its
+     heading is an h3 and has to stay one. Sub-pages have no such parent and
+     want an h2. Passing the level keeps one component honest on both rather
+     than forcing a heading-order break on whichever page loses the argument. */
+  headingLevel?: 2 | 3;
+}
+
+const { faqs, heading, headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+---
+
+<div class="erp-faq animate-on-scroll slide-up delay-200">
+    {heading && <Heading class="erp-faq-heading">{heading}</Heading>}
+    <div class="erp-faq-list">
+        {faqs.map((faq) => (
+            <details class="erp-faq-item">
+                <summary>
+                    <span>{faq.q}</span>
+                    <svg class="erp-faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </summary>
+                <p>{faq.a}</p>
+            </details>
+        ))}
+    </div>
+    <slot name="footer" />
+</div>
+
+<script>
+    /* One answer open at a time, so the list stays scannable rather than
+       turning into a wall of text. Scoped by querying inside this component's
+       own list, so two FaqLists on one page would not fight each other. */
+    document.querySelectorAll<HTMLElement>('.erp-faq-list').forEach((list) => {
+        const items = list.querySelectorAll<HTMLDetailsElement>('.erp-faq-item');
+        items.forEach((item) => {
+            item.addEventListener('toggle', () => {
+                if (!item.open) return;
+                items.forEach((other) => {
+                    if (other !== item) other.open = false;
+                });
+            });
+        });
+    });
+</script>

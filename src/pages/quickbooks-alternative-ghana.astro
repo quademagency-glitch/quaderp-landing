@@ -1,0 +1,86 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const CHECKED_ON = '22 August 2026';
+
+const faqs = [
+  {
+    q: 'Is QuadERP an accounting package?',
+    a: 'Not in the sense QuickBooks is. It keeps the day to day money in order, invoices, debts, expenses and a profit and loss, but it is not double entry and it does not file anything. The accounting page sets out exactly where that line sits.',
+  },
+  {
+    q: 'Can I use both?',
+    a: 'Plenty of businesses do. Run the shop on QuadERP, export, and let your accountant work in whatever they prefer. The export is self-serve.',
+  },
+  {
+    q: 'When is QuickBooks the better answer?',
+    a: 'When the accounting itself is the job. If you need full double entry, statutory reporting and a package your accountant already knows inside out, buy the accounting package. We would rather say that than sell you the wrong thing.',
+  },
+];
+---
+
+<PageLayout page="quickbooks-alternative-ghana" faqs={faqs} faqHeading="Questions people ask when comparing">
+    <p>
+        This comes up often enough to be worth a straight answer. QuickBooks is accounting
+        software and it is good at being accounting software. The question is whether accounting
+        software is what a shop with a counter, shelves and staff actually needs to buy first.
+    </p>
+
+    <h2>They solve different halves of the same business</h2>
+    <p>
+        An accounting package starts from transactions that have already happened. A retail
+        system starts at the counter, where the transaction is created, and works outward into
+        stock, staff and the money. If you only have the first, somebody has to feed it, and that
+        somebody is usually you, in the evening.
+    </p>
+
+    <div class="erp-compare-wrap">
+        <table class="erp-compare-table">
+            <thead>
+                <tr><th>What you need</th><th>QuadERP</th><th>An accounting package</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Ring up a sale at the counter</td><td>Yes, that is the starting point</td><td>Not what it is for</td></tr>
+                <tr><td>Stock levels that move when you sell</td><td>Yes</td><td>Not what it is for</td></tr>
+                <tr><td>Which staff member sold what</td><td>Yes</td><td>Not what it is for</td></tr>
+                <tr><td>Several branches in one view</td><td>Yes, on Multi-Branch</td><td>Varies by product and tier</td></tr>
+                <tr><td>Invoices and who owes you</td><td>Yes</td><td>Yes</td></tr>
+                <tr><td>Full double entry and a balance sheet</td><td>No</td><td>Yes</td></tr>
+                <tr><td>Statutory filing</td><td>No</td><td>Yes, that is the point of it</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="erp-checked-on">
+        The QuadERP column is checked against what ships today. The right-hand column is
+        deliberately generic, because accounting products differ by tier and we are not going to
+        quote someone else's feature list back at you from memory. Checked {CHECKED_ON}.
+    </p>
+
+    <h2>Where we would tell you to buy QuickBooks instead</h2>
+    <p>
+        If the accounting is the job, buy the accounting package. If you need a trial balance, a
+        balance sheet, full double entry or statutory filing, QuadERP does not do those and is
+        not pretending to. That is written out on
+        <a href="/accounting-software-ghana/">the accounting page</a> in more detail than most
+        vendors would put on their own site.
+    </p>
+
+    <h2>What we do that an accounts package does not</h2>
+    <p>
+        The shop floor. Selling on a phone or a laptop with no terminal to buy, Mobile Money as a
+        first-class payment method, stock that moves as you sell, reorder alerts, transfers
+        between branches, and a record of which staff member did what. Prices in cedis, and we
+        set it up and train your staff rather than emailing you a login.
+    </p>
+    <p>
+        The detail is on <a href="/pos-system-ghana/">the POS page</a> and
+        <a href="/inventory-management-software/">the inventory page</a>.
+    </p>
+
+    <h2>Using both</h2>
+    <p>
+        This is the common ending. Run the shop on QuadERP, export whenever your accountant asks,
+        and let them work in the tool they already know. The export is a button you press
+        yourself, not a request you send us.
+    </p>
+</PageLayout>

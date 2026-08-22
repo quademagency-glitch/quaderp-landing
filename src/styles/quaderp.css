@@ -1795,3 +1795,18 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Links out of a homepage section into the page that covers it properly.
+   The site had no internal links at all for its whole life, so a crawler
+   arriving at / found one node and left. */
+.erp-section-links {
+    margin-top: 14px;
+    font-size: 15px;
+    color: var(--text-muted);
+}
+
+.erp-section-links a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}

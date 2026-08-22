@@ -1,0 +1,94 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const faqs = [
+  {
+    q: 'Do I need to buy a POS machine?',
+    a: 'No. It runs in a browser, so the phone in your pocket or the laptop on the counter is the terminal. If you already have a receipt printer or a barcode scanner they will usually work, and if you do not, you can start without either.',
+  },
+  {
+    q: 'Is this the same as the POS machine my bank gave me?',
+    a: 'No, and the two do different jobs. A bank POS terminal takes a card payment and settles it to your account. This records the sale: what left the shelf, at what price, by which staff member, and what that does to your stock and your takings. Most shops that use both keep both.',
+  },
+  {
+    q: 'Can it take Mobile Money?',
+    a: 'Yes. A sale can be recorded as Mobile Money, cash, or card, and the takings report separates them so you can reconcile at the end of the day.',
+  },
+  {
+    q: 'What happens if the internet goes off in the middle of a sale?',
+    a: 'The cashier can keep selling. The sale is held on that device and goes up when you press Sync. There are limits worth knowing about, and they are written out in full on the security and uptime page.',
+  },
+  {
+    q: 'How many people can sell at once?',
+    a: 'Single Branch covers one location with up to three tills. Multi-Branch covers up to five locations with no limit on tills. Above that we quote it.',
+  },
+];
+---
+
+<PageLayout page="pos-system-ghana" faqs={faqs} faqHeading="Questions people ask about the POS">
+    <p>
+        Most POS software sold in Ghana was designed somewhere else and priced somewhere else.
+        You get a monthly fee in dollars, a card reader that assumes every customer taps, and a
+        support line that opens when your shop is closing. Then the network drops and the whole
+        thing stops.
+    </p>
+
+    <h2>It runs on what you already own</h2>
+    <p>
+        There is no terminal to buy and nothing to install. Open the browser on a phone, a tablet
+        or the laptop on the counter and you are at the till. That matters more than it sounds:
+        the usual reason a shop puts off changing systems is the hardware bill at the front, and
+        here there is not one.
+    </p>
+    <p>
+        If you already have a thermal receipt printer or a barcode scanner, they generally work.
+        If you do not, you can run the whole thing off a phone and print nothing.
+    </p>
+
+    <h2>Mobile Money is a payment method, not an afterthought</h2>
+    <p>
+        A sale can be recorded as Mobile Money, cash or card, and the day's takings separate them
+        so the reconciliation at closing is a comparison rather than a puzzle. Prices are in cedis
+        because the shop is in Ghana, not converted from a dollar list at whatever rate applied
+        the day the page was built.
+    </p>
+
+    <h2>The till tells you what the shelf is doing</h2>
+    <p>
+        Every sale moves stock. That is the entire point of putting the two in one system: you
+        stop reconciling a sales app against a stock book, because there is nothing to reconcile.
+        Sell the last four of something and the reorder alert fires the same moment, not at the
+        end of the week when someone gets round to counting.
+    </p>
+    <p>
+        More on that on the <a href="/inventory-management-software/">inventory side of it</a>.
+    </p>
+
+    <h2>It keeps selling when the network does not</h2>
+    <p>
+        Connectivity in Ghana is good until it is not, usually at the worst time. When the
+        connection drops mid-trade the cashier can keep taking payment. The sale is held on that
+        device and syncs when you press Sync.
+    </p>
+    <div class="erp-page-note">
+        <strong>The limits, so they are not a surprise.</strong> Sync is manual, not automatic.
+        The queue lives on the device that took the sale, so a different phone cannot recover it.
+        Only selling is queued, so stock adjustments and purchase orders still need a connection.
+        The whole of it is written out on <a href="/security-and-uptime/">security and uptime</a>.
+    </div>
+
+    <h2>You can see who sold what</h2>
+    <p>
+        Every sale carries the staff member who rang it up. So can every discount, every void and
+        every refund. Shop owners rarely ask for this in those words. What they say is that the
+        takings do not match what went out of the door, and this is the part of the system that
+        answers it.
+    </p>
+
+    <h2>What it costs</h2>
+    <p>
+        GHS 250 a month for one branch, GHS 600 for up to five, with a one-time setup fee charged
+        only if you stay past the free trial. Thirty days free, no card. The full table and what
+        the setup fee buys are on the <a href="/#erp-pricing">pricing section of the homepage</a>.
+    </p>
+</PageLayout>

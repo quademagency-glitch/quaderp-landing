@@ -1,0 +1,82 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const CHECKED_ON = '22 August 2026';
+
+const faqs = [
+  {
+    q: 'Is Odoo bad software?',
+    a: 'No. It is capable software aimed at a different buyer. The difference is what it costs in time and expertise to get from signing up to a working shop, and who does that work.',
+  },
+  {
+    q: 'How long does QuadERP take to set up?',
+    a: 'We do the setup, including loading your stock, and shops are normally selling on it inside the same week. The setup fee is only charged if you stay past the free trial.',
+  },
+  {
+    q: 'What if I outgrow QuadERP?',
+    a: 'Then you export your data and move. That is a real answer rather than a polite one: the export is self-serve and it is your data. A system you cannot leave is a worse purchase than one you can.',
+  },
+];
+---
+
+<PageLayout page="odoo-alternative-ghana" faqs={faqs} faqHeading="Questions people ask when comparing">
+    <p>
+        Odoo is a large, modular business system that can be configured into almost anything,
+        including a very good retail setup. That flexibility is genuine and it is also the whole
+        trade-off, because someone has to do the configuring and that someone is not usually the
+        person who owns the shop.
+    </p>
+
+    <h2>The question is not features, it is who does the work</h2>
+    <p>
+        A modular system asks you to decide which modules, how they connect, what your workflow
+        is, and then to keep those decisions maintained. Businesses that run Odoo well normally
+        have an implementation partner and a budget for one. If you have that, it is a serious
+        option and we are not going to pretend otherwise.
+    </p>
+    <p>
+        QuadERP has made those decisions already, for one kind of business: a retail shop in
+        Ghana with a counter, stock and staff. Fewer choices, and none of them yours to make.
+    </p>
+
+    <div class="erp-compare-wrap">
+        <table class="erp-compare-table">
+            <thead>
+                <tr><th></th><th>QuadERP</th><th>A modular ERP</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Shape</td><td>One system, retail, opinionated</td><td>Modules you assemble</td></tr>
+                <tr><td>Who sets it up</td><td>We do, including your stock</td><td>You, or a partner you pay</td></tr>
+                <tr><td>Time to selling</td><td>Normally within the week</td><td>Depends entirely on scope</td></tr>
+                <tr><td>Fits an unusual process</td><td>Only if retail-shaped</td><td>Yes, that is its strength</td></tr>
+                <tr><td>Manufacturing, projects, HR depth</td><td>No</td><td>Yes</td></tr>
+                <tr><td>Priced in</td><td>Cedis</td><td>Varies</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="erp-checked-on">
+        The QuadERP column is checked against what ships today. The right-hand column describes
+        modular ERP as a category rather than one vendor's current price list. Checked {CHECKED_ON}.
+    </p>
+
+    <h2>Where Odoo is the better buy</h2>
+    <p>
+        If you manufacture, run projects, need deep HR, or have a process that is genuinely unlike
+        anyone else's, you want something you can shape. QuadERP will feel narrow, because it is.
+        It does retail.
+    </p>
+
+    <h2>Where this is the better buy</h2>
+    <p>
+        If you sell things over a counter in one or several shops and what you actually want is to
+        stop losing stock and start seeing your numbers, the narrowness is the feature. There is
+        nothing to configure, we load your stock, and your staff are trained on it before you are
+        asked for money.
+    </p>
+    <p>
+        See <a href="/pos-system-ghana/">the POS</a>,
+        <a href="/inventory-management-software/">stock</a>, and
+        <a href="/accounting-software-ghana/">the money side</a>, including what the money side
+        does not do.
+    </p>
+</PageLayout>

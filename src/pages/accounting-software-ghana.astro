@@ -1,0 +1,104 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const faqs = [
+  {
+    q: 'Does this file my VAT return?',
+    a: 'No. You can set a tax rate that applies on sales, and the figures are all exportable, but QuadERP does not prepare or submit a VAT return and does not file anything with the GRA. If you need statutory filing, your accountant or a dedicated filing tool still does that part.',
+  },
+  {
+    q: 'Can it replace my accountant?',
+    a: 'No, and it is not trying to. It keeps the day to day in order so that the person doing your books starts from real records instead of a carrier bag of receipts. That usually makes them cheaper, not unnecessary.',
+  },
+  {
+    q: 'What reports does it actually produce?',
+    a: 'A profit and loss, and an aged list of who owes you. Not a trial balance and not a balance sheet. If your accountant needs those, they build them from the export.',
+  },
+  {
+    q: 'Can I get my data out?',
+    a: 'Yes, yourself, without asking us. There is an export button that produces a zip of your business data, and it is available to anyone on your team with permission to manage the business.',
+  },
+  {
+    q: 'Does it handle expenses my staff pay for?',
+    a: 'Yes. Staff record an expense with a receipt photo, and it waits for approval before it counts against the books. The approval step is the point: it is where most of the discipline comes from.',
+  },
+];
+---
+
+<PageLayout page="accounting-software-ghana" faqs={faqs} faqHeading="Questions people ask about the money side">
+    <p>
+        Most retail businesses in Ghana run two systems that do not speak: something for selling,
+        and a book, a spreadsheet or an accountant for the money. The gap between them is where
+        the month goes. Sales are in one place, expenses in a drawer, debts in somebody's head,
+        and profit is a number you arrive at afterwards by subtraction and hope.
+    </p>
+
+    <h2>What it does</h2>
+    <h3>Invoices, and chasing what they turn into</h3>
+    <p>
+        Raise an invoice, send it, and it becomes a debt the system tracks rather than a piece of
+        paper you have to remember. The aged list shows who owes you and for how long, which is
+        the difference between chasing the oldest debt and chasing whoever you happened to think
+        of this morning.
+    </p>
+
+    <h3>Expenses, with an approval step</h3>
+    <p>
+        Staff record an expense with a photo of the receipt. It waits for approval before it
+        counts. That single gate is where most of the control comes from, and it is the thing a
+        shoebox of receipts can never do.
+    </p>
+
+    <h3>What you owe, and the cash drawer</h3>
+    <p>
+        Supplier balances sit alongside customer ones, so both directions are visible. The till
+        account tracks the cash that is actually in the drawer against what the sales say should
+        be there.
+    </p>
+
+    <h3>A profit and loss you can read</h3>
+    <p>
+        Revenue, cost of what you sold, and what is left, without exporting anything into a
+        spreadsheet first. It reads off the same sales your
+        <a href="/pos-system-ghana/">POS</a> already recorded, so it is not a second set of
+        numbers to keep in step.
+    </p>
+
+    <h2>What it does not do, before you buy it</h2>
+    <div class="erp-page-note">
+        <p>
+            <strong>It does not file anything.</strong> You can set a tax rate that applies on
+            sales, but there is no VAT return, no GRA submission and no statutory filing of any
+            kind. Anyone telling you a shop system handles your filing is selling you something.
+        </p>
+        <p>
+            <strong>It is not double entry.</strong> There is no trial balance and no balance
+            sheet. The reports are a profit and loss and an aged receivables list. If your
+            accountant needs the full set, they build it from the export.
+        </p>
+        <p style="margin-bottom: 0;">
+            <strong>It does not replace your accountant.</strong> It gives them clean records to
+            start from, which normally reduces their bill rather than their job.
+        </p>
+    </div>
+    <p>
+        We would rather you read that before signing up than discover it in month two. If the
+        filing side is what you actually need, a dedicated accounting package is the right
+        purchase and we will say so.
+    </p>
+
+    <h2>Your data leaves with you</h2>
+    <p>
+        There is an export button. It produces a zip of your business's data and you press it
+        yourself, without emailing us and waiting. It is worth checking that any system you are
+        considering can say the same, because the ones that cannot tend not to mention it.
+    </p>
+
+    <h2>How this compares to the accounting packages</h2>
+    <p>
+        If you are weighing this against a dedicated accounts product, the honest comparisons are
+        here: <a href="/quickbooks-alternative-ghana/">QuickBooks</a>,
+        <a href="/sage-alternative-ghana/">Sage</a> and
+        <a href="/odoo-alternative-ghana/">Odoo</a>.
+    </p>
+</PageLayout>
