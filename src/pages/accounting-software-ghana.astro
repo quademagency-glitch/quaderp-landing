@@ -4,7 +4,7 @@ import PageLayout from '../layouts/PageLayout.astro';
 const faqs = [
   {
     q: 'Does this file my VAT return?',
-    a: 'No. You can set a tax rate that applies on sales, and the figures are all exportable, but QuadERP does not prepare or submit a VAT return and does not file anything with the GRA. If you need statutory filing, your accountant or a dedicated filing tool still does that part.',
+    a: 'No, and it does not work the VAT out either. There is a tax rate field in settings, but nothing applies it: every sale is recorded with no tax on it. The sales figures are all exportable, so your accountant or a dedicated filing tool can work from them, but QuadERP does not prepare or submit a return and does not file anything with the GRA.',
   },
   {
     q: 'Can it replace my accountant?',
@@ -67,9 +67,10 @@ const faqs = [
     <h2>What it does not do, before you buy it</h2>
     <div class="erp-page-note">
         <p>
-            <strong>It does not file anything.</strong> You can set a tax rate that applies on
-            sales, but there is no VAT return, no GRA submission and no statutory filing of any
-            kind. Anyone telling you a shop system handles your filing is selling you something.
+            <strong>It does not do VAT.</strong> There is a tax rate field in settings, but
+            nothing applies it to a sale today, so sales are recorded with no tax line. There is no
+            VAT return, no GRA submission and no statutory filing of any kind. Anyone telling you a
+            shop system handles your filing is selling you something.
         </p>
         <p>
             <strong>It is not double entry.</strong> There is no trial balance and no balance
