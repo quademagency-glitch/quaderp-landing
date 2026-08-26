@@ -1601,10 +1601,14 @@ const jsonLd = [
         color: var(--negative);
     }
 
+    /* --text-muted, not --text-placeholder. The placeholder token is 0.3 alpha
+       by design, for grey text sitting inside an empty input. Used on a visible
+       part of a label it failed WCAG AA contrast on all four fields, which
+       Lighthouse scored as the homepage's only accessibility fault. */
     .form-optional {
         font-size: 12px;
         font-weight: 400;
-        color: var(--text-placeholder);
+        color: var(--text-muted);
     }
 
     /* Success card */
