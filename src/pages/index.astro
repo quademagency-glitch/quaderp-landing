@@ -360,6 +360,24 @@ const pricingFaqs = [
     {
         q: "Is paying yearly worth it?",
         a: "It is twelve months for the price of eleven. Same product, one less invoice to think about during the year."
+    },
+    {
+        /* The competitor a shop owner in Accra actually weighs us against is
+           not QuickBooks, it is a local POS sold as a one-time lifetime
+           licence you host yourself. That pitch is aimed squarely at the
+           monthly fee, and until now the site had no answer to it anywhere:
+           "one-time" appeared six times on this page and every one of them
+           was about the setup fee.
+
+           Conceding that buying once can be cheaper is not a weakness here.
+           It is true for a shop that has someone technical, and a reader who
+           has already been told the honest version of Mobile Money and the
+           accounting scope will notice if this is the one answer that
+           oversells. Backups are deliberately not in this list: the backup
+           script in the server repo is started by launchd on a particular
+           machine, not by anything we could point at from a sales page. */
+        q: "Why a monthly fee instead of buying it once?",
+        a: "The fee is not for the software so much as for keeping it running: the hosting, the updates, and a person on WhatsApp in your own timezone who usually answers the same day. Software you buy once and host yourself can genuinely come out cheaper, and if you have someone who can keep a server running and restore it when it falls over, it may be the better buy. Most shops do not have that person, and the cost of not having them shows up as a day of not selling rather than as a line on an invoice. What we will not do is make leaving hard: thirty days free with no card, and your products, sales, customers and ledger exported to you if you go."
     }
 ];
 
