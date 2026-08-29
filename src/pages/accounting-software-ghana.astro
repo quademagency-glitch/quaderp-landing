@@ -4,7 +4,11 @@ import PageLayout from '../layouts/PageLayout.astro';
 const faqs = [
   {
     q: 'Does this file my VAT return?',
-    a: 'No, and it does not work the VAT out either. There is a tax rate field in settings, but nothing applies it: every sale is recorded with no tax on it. The sales figures are all exportable, so your accountant or a dedicated filing tool can work from them, but QuadERP does not prepare or submit a return and does not file anything with the GRA.',
+    a: 'No. It works the tax out on a sale, it does not file anything. Turn tax on in settings and every sale carries the rate, the label and the amount, priced inclusive by default because that is how shelves are marked here. What it will not do is prepare a return, submit one, or talk to the GRA. The figures export, so your accountant or a dedicated filing tool works from them.',
+  },
+  {
+    q: 'What about GRA e-invoicing? A competitor says they do it.',
+    a: 'We do not, and for most shops it does not apply. E-VAT invoicing is a requirement for VAT-registered businesses, and since the VAT Act 2025 took effect in January 2026 a supplier of goods registers only above GHS 750,000 of taxable supplies a year, up from GHS 200,000. Service providers register at any turnover. So check which side of that line you are on: below it and selling goods, this is not something you need. Above it, you need e-invoicing and we do not have it yet. Please take that as a statement of what we do rather than tax advice, and confirm your own position with your accountant or the GRA.',
   },
   {
     q: 'Can it replace my accountant?',
@@ -67,9 +71,11 @@ const faqs = [
     <h2>What it does not do, before you buy it</h2>
     <div class="erp-page-note">
         <p>
-            <strong>It does not do VAT.</strong> There is a tax rate field in settings, but
-            nothing applies it to a sale today, so sales are recorded with no tax line. There is no
-            VAT return, no GRA submission and no statutory filing of any kind. Anyone telling you a
+            <strong>It does not file VAT, and it does not do GRA e-invoicing.</strong> It does
+            now calculate tax: switch it on in settings and every sale carries the rate, the label
+            and the amount, inclusive of the marked price by default. That is the arithmetic and
+            the receipt. It is not a return, not a submission, and not the GRA's e-VAT clearance,
+            which is a separate requirement for VAT-registered businesses. Anyone telling you a
             shop system handles your filing is selling you something.
         </p>
         <p>
