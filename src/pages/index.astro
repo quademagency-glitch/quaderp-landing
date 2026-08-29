@@ -205,6 +205,8 @@ const defaultPricingPlans: PricingPlan[] = [
         monthlyPrice: "GHS 250", monthlyPeriod: "/mo",
         yearlyPrice: "GHS 2,750", yearlyPeriod: "/yr",
         setupFee: "GHS 1,000",
+        setupLabel: "No setup fee",
+        setupNote: "Set it up yourself at no charge, or we load your products, prices and opening stock and train your staff for GHS 1,000.",
         description: "One shop, run properly. Know what sold, what is left, and what your staff did with it.",
         features: [
             "1 Store Location",
@@ -224,6 +226,8 @@ const defaultPricingPlans: PricingPlan[] = [
         monthlyPrice: "GHS 600", monthlyPeriod: "/mo",
         yearlyPrice: "GHS 6,600", yearlyPeriod: "/yr",
         setupFee: "GHS 2,500",
+        setupLabel: "No setup fee",
+        setupNote: "Set it up yourself at no charge, or we load every branch, migrate your stock and train your staff for GHS 2,500.",
         description: "For when “how is the other shop doing?” has become a daily question. Every branch on one screen.",
         features: [
             "Up to 5 Store Locations",
@@ -269,7 +273,10 @@ const featureCategories = [
         name: "Platform Basics",
         features: [
             { name: "Max Store Locations", single: "1 Location", multi: "Up to 5 Locations", franchise: "Unlimited Locations" },
-            { name: "Setup Fee", single: "GHS 1,000", multi: "GHS 2,500", franchise: "Custom Quote" },
+            /* Setup stopped being compulsory. Doing it yourself is free on
+                every self-serve tier, so this row is what the optional
+                service costs, not a barrier to entry. */
+            { name: "Guided setup, if you want it", single: "GHS 1,000", multi: "GHS 2,500", franchise: "Quoted" },
             { name: "Support Level", single: "Standard Support", multi: "Priority Support", franchise: "Dedicated Account Mgr" }
         ]
     },
@@ -354,7 +361,7 @@ const featureCategories = [
    decision point is not a new claim; it is the same claim, in time to matter. */
 const guarantees = [
     { title: "30 days, no card", body: "Nothing to cancel and nothing to charge back. If you walk away you were never billed." },
-    { title: "Setup billed only if you stay", body: "The one-time setup fee falls due when the trial converts, not when it starts." },
+    { title: "No setup fee to start", body: "Set the system up yourself and pay nothing but the monthly fee. Guided setup is there if you want it." },
     { title: "Your data leaves with you", body: "Ask within 30 days of cancelling and we export your products, sales, customers and ledger." },
     { title: "Support in your timezone", body: "WhatsApp us and you get a person here, usually the same day." }
 ];
@@ -365,8 +372,8 @@ const pricingFaqs = [
         a: "Yes. Thirty days, no card at signup, and nothing to cancel if you decide to walk away. We would rather you test it in your own shop than take our word for it."
     },
     {
-        q: "What does the setup fee actually pay for?",
-        a: "Our team loading your products, prices and opening stock, setting up your branches, and training your staff so they can work the till on day one. It is a one-time charge, and it only falls due when you move onto a paid plan after the trial."
+        q: "Do I have to pay a setup fee?",
+        a: "No. Set it up yourself and you pay the monthly fee and nothing else. If you would rather not spend the evenings on it, guided setup is our team loading your products, prices and opening stock, setting up your branches, and training your staff so they can work the till on day one. That is GHS 1,000 on Single Branch and GHS 2,500 on Multi-Branch, it is optional, and it is charged once."
     },
     {
         q: "Do I need to buy a POS machine or any special hardware?",
@@ -374,7 +381,7 @@ const pricingFaqs = [
     },
     {
         q: "Can I start on Single Branch and move up later?",
-        a: "Yes. When you open a second shop we move you to Multi-Branch. You pay the difference in the monthly fee, plus a one-time top-up on setup, which is the difference between the two setup fees. So GHS 1,500 on top of the GHS 1,000 you already paid, not a fresh GHS 2,500."
+        a: "Yes. When you open a second shop we move you to Multi-Branch and you pay the difference in the monthly fee. Nothing else changes. If you took guided setup on Single Branch and want us to do the new branches too, that is the difference between the two setup prices rather than a fresh charge, so GHS 1,500 on top of the GHS 1,000 you already paid."
     },
     {
         q: "What happens to my data if I stop paying?",
@@ -896,7 +903,7 @@ const jsonLd = [
             <div class="section-header animate-on-scroll slide-up">
                 <span class="erp-eyebrow">Pricing</span>
                 <h2>Try It Free. Pay When It's Working.</h2>
-                <p>Thirty days on us, no card required. Setup is a one-time charge that only falls due when you decide to stay.</p>
+                <p>Thirty days on us, no card required. No setup fee unless you ask us to do the setup for you.</p>
 
                 <div class="pricing-toggle-container">
                     <span class="toggle-label active" id="label-monthly">Monthly</span>
