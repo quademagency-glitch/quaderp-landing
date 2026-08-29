@@ -114,7 +114,24 @@ const alternatives = [
     },
     {
         heading: "“What about the big foreign systems?”",
-        body: "Square, Vend and Lightspeed are good software built for other markets. They do not take Mobile Money, they do not price in cedis by default, they do not plug into Arkesel or Paystack, and their support desk is asleep while your shop is open."
+        /* This used to read "they do not take Mobile Money", which implied we
+           do. We do not. A sale carries payment_method cash, card or mobile,
+           so MoMo is recorded against the sale and the customer still pays on
+           your own MoMo number, which is exactly what the pricing FAQ says a
+           few sections down. Two parts of one page cannot disagree about the
+           single feature this market cares most about.
+
+           It also claimed they "do not plug into Arkesel or Paystack".
+           Arkesel is fair, it sends the customer SMS. Paystack was not: it
+           appears only in subscriptions.js, where it collects our own
+           subscription fee from the shop. It is not something the shop can
+           take payments with, so listing it as a feature they lack was
+           selling a thing that does not exist.
+
+           Rewritten as what QuadERP does rather than what they lack, which is
+           the rule the comparison pages already follow, and every clause is
+           checkable in the codebase. */
+        body: "Square, Vend and Lightspeed are good software built for other markets. QuadERP carries Mobile Money as a tender at the till, so the day's takings split by cash, card and MoMo when you cash up. It prices in cedis, sends customer SMS through Arkesel rather than a foreign gateway, and answers on WhatsApp while your shop is still open."
     }
 ];
 
