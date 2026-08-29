@@ -208,13 +208,16 @@ const defaultPricingPlans: PricingPlan[] = [
         setupLabel: "No setup fee",
         setupNote: "Set it up yourself at no charge, or we load your products, prices and opening stock and train your staff for GHS 1,000.",
         description: "One shop, run properly. Know what sold, what is left, and what your staff did with it.",
+        /* The price is set by how many shops you run, not by which features
+           you are allowed. So this list says "everything", because that is
+           what the software does: nothing in it checks a plan before letting
+           a business use a feature. */
         features: [
-            "1 Store Location",
-            "Up to 3 POS Terminals",
-            "Real-time Inventory Tracking",
+            "1 Shop",
+            "Every feature, nothing held back",
             "Theft & Shrinkage Alerts",
+            "Loyalty, Gift Cards & SMS Campaigns",
             "Accounting, Invoicing & Receivables",
-            "Sales Dashboard & Top Sellers",
             "Standard Support"
         ],
         /* `selfServe` drives the signup link: the href is built from the tier
@@ -231,11 +234,11 @@ const defaultPricingPlans: PricingPlan[] = [
         setupNote: "Set it up yourself at no charge, or we load every branch, migrate your stock and train your staff for GHS 2,500.",
         description: "For when “how is the other shop doing?” has become a daily question. Every branch on one screen.",
         features: [
-            "Up to 5 Store Locations",
-            "Unlimited POS Terminals",
-            "Theft & Shrinkage Alerts Across Every Branch",
-            "Cross-Branch Stock Transfers",
-            "Loyalty, Gift Cards & SMS Campaigns",
+            "Up to 5 Shops",
+            "Every feature, nothing held back",
+            "Stock Transfers Between Shops",
+            "One View Across Every Shop",
+            "Theft & Shrinkage Alerts Per Shop",
             "Priority Support"
         ],
         isPopular: true, buttonText: "Start Free Trial", selfServe: true
@@ -273,7 +276,22 @@ const featureCategories = [
     {
         name: "Platform Basics",
         features: [
-            { name: "Max Store Locations", single: "1 Location", multi: "Up to 5 Locations", franchise: "Unlimited Locations" },
+            /* The whole table below follows one rule, because it is the rule
+                the business actually prices on: you pay for the number of
+                shops you run, not for a list of features somebody unlocked.
+
+                It used to claim nine feature gates. None of them existed. There
+                is no billing_plan check anywhere in routes or services, and
+                loyalty.js, smsService.js, auditLogs.js, the permissionCheck
+                middleware and the analytics performance reports all run for
+                any business on any plan. A Single Branch customer has been
+                getting every one of those since launch while this table told
+                them they were not.
+
+                Rows that still differ are the shop count, the human services,
+                and the handful of things that only mean anything once you have
+                a second shop. */
+            { name: "Shops included", single: "1", multi: "Up to 5", franchise: "Unlimited" },
             /* Setup stopped being compulsory. Doing it yourself is free on
                 every self-serve tier, so this row is what the optional
                 service costs, not a barrier to entry. */
@@ -284,7 +302,11 @@ const featureCategories = [
     {
         name: "Point of Sale (POS)",
         features: [
-            { name: "Max POS Terminals", single: "Up to 3", multi: "Unlimited", franchise: "Unlimited" },
+            /* There is no device registration in the product. Nothing counts
+                or limits tills, so "up to 3" was a number we could not have
+                enforced if we wanted to. Under a per-shop price it should not
+                be a difference anyway. */
+            { name: "Tills per shop", single: "Unlimited", multi: "Unlimited", franchise: "Unlimited" },
             { name: "Touch-Optimized Register", single: "Yes", multi: "Yes", franchise: "Yes" },
             { name: "Multi-Payment (Cash/Card/Momo)", single: "Yes", multi: "Yes", franchise: "Yes" },
             { name: "Returns & Refunds", single: "Yes", multi: "Yes", franchise: "Yes" },
@@ -297,8 +319,10 @@ const featureCategories = [
             { name: "Real-time Stock Sync", single: "Yes", multi: "Yes", franchise: "Yes" },
             { name: "Low Stock Alerts", single: "Yes", multi: "Yes", franchise: "Yes" },
             { name: "Stock Adjustments & Reconciliation", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Multi-Store Stock Transfers", single: "No", multi: "Yes", franchise: "Yes" },
-            { name: "Centralized Warehouse Routing", single: "No", multi: "Yes", franchise: "Yes" }
+            /* Not withheld from Single Branch. They need a second shop to
+                move stock to. */
+            { name: "Stock transfers between shops", single: "Needs 2+ shops", multi: "Yes", franchise: "Yes" },
+            { name: "Central warehouse routing", single: "Needs 2+ shops", multi: "Yes", franchise: "Yes" }
         ]
     },
     {
@@ -322,9 +346,9 @@ const featureCategories = [
                 If gating this to Multi-Branch is the intention, the engine
                 needs the check first and this row can go back afterwards.
                 Until then the page describes the product that ships. */
-            { name: "Theft and Shrinkage Alerts", single: "Yes", multi: "Every branch", franchise: "Every branch" },
-            { name: "Employee Performance Tracking", single: "No", multi: "Yes", franchise: "Yes" },
-            { name: "Cross-Location Comparison", single: "No", multi: "Yes", franchise: "Yes" }
+            { name: "Theft and shrinkage alerts", single: "Yes", multi: "Every shop", franchise: "Every shop" },
+            { name: "Employee performance tracking", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Shop against shop comparison", single: "Needs 2+ shops", multi: "Yes", franchise: "Yes" }
         ]
     },
     {
@@ -340,8 +364,8 @@ const featureCategories = [
         name: "CRM & Customer Loyalty",
         features: [
             { name: "Customer Profiles & History", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Loyalty Points & Rewards", single: "No", multi: "Yes", franchise: "Yes" },
-            { name: "Marketing Comms (SMS/Email)", single: "No", multi: "Yes", franchise: "Yes" }
+            { name: "Loyalty points & rewards", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "SMS & email campaigns", single: "Yes", multi: "Yes", franchise: "Yes" }
         ]
     },
     {
@@ -356,8 +380,8 @@ const featureCategories = [
         name: "Staff Management & Security",
         features: [
             { name: "Basic Staff Profiles", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Advanced Role-Based Permissions", single: "No", multi: "Yes", franchise: "Yes" },
-            { name: "Detailed Activity Audit Logs", single: "No", multi: "Yes", franchise: "Yes" }
+            { name: "Role-based permissions", single: "Yes", multi: "Yes", franchise: "Yes" },
+            { name: "Activity audit logs", single: "Yes", multi: "Yes", franchise: "Yes" }
         ]
     },
     {
@@ -934,7 +958,10 @@ const jsonLd = [
             <div class="section-header animate-on-scroll slide-up">
                 <span class="erp-eyebrow">Pricing</span>
                 <h2>Try It Free. Pay When It's Working.</h2>
-                <p>Thirty days on us, no card required. No setup fee unless you ask us to do the setup for you.</p>
+                {/* The pricing model, said out loud. It is the thing that
+                    separates us from the systems that sell you a Basic plan
+                    and then charge again for the report you needed. */}
+                <p>Thirty days on us, no card required. You pay for the number of shops you run, not for a list of features: every plan has all of them. No setup fee either, unless you want us to do the setup for you.</p>
 
                 <div class="pricing-toggle-container">
                     <span class="toggle-label active" id="label-monthly">Monthly</span>
