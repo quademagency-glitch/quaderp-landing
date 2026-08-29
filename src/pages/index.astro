@@ -227,8 +227,19 @@ const defaultPricingPlans: PricingPlan[] = [
     },
     {
         name: "Multi-Branch",
-        monthlyPrice: "GHS 600", monthlyPeriod: "/mo",
-        yearlyPrice: "GHS 6,600", yearlyPeriod: "/yr",
+        /* Was GHS 600, which made the second shop cost more per shop than
+           the first: 250 for one shop, 300 each for two. The upgrade a
+           customer is most likely to make was the worst value on the price
+           list, at exactly the moment they were most likely to make it. At 450
+           the curve finally points the right way, 250 then 225 then 150 then
+           112 then 90 per shop, and the second shop costs 200 rather than 350.
+
+           platform_plans.price_monthly is the number Paystack actually charges
+           (subscriptions.js sets finalAmount from it), so that row was updated
+           to match. A price on this page that the billing cannot honour is
+           worse than the price being wrong. */
+        monthlyPrice: "GHS 450", monthlyPeriod: "/mo",
+        yearlyPrice: "GHS 4,950", yearlyPeriod: "/yr",
         setupFee: "GHS 2,500",
         setupLabel: "No setup fee",
         setupNote: "Set it up yourself at no charge, or we load every branch, migrate your stock and train your staff for GHS 2,500.",
@@ -339,8 +350,8 @@ const featureCategories = [
 
                 Worth fixing beyond the pedantry: the H1 on this page is "Stop
                 Losing Money to Theft and Stockouts", and the pricing table was
-                telling the tier most visitors buy that theft alerts cost GHS
-                600 a month. The headline promise and the price list were
+                telling the tier most visitors buy that theft alerts cost an
+                upgrade. The headline promise and the price list were
                 arguing in front of the buyer.
 
                 If gating this to Multi-Branch is the intention, the engine
@@ -1038,7 +1049,7 @@ const jsonLd = [
                             <tr>
                                 <th>Feature Category & Capabilities</th>
                                 <th>Single Branch<br/><span class="tier-sub">GHS 250/mo</span></th>
-                                <th>Multi-Branch<br/><span class="tier-sub">GHS 600/mo</span></th>
+                                <th>Multi-Branch<br/><span class="tier-sub">GHS 450/mo</span></th>
                                 <th>Franchise<br/><span class="tier-sub">Custom</span></th>
                             </tr>
                         </thead>
@@ -1165,7 +1176,7 @@ const jsonLd = [
                                 <select id="erp-plan-select" name="plan_interest">
                                     <option value="" selected>Not sure yet</option>
                                     <option value="Single Branch">Single Branch (GHS 250/mo)</option>
-                                    <option value="Multi-Branch">Multi-Branch (GHS 600/mo)</option>
+                                    <option value="Multi-Branch">Multi-Branch (GHS 450/mo)</option>
                                     <option value="Franchise">Franchise (Custom Quote)</option>
                                 </select>
                             </div>
