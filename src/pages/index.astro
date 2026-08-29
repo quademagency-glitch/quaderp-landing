@@ -212,6 +212,7 @@ const defaultPricingPlans: PricingPlan[] = [
             "1 Store Location",
             "Up to 3 POS Terminals",
             "Real-time Inventory Tracking",
+            "Theft & Shrinkage Alerts",
             "Accounting, Invoicing & Receivables",
             "Sales Dashboard & Top Sellers",
             "Standard Support"
@@ -232,7 +233,7 @@ const defaultPricingPlans: PricingPlan[] = [
         features: [
             "Up to 5 Store Locations",
             "Unlimited POS Terminals",
-            "Loss Prevention & Shrinkage Alerts",
+            "Theft & Shrinkage Alerts Across Every Branch",
             "Cross-Branch Stock Transfers",
             "Loyalty, Gift Cards & SMS Campaigns",
             "Priority Support"
@@ -305,7 +306,23 @@ const featureCategories = [
         features: [
             { name: "Basic Sales Metrics & Charts", single: "Yes", multi: "Yes", franchise: "Yes" },
             { name: "Top Selling Products", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Advanced Loss Prevention Alerts", single: "No", multi: "Yes", franchise: "Yes" },
+            /* This said single: "No". The product disagrees.
+                services/lossPreventionEngine.js is imported unconditionally by
+                routes/sales.js and routes/stock.js, there is no billing_plan
+                check anywhere in routes or services, and all four detections,
+                void patterns, discount patterns, after-hours activity and
+                shrinkage spikes, run for every business on every plan.
+
+                Worth fixing beyond the pedantry: the H1 on this page is "Stop
+                Losing Money to Theft and Stockouts", and the pricing table was
+                telling the tier most visitors buy that theft alerts cost GHS
+                600 a month. The headline promise and the price list were
+                arguing in front of the buyer.
+
+                If gating this to Multi-Branch is the intention, the engine
+                needs the check first and this row can go back afterwards.
+                Until then the page describes the product that ships. */
+            { name: "Theft and Shrinkage Alerts", single: "Yes", multi: "Every branch", franchise: "Every branch" },
             { name: "Employee Performance Tracking", single: "No", multi: "Yes", franchise: "Yes" },
             { name: "Cross-Location Comparison", single: "No", multi: "Yes", franchise: "Yes" }
         ]
