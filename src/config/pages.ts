@@ -42,7 +42,7 @@ export const PAGES: Record<string, PageMeta> = {
       "A point of sale that runs in the browser on the phone or laptop you already own. Mobile Money, cedis, and it sells when the network drops. Free 30 days.",
     h1: "A POS System Built for How Ghanaian Shops Actually Sell",
     intro:
-      "No terminal to buy, no card reader to wait for. It runs in the browser on the phone or laptop you already have, takes Mobile Money and cash, and keeps working when the network goes.",
+      "No terminal to buy, no card reader to wait for. It runs in the browser on the phone or laptop you already have, records Mobile Money beside cash and card, and keeps working when the network goes.",
     nav: "POS system",
     group: "solutions",
     related: ["inventory-management-software", "accounting-software-ghana", "security-and-uptime"],

@@ -28,15 +28,26 @@ const whatsappNumber = "233530890302";
 const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
 const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
-/* The five things a shop owner here checks for that a foreign system fails.
+/* The four things a shop owner here checks for that a foreign system fails.
    Every claim is a capability, not a performance stat, so nothing on this
-   strip needs a customer to substantiate it. */
+   strip needs a customer to substantiate it.
+
+   There were five. "Paystack Payments, card processing through a processor
+   built for this market" described something a shop cannot use. Paystack is
+   wired into routes/billing.js and routes/subscriptions.js, where it collects
+   our subscription fee from the shop, and the platform-admin screens are the
+   only place it is configured. There is no shop-facing card processing behind
+   it. A prospect could have bought this expecting to take cards.
+
+   The Mobile Money line said "take MoMo at the counter", which has the same
+   problem in smaller print. A sale carries payment_method cash, card or
+   mobile: we record the method, the customer still pays on the shop's own
+   MoMo number. Four true claims are worth more than five with a hole in. */
 const ghanaProof = [
-    { title: "Mobile Money", desc: "Take MoMo at the counter, not just cash and card." },
+    { title: "Mobile Money", desc: "Record MoMo at the counter beside cash and card, so the till splits by method at close." },
     { title: "Priced in Cedis", desc: "GHS throughout, with per-location currency for the borders." },
     { title: "No Hardware to Buy", desc: "Runs in a browser on the phone or laptop you already own." },
-    { title: "SMS That Arrives", desc: "Customer campaigns sent through Arkesel, not a foreign gateway." },
-    { title: "Paystack Payments", desc: "Card processing through a processor built for this market." }
+    { title: "SMS That Arrives", desc: "Customer campaigns sent through Arkesel, not a foreign gateway." }
 ];
 
 /* Straight from what shop owners say in the field. The quote does the
@@ -72,7 +83,10 @@ const defaultFeatures = [
     {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
         title: "Point of Sale",
-        description: "Cash, card, Mobile Money and split payments across them. Returns, refunds and a till that reconciles at close of day."
+        /* "and split payments across them" was not true. The pricing FAQ says
+           it plainly: one sale carries one method today, so half cash and half
+           MoMo goes through as two sales. */
+        description: "Cash, card and Mobile Money, each recorded against the sale. Returns, refunds and a till that reconciles at close of day."
     },
     {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-3a2 2 0 0 1-2-2V2"/><path d="M9 18a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7l4 4v10a2 2 0 0 1-2 2H9z"/><path d="M3 7v10a2 2 0 0 0 2 2h6"/><line x1="12" y1="11" x2="16" y2="11"/><line x1="12" y1="15" x2="16" y2="15"/></svg>`,
