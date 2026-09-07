@@ -1,0 +1,227 @@
+---
+/**
+ * A screen recording of the product, played on the page.
+ *
+ * Three constraints shaped this, and they are worth stating because the
+ * obvious implementation breaks all three.
+ *
+ * 1. AUTOPLAY IS ALWAYS MUTED. Not a preference, a browser rule. Chrome,
+ *    Safari and Firefox all refuse to start a video with sound that the
+ *    visitor did not ask for. A narrated video that autoplays therefore
+ *    autoplays silent, and the controls below are how someone turns the
+ *    narration on. There is no arrangement of attributes that avoids this.
+ *
+ * 2. THE VISITOR IS PAYING FOR THE BYTES. This is a market where mobile data
+ *    is bought in bundles, so a visitor who never scrolls this far pays
+ *    nothing at all: `preload="none"` holds the video back, and the poster
+ *    is attached by script rather than rendered, because a poster attribute
+ *    is fetched eagerly whatever preload says. Someone who does scroll here
+ *    pays for one still frame, then for the seconds they actually watch.
+ *
+ * 3. IT MUST STOP WHEN NOBODY IS WATCHING. Playback starts when the video
+ *    scrolls into view and pauses when it leaves. A video playing on a
+ *    screen the visitor has scrolled past is spending their money on
+ *    nothing.
+ *
+ * Autoplay is skipped entirely for anyone who has asked for reduced motion,
+ * or whose browser reports Save-Data. Both are people telling us plainly what
+ * they want, and the poster with a play button still gets them the video.
+ */
+interface Props {
+  src: string;
+  poster: string;
+  title: string;
+  caption?: string;
+  /** Seconds. Shown next to the title so nobody starts an 8 minute video by accident. */
+  duration: string;
+  narrated?: boolean;
+}
+
+const { src, poster, title, caption, duration, narrated = false } = Astro.props;
+---
+
+<figure class="erp-video">
+  <div class="erp-video-frame">
+    {/* `poster` is set from `data-poster` by the script below rather than
+        rendered here. A poster attribute is fetched eagerly, whatever the
+        preload setting says, so two of them below the fold were costing the
+        page 97 KiB and two Lighthouse points before anyone had scrolled to
+        them. The frame is set once the video is within 400px of the viewport,
+        which is far enough ahead that it is always painted before it is
+        looked at. Until then the dark frame colour holds the space, and the
+        aspect-ratio rule means nothing moves when the image arrives. */}
+    <video
+      class="erp-video-el"
+      src={src}
+      data-poster={poster}
+      preload="none"
+      muted
+      playsinline
+      controls
+      aria-label={title}
+    ></video>
+    {narrated && (
+      <p class="erp-video-audio-hint" data-video-hint>
+        Playing without sound. Use the controls to turn the narration on.
+      </p>
+    )}
+  </div>
+  <figcaption class="erp-video-caption">
+    <strong>{title}</strong>
+    <span class="erp-video-duration">{duration}</span>
+    {caption && <span class="erp-video-desc">{caption}</span>}
+  </figcaption>
+</figure>
+
+<style>
+  .erp-video {
+    margin: 0;
+  }
+
+  .erp-video-frame {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #0b1220;
+    box-shadow: 0 18px 40px rgba(10, 22, 44, 0.16);
+  }
+
+  .erp-video-el {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* The recordings are 1440x900. Reserving the ratio keeps the poster from
+       shifting the page as it loads, which is the layout shift Lighthouse
+       measures and a reader feels as the text jumping under their thumb. */
+    aspect-ratio: 1440 / 900;
+    background: #0b1220;
+  }
+
+  .erp-video-audio-hint {
+    position: absolute;
+    left: 12px;
+    bottom: 52px;
+    margin: 0;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(11, 18, 32, 0.82);
+    color: #e8eef7;
+    font-size: 0.72rem;
+    line-height: 1.3;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .erp-video-audio-hint[hidden] {
+    display: none;
+  }
+
+  .erp-video-caption {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.5rem;
+    font-size: 0.85rem;
+    color: var(--erp-text-muted, #51607a);
+  }
+
+  .erp-video-caption strong {
+    color: var(--erp-text, #10203a);
+  }
+
+  .erp-video-duration {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .erp-video-duration::before {
+    content: '·';
+    margin-right: 0.5rem;
+  }
+
+  .erp-video-desc {
+    flex-basis: 100%;
+    margin-top: 0.15rem;
+  }
+
+  @media (max-width: 600px) {
+    .erp-video-audio-hint {
+      left: 8px;
+      right: 8px;
+      bottom: 46px;
+      font-size: 0.68rem;
+      text-align: center;
+    }
+  }
+</style>
+
+<script>
+  /* Play when it comes into view, pause when it leaves.
+     Bound once per video, and only for videos that are allowed to autoplay. */
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saveData = Boolean(
+    (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData,
+  );
+
+  document.querySelectorAll<HTMLVideoElement>('.erp-video-el').forEach((video) => {
+    const hint = video.parentElement?.querySelector<HTMLElement>('[data-video-hint]');
+
+    /* Once someone unmutes, the hint has done its job and the video is theirs:
+       stop pausing it on scroll, because they chose to listen and a video that
+       stops when they look away is a video they have to keep chasing. */
+    let userEngaged = false;
+    video.addEventListener('volumechange', () => {
+      if (!video.muted) {
+        userEngaged = true;
+        if (hint) hint.hidden = true;
+      }
+    });
+    video.addEventListener('play', () => {
+      if (!video.muted && hint) hint.hidden = true;
+    });
+
+    const loadPoster = () => {
+      const src = video.dataset.poster;
+      if (src && !video.poster) video.poster = src;
+    };
+
+    if (reducedMotion || saveData) {
+      /* They asked not to have things move, or not to spend data. They still
+         get the poster and the play button, just no autoplay: one observer
+         with no play branch. */
+      if (hint) hint.hidden = true;
+      new IntersectionObserver(
+        (entries, obs) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            loadPoster();
+            obs.disconnect();
+          }
+        },
+        { rootMargin: '400px 0px' },
+      ).observe(video);
+      return;
+    }
+
+    /* One observer, two jobs, told apart by how much of the video is showing.
+       The 400px rootMargin fires first and only paints the poster; playback
+       waits until the video is properly on screen. */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) loadPoster();
+          if (entry.intersectionRatio >= 0.4) {
+            /* play() rejects if the browser blocks it. Swallow it: the poster
+               and controls are the fallback and nothing is broken. */
+            void video.play().catch(() => {});
+          } else if (!userEngaged) {
+            video.pause();
+          }
+        }
+      },
+      { threshold: [0, 0.4], rootMargin: '400px 0px' },
+    );
+
+    observer.observe(video);
+  });
+</script>

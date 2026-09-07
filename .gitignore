@@ -23,3 +23,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+# vercel link writes both of these
+.vercel
+.env.local
