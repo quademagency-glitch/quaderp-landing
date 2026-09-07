@@ -97,3 +97,26 @@ export const SITE_URL = "https://www.quaderp.app";
 export function absUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+/**
+ * The WhatsApp number every "chat with us" link on the site opens.
+ *
+ * International format, no plus and no spaces, which is what wa.me takes.
+ * 0209027276 becomes 233209027276: drop the leading zero, prefix 233.
+ *
+ * It lived as a `const whatsappNumber` in both index.astro and Layout.astro,
+ * declared separately with no connection between them, so changing the number
+ * meant changing it twice and half the site would have kept pointing at the
+ * old one if either was missed. A fourth copy is in api/confirm.js, which is
+ * a Vercel function outside Astro's build and cannot import this file; that
+ * one carries a comment pointing back here.
+ */
+export const WHATSAPP_NUMBER = "233209027276";
+
+/** The message pre-filled when someone opens the chat. */
+export const WHATSAPP_MESSAGE =
+  "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
+
+/** wa.me link with the message already typed. */
+export const WHATSAPP_LINK =
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;

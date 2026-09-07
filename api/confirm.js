@@ -16,7 +16,12 @@
 const FROM = 'QuadERP <info@quaderp.app>';
 const REPLY_TO = 'info@quaderp.app';
 const CALENDLY_URL = 'https://calendly.com/quaderp/30min';
-const WHATSAPP_URL = 'https://wa.me/233530890302';
+/* Kept in step with WHATSAPP_NUMBER in src/config/site.ts by hand. This file
+   is a Vercel function, outside Astro's build, so it cannot import from src/.
+   If the number changes there, change it here: this copy is what goes into
+   every email a lead receives, so a stale one here is worse than a stale one
+   on the page. */
+const WHATSAPP_URL = 'https://wa.me/233209027276';
 
 const ALLOWED_ORIGINS = ['https://quaderp.app', 'https://www.quaderp.app'];
 

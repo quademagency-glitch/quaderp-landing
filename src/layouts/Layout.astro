@@ -10,7 +10,7 @@ interface Props {
 
 const { title, description, jsonLd = [] } = Astro.props;
 
-import { SITE_URL, absUrl, appHref } from '../config/site';
+import { SITE_URL, absUrl, appHref, WHATSAPP_NUMBER, WHATSAPP_LINK } from '../config/site';
 import { pagesInGroup } from '../config/pages';
 
 /* Taken as a URL rather than imported for its side effect, which matters more
@@ -48,9 +48,8 @@ const lp = Astro.url.pathname;
 const navSignupHref = appHref({ cta: 'nav', lp });
 const drawerSignupHref = appHref({ cta: 'mobile-nav', lp });
 
-const whatsappNumber = "233530890302";
-const whatsappMessage = "Hi Quadem! I'm interested in QuadERP for my store. Can we talk?";
-const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+const whatsappNumber = WHATSAPP_NUMBER;
+const whatsappLink = WHATSAPP_LINK;
 ---
 
 <!doctype html>
