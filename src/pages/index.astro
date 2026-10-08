@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { DEMO_URL, signupUrl, appHref, SITE_URL, absUrl, WHATSAPP_NUMBER, WHATSAPP_LINK } from '../config/site';
+import { DEMO_URL, SIGNUP_URL, appHref, SITE_URL, absUrl, WHATSAPP_NUMBER, WHATSAPP_LINK } from '../config/site';
 import FaqList from '../components/FaqList.astro';
 import ClosingCta from '../components/ClosingCta.astro';
 import ProductVideo from '../components/ProductVideo.astro';
@@ -182,132 +182,75 @@ const scenarios = [
     }
 ];
 
+/* One plan since 8 October 2026, paid before use. It replaced three tiers
+   (Single Branch, Multi-Branch and a quoted Franchise), a 30-day free trial
+   and a monthly price, and the page now says only what the app charges:
+   migration 105 and utils/subscriptionCharge.js in the app repo set the same
+   figures, and the app's Signup page quotes them from the API. If a figure
+   here changes, it changes there first.
+
+   No free trial means the demo carries the whole "try before you buy" job,
+   which is why it is now offered directly under the price as well as in the
+   hero, the showcase and the closing section. */
 type PricingPlan = {
     name: string;
-    monthlyPrice: string; monthlyPeriod: string;
-    yearlyPrice: string; yearlyPeriod: string;
+    price: string; period: string;
+    /** The pill under the price: what the base fee already covers. */
+    included: string;
+    extraBranchPrice: string;
     setupFee: string;
     description: string;
     features: string[];
-    isPopular: boolean;
     buttonText: string;
-    /* Exactly one of these. `selfServe` tiers build their own signup link from
-       the tier name; anything else states where it goes. */
-    selfServe?: boolean;
-    href?: string;
-    setupLabel?: string;
-    setupNote?: string;
 };
 
-const defaultPricingPlans: PricingPlan[] = [
-    {
-        name: "Single Branch",
-        monthlyPrice: "GHS 250", monthlyPeriod: "/mo",
-        yearlyPrice: "GHS 2,750", yearlyPeriod: "/yr",
-        setupFee: "GHS 1,000",
-        setupLabel: "No setup fee",
-        setupNote: "Set it up yourself at no charge, or we load your products, prices and opening stock and train your staff for GHS 1,000.",
-        description: "One shop, run properly. Know what sold, what is left, and what your staff did with it.",
-        /* The price is set by how many shops you run, not by which features
-           you are allowed. So this list says "everything", because that is
-           what the software does: nothing in it checks a plan before letting
-           a business use a feature. */
-        features: [
-            "1 Shop",
-            "Every feature, nothing held back",
-            "Theft & Shrinkage Alerts",
-            "Loyalty, Gift Cards & SMS Campaigns",
-            "Accounting, Invoicing & Receivables",
-            "Standard Support"
-        ],
-        /* `selfServe` drives the signup link: the href is built from the tier
-           name so the choice made here survives the jump to the app. Franchise
-           is quoted by hand and sets its own href instead. */
-        isPopular: false, buttonText: "Start Free Trial", selfServe: true
-    },
-    {
-        name: "Multi-Branch",
-        /* Was GHS 600, which made the second shop cost more per shop than
-           the first: 250 for one shop, 300 each for two. The upgrade a
-           customer is most likely to make was the worst value on the price
-           list, at exactly the moment they were most likely to make it. At 450
-           the curve finally points the right way, 250 then 225 then 150 then
-           112 then 90 per shop, and the second shop costs 200 rather than 350.
+const pricingPlan: PricingPlan = {
+    name: "QuadERP",
+    price: "GHS 1,000", period: "/year",
+    included: "Includes one branch",
+    extraBranchPrice: "GHS 200",
+    /* The setup fee is named and priced, nothing more. What it covers is
+       deliberately not described anywhere on the site: the old optional
+       "guided setup" offer promised product loading and staff training, it
+       no longer exists as a separate offer, and a list of inclusions here
+       would be a promise nobody has agreed to keep. */
+    setupFee: "GHS 1,000",
+    description: "Every feature for every business. The price moves with the number of branches you run, never with what you are allowed to use.",
+    /* Still "everything", for the reason it always was: nothing in the app
+       checks a plan before letting a business use a feature, and with one
+       plan there is nothing left to check against. */
+    features: [
+        "Every feature, nothing held back",
+        "Theft & Shrinkage Alerts",
+        "Stock Transfers Between Branches",
+        "One View Across Every Branch",
+        "Loyalty, Gift Cards & SMS Campaigns",
+        "Accounting, Invoicing & Receivables",
+        "Export Your Data Any Time"
+    ],
+    buttonText: "Get Started"
+};
 
-           platform_plans.price_monthly is the number Paystack actually charges
-           (subscriptions.js sets finalAmount from it), so that row was updated
-           to match. A price on this page that the billing cannot honour is
-           worse than the price being wrong. */
-        monthlyPrice: "GHS 450", monthlyPeriod: "/mo",
-        yearlyPrice: "GHS 4,950", yearlyPeriod: "/yr",
-        setupFee: "GHS 2,500",
-        setupLabel: "No setup fee",
-        setupNote: "Set it up yourself at no charge, or we load every branch, migrate your stock and train your staff for GHS 2,500.",
-        description: "For when “how is the other shop doing?” has become a daily question. Every branch on one screen.",
-        features: [
-            "Up to 5 Shops",
-            "Every feature, nothing held back",
-            "Stock Transfers Between Shops",
-            "One View Across Every Shop",
-            "Theft & Shrinkage Alerts Per Shop",
-            "Priority Support"
-        ],
-        isPopular: true, buttonText: "Start Free Trial", selfServe: true
-    },
-    {
-        name: "Franchise",
-        monthlyPrice: "Custom", monthlyPeriod: "",
-        yearlyPrice: "Custom", yearlyPeriod: "",
-        setupFee: "Custom Quote",
-        description: "Six locations or more, or a distribution business. We build the setup around how you actually operate.",
-        features: [
-            "Unlimited Locations",
-            "Custom API Integrations",
-            "Legacy Data Migration",
-            "On-site Staff Training",
-            "Dedicated Account Manager",
-            /* The uptime figure that used to sit in this bullet was not
-               measured by anything. /security-and-uptime/ now says in as
-               many words that we do not publish an uptime percentage, so
-               the site was contradicting itself on the one claim a buyer
-               would go and check. A Franchise SLA is negotiated per
-               contract, which is true and is the part worth selling. */
-            "Custom SLA, Agreed in Your Contract"
-        ],
-        isPopular: false, buttonText: "Talk to Sales", href: "#erp-contact",
-        /* "+ Custom Quote one-time setup" reads as broken English, and the
-           trial-conversion caveat is meaningless when the whole plan is
-           quoted. Franchise gets its own wording. */
-        setupLabel: "Setup quoted with your plan",
-        setupNote: "Priced around your locations, migration and training needs."
-    }
-];
+/* What the one plan includes, row by row. This was a three-column
+   comparison of Single Branch, Multi-Branch and Franchise; with one plan
+   there is nothing to compare, so it is a single column and the summary now
+   says "everything included" rather than "compare plans".
 
-const featureCategories = [
+   The rule the old table was rebuilt around still holds, and is now the
+   whole price list: you pay for branches, not for features. It once claimed
+   nine feature gates that did not exist (there is no billing_plan check
+   anywhere in routes or services), so a "Yes" here means the code runs for
+   every business, not that a plan unlocked it. */
+type FeatureRow = { name: string; value: string };
+const featureCategories: { name: string; features: FeatureRow[] }[] = [
     {
         name: "Platform Basics",
         features: [
-            /* The whole table below follows one rule, because it is the rule
-                the business actually prices on: you pay for the number of
-                shops you run, not for a list of features somebody unlocked.
-
-                It used to claim nine feature gates. None of them existed. There
-                is no billing_plan check anywhere in routes or services, and
-                loyalty.js, smsService.js, auditLogs.js, the permissionCheck
-                middleware and the analytics performance reports all run for
-                any business on any plan. A Single Branch customer has been
-                getting every one of those since launch while this table told
-                them they were not.
-
-                Rows that still differ are the shop count, the human services,
-                and the handful of things that only mean anything once you have
-                a second shop. */
-            { name: "Shops included", single: "1", multi: "Up to 5", franchise: "Unlimited" },
-            /* Setup stopped being compulsory. Doing it yourself is free on
-                every self-serve tier, so this row is what the optional
-                service costs, not a barrier to entry. */
-            { name: "Guided setup, if you want it", single: "GHS 1,000", multi: "GHS 2,500", franchise: "Quoted" },
-            { name: "Support Level", single: "Standard Support", multi: "Priority Support", franchise: "Dedicated Account Mgr" }
+            { name: "Branches", value: "1 included, more at GHS 200 a year each" },
+            /* Said the same way everywhere else on the page. The old row
+                split Standard, Priority and Dedicated Account Manager by tier;
+                the tiers are gone and so is the split. */
+            { name: "Support", value: "On WhatsApp, usually the same day" }
         ]
     },
     {
@@ -315,147 +258,152 @@ const featureCategories = [
         features: [
             /* There is no device registration in the product. Nothing counts
                 or limits tills, so "up to 3" was a number we could not have
-                enforced if we wanted to. Under a per-shop price it should not
-                be a difference anyway. */
-            { name: "Tills per shop", single: "Unlimited", multi: "Unlimited", franchise: "Unlimited" },
-            { name: "Touch-Optimized Register", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Multi-Payment (Cash/Card/Momo)", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Returns & Refunds", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Till Management (Cash Drawer)", single: "Yes", multi: "Yes", franchise: "Yes" }
+                enforced if we wanted to. */
+            { name: "Tills per branch", value: "Unlimited" },
+            { name: "Touch-Optimized Register", value: "Yes" },
+            { name: "Multi-Payment (Cash/Card/Momo)", value: "Yes" },
+            { name: "Returns & Refunds", value: "Yes" },
+            { name: "Till Management (Cash Drawer)", value: "Yes" }
         ]
     },
     {
         name: "Inventory & Stock Control",
         features: [
-            { name: "Real-time Stock Sync", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Low Stock Alerts", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Stock Adjustments & Reconciliation", single: "Yes", multi: "Yes", franchise: "Yes" },
-            /* Not withheld from Single Branch. They need a second shop to
-                move stock to. */
-            { name: "Stock transfers between shops", single: "Needs 2+ shops", multi: "Yes", franchise: "Yes" },
-            { name: "Central warehouse routing", single: "Needs 2+ shops", multi: "Yes", franchise: "Yes" }
+            { name: "Real-time Stock Sync", value: "Yes" },
+            { name: "Low Stock Alerts", value: "Yes" },
+            { name: "Stock Adjustments & Reconciliation", value: "Yes" },
+            /* Not withheld from anyone. They need a second branch to move
+                stock to. */
+            { name: "Stock transfers between branches", value: "Yes, with 2 or more branches" }
         ]
     },
     {
         name: "Business Dashboard & Analytics",
         features: [
-            { name: "Basic Sales Metrics & Charts", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Top Selling Products", single: "Yes", multi: "Yes", franchise: "Yes" },
-            /* This said single: "No". The product disagrees.
-                services/lossPreventionEngine.js is imported unconditionally by
-                routes/sales.js and routes/stock.js, there is no billing_plan
-                check anywhere in routes or services, and all four detections,
+            { name: "Basic Sales Metrics & Charts", value: "Yes" },
+            { name: "Top Selling Products", value: "Yes" },
+            /* services/lossPreventionEngine.js is imported unconditionally by
+                routes/sales.js and routes/stock.js, and all four detections,
                 void patterns, discount patterns, after-hours activity and
-                shrinkage spikes, run for every business on every plan.
-
-                Worth fixing beyond the pedantry: the H1 on this page is "Stop
-                Losing Money to Theft and Stockouts", and the pricing table was
-                telling the tier most visitors buy that theft alerts cost an
-                upgrade. The headline promise and the price list were
-                arguing in front of the buyer.
-
-                If gating this to Multi-Branch is the intention, the engine
-                needs the check first and this row can go back afterwards.
-                Until then the page describes the product that ships. */
-            { name: "Theft and shrinkage alerts", single: "Yes", multi: "Every shop", franchise: "Every shop" },
-            { name: "Employee performance tracking", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Shop against shop comparison", single: "Needs 2+ shops", multi: "Yes", franchise: "Yes" }
+                shrinkage spikes, run for every business. The H1 on this page
+                is "Stop Losing Money to Theft and Stockouts"; this row is
+                where the price list agrees with it. */
+            { name: "Theft and shrinkage alerts", value: "Yes, in every branch" },
+            { name: "Employee performance tracking", value: "Yes" },
+            { name: "Branch against branch comparison", value: "Yes, with 2 or more branches" }
         ]
     },
     {
         name: "Integrated Accounting & Invoicing",
         features: [
-            { name: "B2B Invoicing generation", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Accounts Receivable (Who owes you)", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Accounts Payable (Who you owe)", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Basic Expense Logging", single: "Yes", multi: "Yes", franchise: "Yes" }
+            { name: "B2B Invoicing generation", value: "Yes" },
+            { name: "Accounts Receivable (Who owes you)", value: "Yes" },
+            { name: "Accounts Payable (Who you owe)", value: "Yes" },
+            { name: "Basic Expense Logging", value: "Yes" }
         ]
     },
     {
         name: "CRM & Customer Loyalty",
         features: [
-            { name: "Customer Profiles & History", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Loyalty points & rewards", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "SMS & email campaigns", single: "Yes", multi: "Yes", franchise: "Yes" }
+            { name: "Customer Profiles & History", value: "Yes" },
+            { name: "Loyalty points & rewards", value: "Yes" },
+            { name: "SMS & email campaigns", value: "Yes" }
         ]
     },
     {
         name: "Purchasing & Supply Chain",
         features: [
-            { name: "Supplier Directory", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Create Purchase Orders (POs)", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Auto-Receive POs into Stock", single: "Yes", multi: "Yes", franchise: "Yes" }
+            { name: "Supplier Directory", value: "Yes" },
+            { name: "Create Purchase Orders (POs)", value: "Yes" },
+            { name: "Auto-Receive POs into Stock", value: "Yes" }
         ]
     },
     {
         name: "Staff Management & Security",
         features: [
-            { name: "Basic Staff Profiles", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Role-based permissions", single: "Yes", multi: "Yes", franchise: "Yes" },
-            { name: "Activity audit logs", single: "Yes", multi: "Yes", franchise: "Yes" }
-        ]
-    },
-    {
-        name: "Enterprise / Technical Extras",
-        features: [
-            { name: "Custom API Integrations", single: "No", multi: "No", franchise: "Yes" },
-            { name: "Legacy Data Migration", single: "No", multi: "No", franchise: "Yes" },
-            { name: "On-site Staff Training", single: "No", multi: "No", franchise: "Yes" },
-            { name: "Custom SLA", single: "No", multi: "No", franchise: "Yes" }
+            { name: "Basic Staff Profiles", value: "Yes" },
+            { name: "Role-based permissions", value: "Yes" },
+            { name: "Activity audit logs", value: "Yes" }
         ]
     }
+    /* "Enterprise / Technical Extras" (custom API integrations, legacy data
+       migration, on-site training, a custom SLA) is gone. Every row in it was
+       a Franchise-only service with a quoted price, and Franchise no longer
+       exists. Listing them as "No" would be noise; listing them as included
+       would be a promise. Large chains are invited to talk to us in the
+       pricing FAQ instead, without a separate price. */
 ];
 
 /* The four promises that answer "what am I risking?".
    Every one of these was already on the page, buried in the FAQ accordion.
    That is to say behind a click, below the pricing table, at exactly the
    moment the reader has decided the price is the problem. Stating them at the
-   decision point is not a new claim; it is the same claim, in time to matter. */
+   decision point is not a new claim; it is the same claim, in time to matter.
+
+   Two of the four stopped being true on 8 October 2026, when the trial and
+   the free self-setup went: "30 days, no card" and "No setup fee to start".
+   Their replacements are the answers to the same worry under the new terms,
+   and each one is stated again in the FAQ below and in the app's Terms
+   (clauses 8.1, 9.2 and 10.4). */
 const guarantees = [
-    { title: "30 days, no card", body: "Nothing to cancel and nothing to charge back. If you walk away you were never billed." },
-    { title: "No setup fee to start", body: "Set the system up yourself and pay nothing but the monthly fee. Guided setup is there if you want it." },
-    { title: "Your data leaves with you", body: "Ask within 30 days of cancelling and we export your products, sales, customers and ledger." },
+    { title: "Every feature, one price", body: "Nothing is held back for a dearer plan. You pay for branches, never for features." },
+    { title: "No automatic charges", body: "You renew by paying for the next year when you choose. Paying early adds it onto the end of the current one." },
+    { title: "Your data stays yours", body: "Export it any time. If you do not renew, nothing is deleted: the account narrows to sign-in, billing and the export." },
     { title: "Support in your timezone", body: "WhatsApp us and you get a person here, usually the same day." }
 ];
 
+/* Rewritten for the 8 October 2026 pricing. The trial, the optional guided
+   setup, the Single Branch to Multi-Branch upgrade, Franchise and the yearly
+   discount all went, and so did their answers. What replaced them are the
+   questions the new terms raise: what it costs on day one, why there is no
+   trial, what a second branch costs, and what happens when the year ends.
+   Every figure and rule here matches the app's Terms, clauses 6 to 10. */
 const pricingFaqs = [
     {
-        q: "Is the free trial really free?",
-        a: "Yes. Thirty days, no card at signup, and nothing to cancel if you decide to walk away. We would rather you test it in your own shop than take our word for it."
+        q: "What does it cost to start?",
+        a: "GHS 2,000 for one branch: the one-time setup fee of GHS 1,000 and your first year at GHS 1,000, paid together before you start. After that it is GHS 1,000 a year, plus GHS 200 a year for each additional branch. Prices are before VAT and any other levy the law adds, which are paid on top where they apply."
     },
     {
-        q: "Do I have to pay a setup fee?",
-        a: "No. Set it up yourself and you pay the monthly fee and nothing else. If you would rather not spend the evenings on it, guided setup is our team loading your products, prices and opening stock, setting up your branches, and training your staff so they can work the till on day one. That is GHS 1,000 on Single Branch and GHS 2,500 on Multi-Branch, it is optional, and it is charged once."
+        /* Said plainly because the old answer to this question was "yes",
+           and anyone who read the site before October will arrive expecting
+           thirty days. The refund line is here, not hidden in the Terms,
+           because it is the reason the demo matters. */
+        q: "Is there a free trial?",
+        a: "No. A business pays the setup fee and its first year before it uses QuadERP. The way to try it is the live demo: a fully stocked demo store you can use without an account, an email or anything to install. Fees, the setup fee included, are not refundable unless the law requires it or we fail to fix a material failure on our side, so we would rather you spend an evening in the demo than take our word for it."
     },
     {
         q: "Do I need to buy a POS machine or any special hardware?",
         a: "No. QuadERP runs in a browser on the phone, tablet or laptop you already have. If you want a barcode scanner later, our scanner app turns a phone into one."
     },
     {
-        q: "Can I start on Single Branch and move up later?",
-        a: "Yes. When you open a second shop we move you to Multi-Branch and you pay the difference in the monthly fee. Nothing else changes. If you took guided setup on Single Branch and want us to do the new branches too, that is the difference between the two setup prices rather than a fresh charge, so GHS 1,500 on top of the GHS 1,000 you already paid."
+        q: "How do additional branches work?",
+        a: "Each branch after the first is GHS 200 a year. You pay the full GHS 200 when you add the branch, however much of your year is left, and it is then part of every renewal. There is no plan to move up to: every feature is already included, whether you run one branch or several."
+    },
+    {
+        q: "What happens at the end of the year?",
+        a: "Nothing is charged automatically. You renew by paying for the next year when you choose, and paying early adds the new year onto the end of the current one, so no time you have paid for is lost. If you do not renew, the account narrows to sign-in, billing and data export until you do."
     },
     {
         q: "What happens to my data if I stop paying?",
-        a: "It stays yours. For 30 days after you cancel, ask us and we will export your products, sales, customers and ledger into files you keep. We do not hold your business records hostage to a subscription."
+        a: "It stays yours, and nothing is deleted. The export is in the app and works at any time, including after you stop renewing, so you can download your business data yourself without asking us. We do not hold your business records hostage to a subscription."
     },
     {
         q: "Can I take Mobile Money through it?",
         a: "QuadERP records the payment, it does not take it. Cash, card and Mobile Money are each recorded against the sale, so the day's takings break down by method when you close the till, but the customer still pays on your own MoMo number or bank terminal. One sale carries one method today, so someone paying half cash and half MoMo goes through as two sales."
     },
     {
-        q: "I have more than five branches. What then?",
-        a: "That is the Franchise plan. Tell us the shape of your business and we will quote for it, including migrating your data across from whatever you are running now."
-    },
-    {
-        q: "Is paying yearly worth it?",
-        a: "It is twelve months for the price of eleven. Same product, one less invoice to think about during the year."
+        /* Replaces the Franchise answer. There is no separate price for a
+           big business any more, so this says so, and keeps the one route
+           to a person that a chain or a distributor will usually want. */
+        q: "We are a large chain or a distribution business. Is there a different price?",
+        a: "No. It is the same plan at the same price: GHS 1,000 a year with one branch, and GHS 200 a year for each branch after that. If you would rather talk it through before you pay, use the form below or message us on WhatsApp."
     },
     {
         /* The competitor a shop owner in Accra actually weighs us against is
            not QuickBooks, it is a local POS sold as a one-time lifetime
-           licence you host yourself. That pitch is aimed squarely at the
-           monthly fee, and until now the site had no answer to it anywhere:
+           licence you host yourself. That pitch is aimed squarely at a
+           recurring fee (monthly when this was written, yearly since
+           October 2026), and until now the site had no answer to it anywhere:
            "one-time" appeared six times on this page and every one of them
            was about the setup fee.
 
@@ -466,8 +414,8 @@ const pricingFaqs = [
            oversells. Backups are deliberately not in this list: the backup
            script in the server repo is started by launchd on a particular
            machine, not by anything we could point at from a sales page. */
-        q: "Why a monthly fee instead of buying it once?",
-        a: "The fee is not for the software so much as for keeping it running: the hosting, the updates, and a person on WhatsApp in your own timezone who usually answers the same day. Software you buy once and host yourself can genuinely come out cheaper, and if you have someone who can keep a server running and restore it when it falls over, it may be the better buy. Most shops do not have that person, and the cost of not having them shows up as a day of not selling rather than as a line on an invoice. What we will not do is make leaving hard: thirty days free with no card, and your products, sales, customers and ledger exported to you if you go."
+        q: "Why a yearly fee instead of buying it once?",
+        a: "The fee is not for the software so much as for keeping it running: the hosting, the updates, and a person on WhatsApp in your own timezone who usually answers the same day. Software you buy once and host yourself can genuinely come out cheaper, and if you have someone who can keep a server running and restore it when it falls over, it may be the better buy. Most shops do not have that person, and the cost of not having them shows up as a day of not selling rather than as a line on an invoice. What we will not do is make leaving hard: nothing is charged automatically, and you can export your data whenever you like, renewed or not."
     },
     {
         /* Competitors on page one of "pos system ghana" lead with GRA
@@ -505,19 +453,39 @@ const jsonLd = [
         description:
             "Store management software for retail shops, pharmacies and multi-branch businesses in Ghana. Point of sale with Mobile Money, live stock across branches, loss prevention and receivables.",
         inLanguage: "en-GH",
-        offers: defaultPricingPlans
-            /* Franchise is quoted by hand, and a schema Offer with no price is
-               worse than no Offer: it renders as a blank price in results. */
-            .filter((plan) => plan.selfServe)
-            .map((plan) => ({
-                "@type": "Offer",
-                name: plan.name,
-                price: plan.monthlyPrice.replace(/[^0-9.]/g, ""),
-                priceCurrency: "GHS",
-                url: signupUrl(plan.name),
-                availability: "https://schema.org/InStock",
-                description: plan.description,
-            })),
+        /* One Offer for the one plan. `price` alone would read as a one-off
+           GHS 1,000, so the specification says what it is: a yearly
+           subscription (UN/CEFACT unit code ANN, one year) plus a one-time
+           activation fee for the setup. Additional branches are left out on
+           purpose; schema.org has no tidy way to say "per extra branch", and
+           an Offer that guesses is worse than one that stops at the base. */
+        offers: {
+            "@type": "Offer",
+            name: pricingPlan.name,
+            price: pricingPlan.price.replace(/[^0-9.]/g, ""),
+            priceCurrency: "GHS",
+            priceSpecification: [
+                {
+                    "@type": "UnitPriceSpecification",
+                    priceComponentType: "https://schema.org/Subscription",
+                    price: pricingPlan.price.replace(/[^0-9.]/g, ""),
+                    priceCurrency: "GHS",
+                    unitCode: "ANN",
+                    unitText: "YEAR",
+                    referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "ANN" },
+                },
+                {
+                    "@type": "UnitPriceSpecification",
+                    priceComponentType: "https://schema.org/ActivationFee",
+                    name: "One-time setup fee",
+                    price: pricingPlan.setupFee.replace(/[^0-9.]/g, ""),
+                    priceCurrency: "GHS",
+                },
+            ],
+            url: SIGNUP_URL,
+            availability: "https://schema.org/InStock",
+            description: pricingPlan.description,
+        },
         featureList: defaultFeatures.map((f) => f.title),
         publisher: {
             "@type": "Organization",
@@ -565,7 +533,7 @@ const jsonLd = [
 
 <Layout
     title="QuadERP | Store Management Software for Retail in Ghana"
-    description="QuadERP helps Ghanaian shops track sales, manage stock across branches, catch staff theft, and know who owes them. Free for 30 days, no card needed."
+    description="QuadERP helps Ghanaian shops track sales, manage stock across branches, catch staff theft, and know who owes them. Every feature, one yearly price."
     jsonLd={jsonLd}
 >
     <!-- ===== HERO ===== -->
@@ -585,7 +553,11 @@ const jsonLd = [
                     See what's selling, what's in stock, and what your staff are doing across every branch, right from your phone.
                 </p>
                 <div class="erp-hero-ctas hero-reveal hero-delay-3">
-                    <a href={appHref({ cta: 'hero', lp: Astro.url.pathname })} class="btn btn-primary btn-pill erp-btn-lg" data-track="trial_start" data-track-where="hero">Start Your 30-Day Free Trial</a>
+                    {/* data-track="trial_start" is a historical name. There has
+                        been no trial since 8 October 2026 and the event now
+                        means "signup started", but renaming it would break the
+                        funnel's history in GA, so every signup button keeps it. */}
+                    <a href={appHref({ cta: 'hero', lp: Astro.url.pathname })} class="btn btn-primary btn-pill erp-btn-lg" data-track="trial_start" data-track-where="hero">Get Started</a>
                     {/* Opens the sandbox. It used to scroll to the showcase
                         instead, so a button labelled "Try Live Demo" did not
                         try the live demo: it moved you down the page to hunt
@@ -597,10 +569,14 @@ const jsonLd = [
                         Try Live Demo
                     </a>
                 </div>
+                {/* All three of the old lines went on 8 October 2026: "No credit
+                    card needed" and "Pay nothing until you decide to stay"
+                    described the trial, and "We set you up and train your
+                    staff" described a guided setup that is no longer offered. */}
                 <ul class="erp-hero-trust hero-reveal hero-delay-4">
-                    <li><span class="erp-check" aria-hidden="true"></span>No credit card needed</li>
-                    <li><span class="erp-check" aria-hidden="true"></span>We set you up and train your staff</li>
-                    <li><span class="erp-check" aria-hidden="true"></span>Pay nothing until you decide to stay</li>
+                    <li><span class="erp-check" aria-hidden="true"></span>Every feature in one price</li>
+                    <li><span class="erp-check" aria-hidden="true"></span>Try the full demo, no account needed</li>
+                    <li><span class="erp-check" aria-hidden="true"></span>No automatic charges</li>
                 </ul>
             </div>
         </div>
@@ -964,28 +940,31 @@ const jsonLd = [
     <!-- ===== HOW IT WORKS ===== -->
     <section class="process section-padding section-alt" id="erp-process">
         <div class="container">
+            {/* Was "start free, we set you up, decide after 30 days". All
+                three steps described the trial or the old guided setup. The
+                order now follows the actual path: look, pay, renew. */}
             <div class="section-header animate-on-scroll slide-up">
                 <span class="erp-eyebrow">Getting started</span>
-                <h2>Three Steps, and We Do the Heavy Lifting</h2>
-                <p>Thirty days to make up your mind, at no cost and with nothing to cancel.</p>
+                <h2>Three Steps, and the First One Is Free</h2>
+                <p>There is no free trial, so the demo is where you make up your mind.</p>
             </div>
             <div class="process-timeline">
                 <div class="timeline-line"></div>
                 <div class="process-steps" style="grid-template-columns: repeat(3, 1fr);">
                     <div class="process-step animate-on-scroll slide-up delay-100">
                         <div class="step-number">1</div>
-                        <h3 class="step-title">Start Free</h3>
-                        <p class="step-desc">Open your account in a few minutes. Thirty days, no card, no commitment.</p>
+                        <h3 class="step-title">Try the Demo</h3>
+                        <p class="step-desc">Open the live demo, a fully stocked demo store. No account, no email, nothing to install.</p>
                     </div>
                     <div class="process-step animate-on-scroll slide-up delay-200">
                         <div class="step-number">2</div>
-                        <h3 class="step-title">We Set You Up</h3>
-                        <p class="step-desc">Our team loads your products, prices and opening stock, adds your branches, and trains your staff.</p>
+                        <h3 class="step-title">Sign Up and Pay</h3>
+                        <p class="step-desc">Create your account, then pay the one-time setup fee and your first year together: GHS 2,000 for one branch. QuadERP opens straight away.</p>
                     </div>
                     <div class="process-step animate-on-scroll slide-up delay-300">
                         <div class="step-number">3</div>
-                        <h3 class="step-title">Decide After 30 Days</h3>
-                        <p class="step-desc">Move onto a paid plan or walk away. Either way the data is yours to take with you.</p>
+                        <h3 class="step-title">Renew When You Choose</h3>
+                        <p class="step-desc">Nothing is charged automatically. Pay for the next year when you are ready, and export your data whenever you like.</p>
                     </div>
                 </div>
             </div>
@@ -997,60 +976,56 @@ const jsonLd = [
         <div class="container">
             <div class="section-header animate-on-scroll slide-up">
                 <span class="erp-eyebrow">Pricing</span>
-                <h2>Try It Free. Pay When It's Working.</h2>
+                <h2>One Plan. Every Feature.</h2>
                 {/* The pricing model, said out loud. It is the thing that
                     separates us from the systems that sell you a Basic plan
-                    and then charge again for the report you needed. */}
-                <p>Thirty days on us, no card required. You pay for the number of shops you run, not for a list of features: every plan has all of them. No setup fee either, unless you want us to do the setup for you.</p>
+                    and then charge again for the report you needed.
 
-                <div class="pricing-toggle-container">
-                    <span class="toggle-label active" id="label-monthly">Monthly</span>
-                    <label class="erp-toggle">
-                        {/* The visible "Monthly / Annually" text sits outside the
-                            label, so without this the control announces as a bare
-                            unnamed checkbox. */}
-                        <input type="checkbox" id="pricing-toggle" aria-label="Show annual pricing">
-                        <span class="erp-toggle-slider"></span>
-                    </label>
-                    <span class="toggle-label" id="label-yearly">Annually <span class="discount-badge">1 Month Free</span></span>
+                    The Monthly / Annually toggle that sat under this went with
+                    the monthly price on 8 October 2026. QuadERP is yearly only,
+                    so there is nothing left to switch between. */}
+                <p>You pay for the number of branches you run, never for a list of features, and you pay before you start, once a year. There is no free trial, so the live demo is the place to try it first.</p>
+            </div>
+            {/* One card, so no map, no "Most Popular" badge and no toggle
+                data attributes. The tier-* classes are the same ones the
+                three cards used, so the card looks as it did. */}
+            <div class="pricing-grid">
+                <div class="pricing-card erp-surface animate-on-scroll slide-up delay-100">
+                    <h3 class="tier-name">{pricingPlan.name}</h3>
+                    <div class="tier-price">
+                        <span class="price-amount">{pricingPlan.price}</span><span class="erp-price-period">{pricingPlan.period}</span>
+                    </div>
+                    <div class="tier-setup-fee">{pricingPlan.included}</div>
+                    <ul class="tier-extras">
+                        <li>+ {pricingPlan.extraBranchPrice} a year for each additional branch</li>
+                        <li>+ {pricingPlan.setupFee} one-time setup, paid with your first year</li>
+                    </ul>
+                    <p class="tier-desc">{pricingPlan.description}</p>
+                    <ul class="tier-features">
+                        {pricingPlan.features.map((feature) => (
+                            <li>{feature}</li>
+                        ))}
+                    </ul>
+                    {/* No ?plan= on this link any more: there is one plan, and
+                        the app's signup has ignored the parameter since the
+                        change. trial_start is the historical event name, see
+                        the hero. */}
+                    <a
+                        href={appHref({ cta: 'pricing', lp: Astro.url.pathname })}
+                        class="btn btn-primary btn-pill tier-btn"
+                        data-track="trial_start"
+                        data-track-label={pricingPlan.name}
+                        data-track-where="pricing"
+                    >{pricingPlan.buttonText}</a>
+                    <a href="#erp-contact" class="tier-alt-link" data-track="plan_select" data-track-label={pricingPlan.name} data-track-where="pricing-assist">Prefer we walk you through it first?</a>
                 </div>
             </div>
-            <div class="pricing-grid">
-                {defaultPricingPlans.map((plan, index) => (
-                    <div class={`pricing-card erp-surface ${plan.isPopular ? 'popular-tier' : ''} animate-on-scroll slide-up delay-${(index + 1) * 100}`}>
-                        {plan.isPopular && <div class="popular-badge">Most Popular</div>}
-                        <h3 class="tier-name">{plan.name}</h3>
-                        <div class="tier-price" data-monthly-price={plan.monthlyPrice} data-yearly-price={plan.yearlyPrice} data-monthly-period={plan.monthlyPeriod} data-yearly-period={plan.yearlyPeriod}>
-                            <span class="price-amount">{plan.monthlyPrice}</span><span class="erp-price-period">{plan.monthlyPeriod}</span>
-                        </div>
-                        <div class="tier-setup-fee">
-                            {plan.setupLabel ?? `+ ${plan.setupFee} one-time setup`}
-                        </div>
-                        <p class="tier-setup-note">
-                            {plan.setupNote ?? "Charged only when your free trial converts to a paid plan."}
-                        </p>
-                        <p class="tier-desc">{plan.description}</p>
-                        <ul class="tier-features">
-                            {plan.features.map((feature) => (
-                                <li>{feature}</li>
-                            ))}
-                        </ul>
-                        <a
-                            href={plan.selfServe ? appHref({ plan: plan.name, cta: 'pricing', lp: Astro.url.pathname }) : plan.href}
-                            class={`btn ${plan.isPopular ? 'btn-primary' : 'btn-ghost'} btn-pill tier-btn`}
-                            data-track={plan.selfServe ? "trial_start" : "plan_select"}
-                            data-track-label={plan.name}
-                            data-track-where="pricing"
-                        >{plan.buttonText}</a>
-                        {plan.selfServe && (
-                            <a href="#erp-contact" data-plan={plan.name} class="tier-alt-link" data-track="plan_select" data-track-label={plan.name} data-track-where="pricing-assist">Prefer we walk you through it first?</a>
-                        )}
-                    </div>
-                ))}
-            </div>
+            {/* Used to read "Every plan starts with the same 30-day free
+                trial." With no trial, the demo is the only way to try before
+                paying, so this is where it is offered. */}
             <div class="erp-pricing-note animate-on-scroll slide-up">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>
-                <p>Every plan starts with the same 30-day free trial. No card, nothing to cancel.</p>
+                <p>Try it before you pay: the <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" data-track="demo_open" data-track-where="pricing">live demo</a> is a fully stocked demo store, and it needs no account.</p>
             </div>
 
             <ul class="erp-guarantees animate-on-scroll slide-up delay-100">
@@ -1069,7 +1044,7 @@ const jsonLd = [
             <div class="erp-compare-features animate-on-scroll slide-up delay-200">
                 <details class="erp-compare-details">
                     <summary class="compare-title">
-                        <span>Compare Plan Features</span>
+                        <span>See Everything Included</span>
                         <svg class="compare-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </summary>
                     <div class="table-responsive">
@@ -1077,31 +1052,20 @@ const jsonLd = [
                         <thead>
                             <tr>
                                 <th>Feature Category & Capabilities</th>
-                                <th>Single Branch<br/><span class="tier-sub">GHS 250/mo</span></th>
-                                <th>Multi-Branch<br/><span class="tier-sub">GHS 450/mo</span></th>
-                                <th>Franchise<br/><span class="tier-sub">Custom</span></th>
+                                <th>{pricingPlan.name}<br/><span class="tier-sub">{pricingPlan.price} a year</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             {featureCategories.map((category) => (
                                 <>
                                     <tr class="category-row">
-                                        <td colspan="4">{category.name}</td>
+                                        <td colspan="2">{category.name}</td>
                                     </tr>
                                     {category.features.map((feature) => (
                                         <tr>
                                             <td class="feature-name">{feature.name}</td>
-                                            <td class={feature.single === 'Yes' ? 'text-accent' : feature.single === 'No' ? 'text-muted' : ''}>
-                                                {feature.single === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> :
-                                                 feature.single === 'No' ? '-' : feature.single}
-                                            </td>
-                                            <td class={feature.multi === 'Yes' ? 'text-accent' : feature.multi === 'No' ? 'text-muted' : ''}>
-                                                {feature.multi === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> :
-                                                 feature.multi === 'No' ? '-' : feature.multi}
-                                            </td>
-                                            <td class={feature.franchise === 'Yes' ? 'text-accent' : feature.franchise === 'No' ? 'text-muted' : ''}>
-                                                {feature.franchise === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> :
-                                                 feature.franchise === 'No' ? '-' : feature.franchise}
+                                            <td class={feature.value === 'Yes' ? 'text-accent' : ''}>
+                                                {feature.value === 'Yes' ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> : feature.value}
                                             </td>
                                         </tr>
                                     ))}
@@ -1128,7 +1092,7 @@ const jsonLd = [
             <div class="section-header animate-on-scroll slide-up">
                 <span class="erp-eyebrow">Talk to us</span>
                 <h2>Rather Talk to a Person First?</h2>
-                <p>Tell us about your shop and we'll walk you through it. You can still start the free trial yourself at any time.</p>
+                <p>Tell us about your shop and we'll walk you through it. You can still sign up yourself at any time.</p>
             </div>
 
             <div class="erp-contact-grid">
@@ -1202,11 +1166,15 @@ const jsonLd = [
 
                             <div class="form-group">
                                 <label for="erp-plan-select">Plan You're Interested In <span class="form-optional">(optional)</span></label>
+                                {/* One plan since 8 October 2026, so the choice is
+                                    one branch or several. The values are what
+                                    api/confirm.js drops into "you're interested in
+                                    the ___ plan" in the confirmation email, which
+                                    is why they name QuadERP rather than a count. */}
                                 <select id="erp-plan-select" name="plan_interest">
                                     <option value="" selected>Not sure yet</option>
-                                    <option value="Single Branch">Single Branch (GHS 250/mo)</option>
-                                    <option value="Multi-Branch">Multi-Branch (GHS 450/mo)</option>
-                                    <option value="Franchise">Franchise (Custom Quote)</option>
+                                    <option value="QuadERP (one branch)">QuadERP, one branch</option>
+                                    <option value="QuadERP (several branches)">QuadERP, several branches</option>
                                 </select>
                             </div>
 
@@ -1309,13 +1277,9 @@ const jsonLd = [
             updateHeroParallax();
         }
 
-        // Plan pre-selection from pricing card buttons
-        document.querySelectorAll<HTMLElement>('[data-plan]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const planSelect = document.getElementById('erp-plan-select') as HTMLSelectElement | null;
-                if (planSelect) planSelect.value = btn.dataset.plan ?? '';
-            });
-        });
+        // The pricing cards used to pre-select their tier in the contact
+        // form's plan dropdown via a data-plan attribute. With one plan there
+        // is no tier to carry across, so the link and the handler both went.
 
         // Form AJAX submit
         const erpForm = document.getElementById('erpContactForm') as HTMLFormElement | null;
@@ -1414,28 +1378,6 @@ const jsonLd = [
             pricingSeen.observe(pricingGrid);
         }
 
-        // Pricing toggle
-        const pricingToggle = document.getElementById('pricing-toggle') as HTMLInputElement | null;
-        const labelMonthly = document.getElementById('label-monthly');
-        const labelYearly = document.getElementById('label-yearly');
-        const priceElements = document.querySelectorAll<HTMLElement>('.tier-price');
-
-        if (pricingToggle) {
-            pricingToggle.addEventListener('change', () => {
-                const isYearly = pricingToggle.checked;
-
-                labelMonthly?.classList.toggle('active', !isYearly);
-                labelYearly?.classList.toggle('active', isYearly);
-
-                priceElements.forEach(el => {
-                    const amountSpan = el.querySelector('.price-amount');
-                    const periodSpan = el.querySelector('.erp-price-period');
-                    if (amountSpan) amountSpan.textContent = isYearly ? (el.dataset.yearlyPrice ?? '') : (el.dataset.monthlyPrice ?? '');
-                    if (periodSpan) periodSpan.textContent = isYearly ? (el.dataset.yearlyPeriod ?? '') : (el.dataset.monthlyPeriod ?? '');
-                });
-            });
-        }
-
         // The FAQ accordion moved into components/FaqList.astro with the markup.
     </script>
 </Layout>
@@ -1512,11 +1454,12 @@ const jsonLd = [
         overflow-x: auto;
     }
 
+    /* Was min-width 800px, which four columns needed. Two columns fit a
+       phone, so the table wraps instead of making the reader scroll sideways. */
     .erp-feature-table {
         width: 100%;
         border-collapse: collapse;
         text-align: center;
-        min-width: 800px;
     }
 
     .erp-feature-table th {
@@ -1584,12 +1527,6 @@ const jsonLd = [
         color: var(--accent);
     }
 
-    /* The "not included" cells. A dash at placeholder contrast is the point:
-       it should read as absent without competing with the ticks. */
-    .text-muted {
-        color: var(--text-placeholder);
-    }
-
     @media (max-width: 768px) {
         .erp-compare-features {
             padding: 22px 16px;
@@ -1624,18 +1561,25 @@ const jsonLd = [
         font-variant-numeric: tabular-nums lining-nums;
     }
 
-    /* The setup fee is the single biggest objection in the field, so the
-       "only when you convert" caveat sits directly under the number rather
-       than being buried in the FAQ. */
-    .tier-setup-note {
-        font-size: 12.5px;
+    /* What is added to the yearly price, directly under it. The setup fee
+       is the single biggest objection in the field, and it is now compulsory,
+       so it sits next to the number rather than being left for the FAQ. */
+    .tier-extras {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 16px;
+        font-size: 13px;
         line-height: 1.5;
         color: var(--text-muted);
-        margin: 0 0 16px;
+        font-variant-numeric: tabular-nums lining-nums;
     }
 
-    /* Secondary path out of a pricing card for owners who won't self-serve.
-       Deliberately a text link, so it never competes with the trial button. */
+    .tier-extras li + li {
+        margin-top: 3px;
+    }
+
+    /* Secondary path out of the pricing card for owners who won't self-serve.
+       Deliberately a text link, so it never competes with the signup button. */
     .tier-alt-link {
         display: block;
         margin-top: 14px;

@@ -60,6 +60,9 @@ if (faqs.length > 0) {
   });
 }
 
+/* "trial" in the name and in data-track="trial_start" below is historical:
+   there has been no trial since 8 October 2026, and both now mean "signup".
+   The event name stays so the funnel's history in GA stays continuous. */
 const trialHref = appHref({ cta: 'page-hero', lp: meta.path });
 const closingHref = appHref({ cta: 'page-closing', lp: meta.path });
 ---
@@ -74,7 +77,7 @@ const closingHref = appHref({ cta: 'page-closing', lp: meta.path });
                 <h1 class="erp-page-title">{meta.h1}</h1>
                 <p class="erp-page-intro">{meta.intro}</p>
                 <div class="erp-page-ctas">
-                    <a href={trialHref} class="btn btn-primary btn-pill" data-track="trial_start" data-track-where="page-hero">Start your 30-day free trial</a>
+                    <a href={trialHref} class="btn btn-primary btn-pill" data-track="trial_start" data-track-where="page-hero">Get started</a>
                     <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-pill" data-track="demo_open" data-track-where="page-hero">Open the live demo</a>
                 </div>
             </div>
@@ -86,13 +89,19 @@ const closingHref = appHref({ cta: 'page-closing', lp: meta.path });
             {faqs.length > 0 && <FaqList faqs={faqs} heading={faqHeading} />}
 
             <section class="erp-page-closing">
-                <h2>See it against your own stock</h2>
+                {/* Was "Thirty days, no card. We set it up and train whoever
+                    stands behind the counter, and you pay nothing until you
+                    decide to stay." Every clause described the trial or the old
+                    guided setup. The demo is now the way to try it first. */}
+                <h2>Look around first, then decide</h2>
                 <p>
-                    Thirty days, no card. We set it up and train whoever stands behind the counter,
-                    and you pay nothing until you decide to stay.
+                    The <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" data-track="demo_open" data-track-where="page-closing">live demo</a>
+                    is a fully stocked demo store and needs no account. When you are ready, it is
+                    GHS 1,000 a year with every feature and one branch, plus a one-time GHS 1,000
+                    setup fee with your first year.
                 </p>
                 <div class="erp-page-ctas">
-                    <a href={closingHref} class="btn btn-primary btn-pill" data-track="trial_start" data-track-where="page-closing">Start free</a>
+                    <a href={closingHref} class="btn btn-primary btn-pill" data-track="trial_start" data-track-where="page-closing">Get started</a>
                     <a href="/#erp-contact" class="btn btn-ghost btn-pill">Rather talk to a person</a>
                 </div>
             </section>

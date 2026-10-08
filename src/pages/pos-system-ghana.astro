@@ -1,5 +1,6 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
+import { DEMO_URL } from '../config/site';
 
 const faqs = [
   {
@@ -19,8 +20,11 @@ const faqs = [
     a: 'The cashier can keep selling. The sale is held on that device and goes up when you press Sync. There are limits worth knowing about, and they are written out in full on the security and uptime page.',
   },
   {
+    /* Was "Single Branch, up to three tills; Multi-Branch, up to five
+       locations; above that we quote it". Those tiers went on 8 October
+       2026, and nothing in the product ever counted tills. */
     q: 'How many people can sell at once?',
-    a: 'Single Branch covers one location with up to three tills. Multi-Branch covers up to five locations with no limit on tills. Above that we quote it.',
+    a: 'As many as you have tills for. There is no limit on tills in a branch. One branch is included in the yearly price, and each additional branch is GHS 200 a year.',
   },
 ];
 ---
@@ -85,11 +89,14 @@ const faqs = [
         answers it.
     </p>
 
+    {/* One plan, paid before use, since 8 October 2026. The figures are the
+        homepage's and the app's; change them there first. */}
     <h2>What it costs</h2>
     <p>
-        GHS 250 a month for one shop, GHS 450 for up to five. No setup fee: set it up yourself
-        and the monthly price is all you pay. Guided setup, where we load your products and train
-        your staff, is optional and costs extra. Thirty days free, no card. The full table is on
-        the <a href="/#erp-pricing">pricing section of the homepage</a>.
+        GHS 1,000 a year with one branch and every feature, plus GHS 200 a year for each
+        additional branch. There is a one-time setup fee of GHS 1,000, paid with your first year,
+        so one branch is GHS 2,000 to start. There is no free trial: the
+        <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" data-track="demo_open" data-track-where="page-body">live demo</a>
+        is the way to try it first, and it needs no account. The detail is on the <a href="/#erp-pricing">pricing section of the homepage</a>.
     </p>
 </PageLayout>

@@ -13,8 +13,12 @@ const faqs = [
     a: 'It produces a profit and loss and an aged receivables list, plus a full export of the underlying records. It does not produce a trial balance or a balance sheet, so those get built from the export.',
   },
   {
-    q: 'Is training included?',
-    a: 'Yes, if you want it. Guided setup is us loading your products and training whoever stands behind the counter, which is normally not the owner. It is optional and priced separately: set the system up yourself and you pay the monthly fee and nothing else.',
+    /* Replaces "Is training included?", whose answer described the optional
+       guided setup (us loading products and training staff). That offer went
+       on 8 October 2026 and the site does not describe what the one-time
+       setup fee covers, so the question it answered honestly is this one. */
+    q: 'Can my staff try it before we pay?',
+    a: 'Yes. The live demo is a fully stocked demo store that needs no account, so whoever stands behind the counter, which is normally not the owner, can practise on it first. There is no free trial: the setup fee and first year are paid before you start, so the demo is the place to find out.',
   },
 ];
 ---
@@ -48,9 +52,9 @@ const faqs = [
                 <tr><td>The primary user</td><td>Whoever is at the counter</td><td>Whoever keeps the books</td></tr>
                 <tr><td>The first action of the day</td><td>Sell something</td><td>Record a transaction</td></tr>
                 <tr><td>Stock on the shelf</td><td>Central</td><td>Varies, often an add-on</td></tr>
-                <tr><td>Several branches</td><td>Yes, on Multi-Branch</td><td>Varies by tier</td></tr>
+                <tr><td>Several branches</td><td>Yes, GHS 200 a year each after the first</td><td>Varies by tier</td></tr>
                 <tr><td>Double entry and statutory reporting</td><td>No</td><td>Yes</td></tr>
-                <tr><td>Setup and staff training</td><td>We do it</td><td>Usually a reseller or consultant</td></tr>
+                <tr><td>What the price depends on</td><td>Branches, never features</td><td>Varies by tier</td></tr>
             </tbody>
         </table>
     </div>
@@ -72,6 +76,7 @@ const faqs = [
     <p>
         A till that runs on a phone, stock that moves when you sell, alerts before you run out,
         a record of which staff member did what, and a number for takings you can look at from
-        home. Priced in cedis, set up by us, free for thirty days.
+        home. Priced in cedis, with every feature in one yearly price, and a live demo you can try
+        before you pay anything.
     </p>
 </PageLayout>

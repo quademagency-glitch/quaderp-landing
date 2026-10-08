@@ -3,8 +3,14 @@ import PageLayout from '../layouts/PageLayout.astro';
 
 const faqs = [
   {
+    /* Used to say "we do it as part of setup" and describe us loading the
+       stock. The optional guided setup that promised that is gone, and the
+       site no longer describes what the setup fee covers, so this answers
+       with what the product does: the import wizard (ImportWizard.jsx in
+       the app) takes .csv, .xlsx and .xls, maps columns, previews, and an
+       import can be undone. */
     q: 'How do I get my existing stock into it?',
-    a: 'We do it as part of setup. You hand over whatever you already have, a spreadsheet, an exercise book, or the contents of the shelves, and we load it and check the counts with you before you start selling on it.',
+    a: 'From a spreadsheet. Upload a .csv or Excel file of your products, with opening stock if you have it, match its columns to the fields, check the preview, and import. If an import goes wrong it can be undone. Stock kept in an exercise book goes in by hand or into a spreadsheet first.',
   },
   {
     q: 'Can I do a stock take on a phone?',
@@ -12,7 +18,7 @@ const faqs = [
   },
   {
     q: 'Does it handle more than one branch?',
-    a: 'Yes, on the Multi-Branch plan. Each location has its own stock, you can transfer between them, and the owner sees one number across all of them.',
+    a: 'Yes. One branch is included in the yearly price and each additional branch is GHS 200 a year. Each location has its own stock, you can transfer between them, and the owner sees one number across all of them.',
   },
   {
     q: 'Will it tell me what to reorder?',
@@ -66,8 +72,8 @@ const faqs = [
         two managers and adding it up.
     </p>
     <p>
-        This is what the Multi-Branch plan is for, and it is the point at which most shops stop
-        being able to run on a book at all.
+        Every feature here comes with the one plan. A second branch is GHS 200 a year, and it is
+        the point at which most shops stop being able to run on a book at all.
     </p>
 
     <h2>Serial and pack codes for the things that need them</h2>

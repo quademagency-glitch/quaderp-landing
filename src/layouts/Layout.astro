@@ -40,10 +40,10 @@ import { GA_ID } from '../config/analytics';
 const canonical = new URL(Astro.url.pathname, SITE_URL).href;
 const ogImage = absUrl('/images/og-cover.jpg');
 
-/* The chrome's own CTAs. Neither the navbar nor the drawer knows which tier
-   the visitor wants, so neither claims one: they carry where the click came
-   from and let the signup page ask. Attaching a plan here would have sent a
-   five-branch chain to the Single Branch card. */
+/* The chrome's own CTAs. They carry where the click came from and nothing
+   else. They never named a plan, even when there were three tiers to choose
+   from, and since 8 October 2026 there is one plan and the app's signup
+   ignores `?plan=` anyway. */
 const lp = Astro.url.pathname;
 const navSignupHref = appHref({ cta: 'nav', lp });
 const drawerSignupHref = appHref({ cta: 'mobile-nav', lp });
@@ -131,7 +131,7 @@ const whatsappLink = WHATSAPP_LINK;
 
         <!-- Conversion tracking.
              Ahrefs above counts visits. This counts what they did: opened the
-             demo, reached pricing, messaged us, started a trial. Without it
+             demo, reached pricing, messaged us, started a signup. Without it
              there is no way to tell which part of the page is losing people.
 
              Nothing leaves the browser until PUBLIC_GA_ID is set. Unset, the
@@ -204,7 +204,11 @@ const whatsappLink = WHATSAPP_LINK;
                     <button class="erp-hamburger" id="hamburgerBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
                         <span></span><span></span><span></span>
                     </button>
-                    <a href={navSignupHref} class="btn btn-primary btn-pill erp-nav-cta-btn" data-track="trial_start" data-track-where="nav">Start Free Trial</a>
+                    {/* trial_start is the historical event name, kept so the
+                        funnel's history in GA stays continuous. It now means
+                        "signup started": there has been no trial since
+                        8 October 2026. */}
+                    <a href={navSignupHref} class="btn btn-primary btn-pill erp-nav-cta-btn" data-track="trial_start" data-track-where="nav">Get Started</a>
                 </div>
             </div>
         </header>
@@ -219,7 +223,7 @@ const whatsappLink = WHATSAPP_LINK;
                     <a href="/#erp-pricing">Pricing</a>
                 </nav>
                 <div class="erp-mobile-nav-cta">
-                    <a href={drawerSignupHref} class="btn btn-primary btn-pill w-100" data-track="trial_start" data-track-where="mobile-nav">Start Free Trial</a>
+                    <a href={drawerSignupHref} class="btn btn-primary btn-pill w-100" data-track="trial_start" data-track-where="mobile-nav">Get Started</a>
                     <a href="/#erp-contact" class="btn btn-ghost btn-pill w-100 erp-mobile-nav-cta-alt" data-track="plan_select" data-track-where="mobile-nav">Talk to Us First</a>
                 </div>
             </div>
@@ -535,8 +539,8 @@ const whatsappLink = WHATSAPP_LINK;
         --accent-line: rgba(129, 140, 248, 0.3);
         --accent-glow: rgba(84, 87, 235, 0.32);
 
-        /* The mark's cyan, kept for the second-voice labels (annual discount,
-           illustration badges) so they separate from the indigo accent. */
+        /* The mark's cyan, kept for the second-voice labels (illustration
+           badges, table category rows) so they separate from the indigo accent. */
         --accent-2: #3fd8ef;
         --accent-2-soft: rgba(34, 211, 238, 0.12);
         --accent-2-line: rgba(34, 211, 238, 0.28);
@@ -1016,9 +1020,9 @@ const whatsappLink = WHATSAPP_LINK;
         margin-top: 24px;
     }
 
-    /* The drawer keeps both paths: self-serve trial for owners ready to poke
-       at it themselves, and a route to a human for the ones who won't sign up
-       to anything without talking first. */
+    /* The drawer keeps both paths: self-serve signup for owners ready to
+       start on their own, and a route to a human for the ones who won't sign
+       up to anything without talking first. */
     .erp-mobile-nav-cta-alt {
         font-weight: 500;
     }

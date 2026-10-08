@@ -39,7 +39,7 @@ export const PAGES: Record<string, PageMeta> = {
     path: "/pos-system-ghana/",
     title: "POS System for Shops in Ghana | QuadERP",
     description:
-      "A point of sale that runs in the browser on the phone or laptop you already own. Mobile Money, cedis, and it sells when the network drops. Free 30 days.",
+      "A point of sale that runs in the browser on the phone or laptop you already own. Mobile Money, cedis, and it sells when the network drops. Free live demo.",
     h1: "A POS System Built for How Ghanaian Shops Actually Sell",
     intro:
       "No terminal to buy, no card reader to wait for. It runs in the browser on the phone or laptop you already have, records Mobile Money beside cash and card, and keeps working when the network goes.",
@@ -87,7 +87,7 @@ export const PAGES: Record<string, PageMeta> = {
     path: "/odoo-alternative-ghana/",
     title: "An Odoo Alternative for Ghanaian Retail | QuadERP",
     description:
-      "Odoo can do almost anything, once someone configures it. QuadERP does retail, set up by us, working the same week. An honest comparison for Ghanaian shops.",
+      "Odoo can do almost anything, once someone configures it. QuadERP does retail, with nothing to configure. An honest comparison for Ghanaian shops.",
     h1: "Odoo Can Do Anything. That Is the Problem.",
     intro:
       "Odoo is a serious system with a serious setup. If you have an implementation partner and a budget for one, it may well beat this. If you have a shop to run, read on.",
@@ -99,7 +99,7 @@ export const PAGES: Record<string, PageMeta> = {
     path: "/sage-alternative-ghana/",
     title: "A Sage Alternative for Shops in Ghana | QuadERP",
     description:
-      "Sage is built for accountants. QuadERP is built for the person behind the counter and the owner checking takings from home. Priced in cedis, set up by us.",
+      "Sage is built for accountants. QuadERP is built for the person behind the counter and the owner checking takings from home. Priced in cedis.",
     h1: "Sage Was Built for Your Accountant, Not for You",
     intro:
       "That is not a criticism of Sage. It is a question of who has to use the thing every day, and what happens on the shop floor while they do.",

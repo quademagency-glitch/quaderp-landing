@@ -17,35 +17,16 @@ export const SIGNUP_URL = `${APP_URL}/signup`;
  */
 export const DEMO_URL = `${APP_URL}/login?demo=1`;
 
-/**
- * Slug rule shared with the app (Signup.jsx) and the API (routes/auth.js),
- * all three mirroring public.slugify from migration 058.
+/*
+ * There is no plan parameter any more. Until 8 October 2026 the pricing cards
+ * sent `?plan=<slug>` so the signup page showed the tier the visitor had
+ * clicked (Single Branch or Multi-Branch). Since then there is one plan, the
+ * app's Signup page ignores `?plan=` on older links, and nothing here sends
+ * it. planSlug() and signupUrl(planName) went with it; the JSON-LD Offer uses
+ * SIGNUP_URL directly.
  */
-export function planSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-/**
- * A signup link that carries the tier the visitor actually clicked.
- *
- * Without this the pricing table is a lie by omission: every tier pointed at
- * a bare /signup, and the signup page hardcoded "Single Branch", so someone
- * choosing Multi-Branch was told they had picked the cheaper plan.
- *
- * The API re-resolves the slug against platform_plans and falls back to
- * Single Branch if it does not recognise it, so a stale name here shows the
- * wrong label at worst. It can never attach a plan that does not exist.
- */
-export function signupUrl(planName?: string): string {
-  return planName ? `${SIGNUP_URL}?plan=${planSlug(planName)}` : SIGNUP_URL;
-}
 
 interface AppLinkOptions {
-  /** The tier the visitor actually chose. Omit where they have not chosen. */
-  plan?: string;
   /** Which control was clicked: nav, mobile-nav, hero, pricing, closing. */
   cta?: string;
   /** The page the click came from. Pass Astro.url.pathname. */
@@ -58,23 +39,22 @@ interface AppLinkOptions {
  * An app-bound link that says where it came from.
  *
  * The two sites are separate origins, so nothing is shared between them: no
- * storage, no cookie, no analytics session. Until now the only thing that
- * crossed was `?plan`, which meant a finished signup could never be traced
- * to the page, the section or the campaign that produced it. Every question
- * worth asking about this funnel ends at the domain boundary.
+ * storage, no cookie, no analytics session. Before these parameters the only
+ * thing that crossed was `?plan`, which meant a finished signup could never be
+ * traced to the page, the section or the campaign that produced it. Every
+ * question worth asking about this funnel ends at the domain boundary.
  *
- * Deliberately kept separate from signupUrl above, which feeds Offer.url in
- * the JSON-LD. Schema URLs have to stay canonical, and a tracking parameter
- * in structured data is both noise and a duplicate-URL signal.
+ * Never used for the JSON-LD, which takes the bare SIGNUP_URL for Offer.url.
+ * Schema URLs have to stay canonical, and a tracking parameter in structured
+ * data is both noise and a duplicate-URL signal.
  *
  * Campaign parameters are not added here. They are only knowable at runtime,
  * so Layout.astro appends them on load. This half is build-time, so it
  * survives a visitor with JavaScript off.
  */
 export function appHref(options: AppLinkOptions = {}): string {
-  const { plan, cta, lp, base = SIGNUP_URL } = options;
+  const { cta, lp, base = SIGNUP_URL } = options;
   const url = new URL(base);
-  if (plan) url.searchParams.set("plan", planSlug(plan));
   if (cta) url.searchParams.set("cta", cta);
   if (lp) url.searchParams.set("lp", lp);
   return url.href;
