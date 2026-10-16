@@ -63,13 +63,13 @@ export function appHref(options: AppLinkOptions = {}): string {
 /**
  * The origin the site is actually served from.
  *
- * Vercel 308s the apex to www, but canonical and og:url both pointed at the
+ * The apex 308s to www (worker/index.js), but canonical and og:url once pointed at the
  * apex, so every crawler and every social scraper was handed a URL that
  * redirects, and the page competed with itself for its own canonical. This is
  * the one place that decides which host is authoritative.
  *
- * If you ever flip Vercel to serve the apex instead, change this and nothing
- * else needs to move.
+ * If you ever serve the apex instead, change this and the redirect in
+ * worker/index.js.
  */
 export const SITE_URL = "https://www.quaderp.app";
 
@@ -87,9 +87,9 @@ export function absUrl(path: string): string {
  * It lived as a `const whatsappNumber` in both index.astro and Layout.astro,
  * declared separately with no connection between them, so changing the number
  * meant changing it twice and half the site would have kept pointing at the
- * old one if either was missed. A fourth copy is in api/confirm.js, which is
- * a Vercel function outside Astro's build and cannot import this file; that
- * one carries a comment pointing back here.
+ * old one if either was missed. A fourth copy is in worker/confirm.js, which
+ * is built separately from Astro and does not import this file; that one
+ * carries a comment pointing back here.
  */
 export const WHATSAPP_NUMBER = "233209027276";
 

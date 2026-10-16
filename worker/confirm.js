@@ -1,4 +1,6 @@
-// Vercel serverless function for QuadERP contact-form submissions.
+// Contact-form submissions for QuadERP, served by the Cloudflare Worker at
+// POST /api/confirm (see worker/index.js). Until October 2026 this was a
+// Vercel function in api/confirm.js; only the request handling changed.
 //
 // Called best-effort by the form AFTER a successful Formspree submit, so if
 // anything here fails the visitor's success state is never affected. Formspree
@@ -8,7 +10,7 @@
 //   1. Lead notification  -> the business (well-listed table of all fields).
 //   2. Confirmation       -> the person who submitted ("we've got it").
 //
-// No npm dependency (Node 22 has global fetch). Requires env var
+// No npm dependency (Workers have global fetch). Requires the Worker secret
 // RESEND_API_KEY. The `from` domain (quaderp.app) must be verified in Resend.
 // Where lead notifications are delivered is set by LEAD_NOTIFICATION_EMAIL
 // (defaults to info@quaderp.app).
@@ -17,7 +19,7 @@ const FROM = 'QuadERP <info@quaderp.app>';
 const REPLY_TO = 'info@quaderp.app';
 const CALENDLY_URL = 'https://calendly.com/quaderp/30min';
 /* Kept in step with WHATSAPP_NUMBER in src/config/site.ts by hand. This file
-   is a Vercel function, outside Astro's build, so it cannot import from src/.
+   is part of the Worker, built separately from Astro, so it does not import from src/.
    If the number changes there, change it here: this copy is what goes into
    every email a lead receives, so a stale one here is worse than a stale one
    on the page. */
@@ -25,13 +27,13 @@ const WHATSAPP_URL = 'https://wa.me/233209027276';
 
 const ALLOWED_ORIGINS = ['https://quaderp.app', 'https://www.quaderp.app'];
 
-function isAllowedOrigin(req) {
-    const origin = req.headers.origin || '';
-    const referer = req.headers.referer || '';
+function isAllowedOrigin(request) {
+    const origin = request.headers.get('origin') || '';
+    const referer = request.headers.get('referer') || '';
     const ok = (v) =>
         ALLOWED_ORIGINS.includes(v) ||
         ALLOWED_ORIGINS.some((o) => v.startsWith(o)) ||
-        /^https:\/\/[a-z0-9-]+\.vercel\.app(\/|$)/i.test(v) ||
+        /^https:\/\/quaderp-landing\.[a-z0-9-]+\.workers\.dev(\/|$)/i.test(v) ||
         v.startsWith('http://localhost');
     return ok(origin) || ok(referer);
 }
@@ -229,23 +231,27 @@ Quadem Digital Enterprise`;
     return { html, text };
 }
 
-export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+const json = (status, obj) =>
+    new Response(JSON.stringify(obj), {
+        status,
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    });
+
+export async function confirm(request, env) {
+    if (request.method !== 'POST') {
+        return json(405, { error: 'Method not allowed' });
     }
-    if (!isAllowedOrigin(req)) {
-        return res.status(403).json({ error: 'Forbidden' });
+    if (!isAllowedOrigin(request)) {
+        return json(403, { error: 'Forbidden' });
     }
 
-    let body = req.body;
-    if (typeof body === 'string') {
-        try { body = JSON.parse(body); } catch { body = {}; }
-    }
-    body = body || {};
+    let body = {};
+    try { body = await request.json(); } catch { body = {}; }
+    if (!body || typeof body !== 'object') body = {};
 
     // Honeypot: our form ships an empty _gotcha; a filled one means a bot.
     if (String(body._gotcha || '').trim()) {
-        return res.status(200).json({ ok: true, skipped: 'spam' });
+        return json(200, { ok: true, skipped: 'spam' });
     }
 
     const f = {
@@ -267,25 +273,25 @@ export default async function handler(req, res) {
     // archived the submission by the time this is called, so rejecting here
     // loses nothing but a malformed email.
     if (!f.name && !f.business_name && !f.email) {
-        return res.status(400).json({ error: 'Nothing to send' });
+        return json(400, { error: 'Nothing to send' });
     }
 
     // LEAD_NOTIFICATION_EMAIL is this deploy's own name for it;
     // PLATFORM_ADMIN_EMAIL is what the ERP server calls the same address, and
     // is accepted so one value can be set across both deploys.
-    const notifyTo = process.env.LEAD_NOTIFICATION_EMAIL || process.env.PLATFORM_ADMIN_EMAIL || 'info@quaderp.app';
+    const notifyTo = env.LEAD_NOTIFICATION_EMAIL || env.PLATFORM_ADMIN_EMAIL || 'info@quaderp.app';
 
     // Graceful degradation, matching store-app/server/services/emailService.js:
     // an unconfigured mail provider is a deployment gap, not a visitor's
     // problem. The submission is already safe in Formspree, so report success
-    // and leave the details in the function log for whoever set it up.
-    const apiKey = process.env.RESEND_API_KEY;
+    // and leave the details in the Worker log for whoever set it up.
+    const apiKey = env.RESEND_API_KEY;
     if (!apiKey) {
         console.warn('[contact] RESEND_API_KEY not set, emails simulated.', {
             notifyTo,
             lead: { name: f.name, business_name: f.business_name, email: f.email, wants_demo: f.wants_demo },
         });
-        return res.status(200).json({ ok: true, simulated: true });
+        return json(200, { ok: true, simulated: true });
     }
 
     const sends = [];
@@ -322,7 +328,7 @@ export default async function handler(req, res) {
     const results = await Promise.allSettled(sends);
     const failed = results.filter((r) => r.status === 'rejected');
     if (failed.length === results.length) {
-        return res.status(502).json({ error: 'All sends failed' });
+        return json(502, { error: 'All sends failed' });
     }
-    return res.status(200).json({ ok: true, sent: results.length - failed.length });
+    return json(200, { ok: true, sent: results.length - failed.length });
 }

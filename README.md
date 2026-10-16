@@ -1,35 +1,23 @@
 # QuadERP landing page
 
-Astro static site, deployed to Vercel at https://www.quaderp.app.
+Astro static site, served by a Cloudflare Worker at https://www.quaderp.app.
 
 ## Deploy config
 
-`vercel.json` sets the cache headers. Without it every asset came back with
-Vercel's default `public, max-age=0, must-revalidate`: the CDN cached them but
-the browser did not, so a returning visitor revalidated the whole page's assets
-on every visit. Content-hashed files under `/_astro/` and the self-hosted fonts
-get a year and `immutable`, because a hashed filename cannot go stale: a
-changed file is a different URL. Unhashed files from `public/` get a day with
-`stale-while-revalidate`. HTML stays `must-revalidate` so a deploy is live
-immediately.
+`npm run build` writes the site to `dist/`; `npx wrangler deploy` publishes it
+with `worker/index.js` in front (config in `wrangler.jsonc`). Until October 2026
+it was on Vercel and `vercel.json` did this job.
 
-**`vercel.json` takes no comments.** Vercel validates it against
-https://openapi.vercel.sh/vercel.json, which sets `additionalProperties: false`
-at the top level and on every header rule, so a `"//"` key fails the deploy
-before anything builds. `$schema` is the only non-functional key allowed. To
-check before pushing:
+The Worker redirects `quaderp.app` to `www.quaderp.app` (308), serves the
+contact-form emails at `POST /api/confirm` (`worker/confirm.js`, needs the
+`RESEND_API_KEY` secret), and sets the headers. Content-hashed files under
+`/_astro/` and the self-hosted fonts get a year and `immutable`, because a
+hashed filename cannot go stale: a changed file is a different URL. Unhashed
+files from `public/` get a day with `stale-while-revalidate`. HTML stays
+`must-revalidate` so a deploy is live immediately.
 
-```sh
-curl -sS https://openapi.vercel.sh/vercel.json -o /tmp/vercel-schema.json
-python3 -c "
-import json; from jsonschema import Draft7Validator
-print(list(Draft7Validator(json.load(open('/tmp/vercel-schema.json')))
-      .iter_errors(json.load(open('vercel.json')))) or 'valid')"
-```
-
-Where two rules set the same header key the last match wins, so the `/(.*)`
-catch-all here only carries security headers. It must never set
-`Cache-Control`, or it would override every specific rule above it.
+`PUBLIC_GA_ID` is read at build time, so it is a build variable, not a Worker
+secret.
 
 The canonical host is `www`. `src/config/site.ts` holds `SITE_URL`, and
 canonical, `og:url` and the sitemap all derive from it.

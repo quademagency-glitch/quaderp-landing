@@ -20,7 +20,7 @@
  * dataLayer and nothing ships them anywhere.
  */
 
-/** Set PUBLIC_GA_ID in Vercel to start sending. Unset = queue only, no network. */
+/** Set PUBLIC_GA_ID as a build variable to start sending. Unset = queue only, no network. */
 export const GA_ID = import.meta.env.PUBLIC_GA_ID ?? "";
 
 /**

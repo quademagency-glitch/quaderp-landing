@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "quaderp-landing",
+  // Redirects the apex, serves /api/confirm, and sets headers. See the top of
+  // worker/index.js.
+  "main": "./worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "observability": { "enabled": true },
+  "assets": {
+    // Built by `npm run build` (Astro) before deploying.
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // Every request reaches the Worker first, so the apex redirect also
+    // covers paths that exist as files.
+    "run_worker_first": true,
+    "not_found_handling": "404-page"
+  }
+}

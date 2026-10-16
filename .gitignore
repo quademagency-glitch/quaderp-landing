@@ -26,3 +26,7 @@ pnpm-debug.log*
 # vercel link writes both of these
 .vercel
 .env.local
+
+# wrangler local state and secrets
+.wrangler/
+.dev.vars*

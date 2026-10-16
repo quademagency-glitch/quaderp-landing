@@ -3,13 +3,13 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-    /* Vercel serves this from www and 308s the apex to it, so www is what
+    /* Served from www, with the apex 308ed to it (worker/index.js), so www is what
        canonical, og:url and the sitemap all have to agree on. Astro uses this
        to resolve Astro.url and any absolute link it generates. */
     site: 'https://www.quaderp.app',
 
     build: {
-        /* Emit the hashed assets under /_astro/ so vercel.json can hand the
+        /* Emit the hashed assets under /_astro/ so worker/index.js can hand the
            whole directory an immutable year-long cache. A hashed filename
            cannot go stale: a changed image is a different URL. */
         assets: '_astro',
